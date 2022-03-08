@@ -152,7 +152,7 @@ pie(werte,labels=kategorie,main="Abstimmungen nach Kategorie")
 
 # neuer DataFrame nur mit diesen drei ausgewählten Gebieten
 ```{r}
-aus.data = data_csv[data_csv$d1e1 == 2 | data_csv$d1e1==3 | data_csv$d1e1==10, ]
+data = data_csv[data_csv$d1e1 == 2 | data_csv$d1e1==3 | data_csv$d1e1==10, ]
 
 
 # pie plot machen
@@ -160,4 +160,8 @@ werte <- c(34,51,132)
 kategorie <- c("Aussenpolitik","Sicherheitspolitik","Sozialpolitik")
 pie(werte,labels=kategorie,main="Verteilung der drei ausgewähten Gebieten")
 ```
+
+
+
+
 
