@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library("dplyr")
+library("tidyverse")
+
+```
+
+```{r}
+cdaSet <- read.csv2("DATASET CSV 13-02-2022.csv", na = "NA")
+cdaSet
+```
+
+```{r}
+tidyCdaSet <- select(cdaSet, anr, datum, titel_kurz_d, anzahl, rechtsform, d1e1, d1e2, d1e3, d2e1, d2e2, d2e3, d3e1, d3e2, d3e3, dep, br.pos, legislatur, legisjahr, gesch_nr)
+```
+
+```{r}
+ggplot(tidyCdaSet, aes(factor(d1e1))) +
+  geom_bar() +
+  labs(x = "Politibereich", y = " Anzahl Abstimmungen")
+```
+
+
+```{r}
+StaatsordnungObs <- filter(tidyCdaSet, d1e1 == 1)
+AussenpolitikObs <- filter(tidyCdaSet, d1e1 == 2)
+SicherheitspolitikObs <- filter(tidyCdaSet, d1e1 == 3)
+WirtschaftObs <- filter(tidyCdaSet, d1e1 == 4)
+LandwirtschaftObs <- filter(tidyCdaSet, d1e1 == 5)
+OeffentlicheFinanzenObs <- filter (tidyCdaSet, d1e1 == 6)
+EnergieObs <- filter(tidyCdaSet, d1e1 == 7)
+VerkehrInfrastrukturObs <- filter(tidyCdaSet, d1e1 == 8)
+UmweltLebensraumObs <- filter(tidyCdaSet, d1e1 == 9)
+SozialpolitikObs <- filter(tidyCdaSet, d1e1 == 10)
+BildungForschun <- filter(tidyCdaSet, d1e1 == 11)
+KulturReligionMedien <- filter(tidyCdaSet, d1e1 == 12)
+```
+
