@@ -1,0 +1,146 @@
+---
+title: "R Notebook"
+output: html_notebook
+
+---
+```{r}
+library(ggplot2)
+```
+
+
+# Daten einlesen
+```{r}
+data_csv <- read.csv2("DatensatzAbstimmungen.csv", na = "NA")
+data_csv
+```
+
+
+# Neuer Data Frame erstellen
+```{r}
+#datum <- subset(data_csv, select=c(anr,datum,annahme))
+#datum
+
+# Beispiel 5. Zeile und 2. Spalte
+#datum[5,2]
+```
+
+
+# Abstimmungen pro Kategorie
+```{r}
+table(data_csv$d1e1)
+
+staatsordnung = data_csv["d1e1"] == 1
+sum(staatsordnung)
+
+aussenpolitik = data_csv["d1e1"] == 2
+sum(aussenpolitik)
+
+sicherheitspolitik = data_csv["d1e1"] == 3
+sum(sicherheitspolitik)
+
+wirtschaft = data_csv["d1e1"] == 4
+sum(wirtschaft)
+
+landwirtschaft = data_csv["d1e1"] == 5
+sum(landwirtschaft)
+
+oeffentlicheFinanzen = data_csv["d1e1"] == 6
+sum(oeffentlicheFinanzen)
+
+energie = data_csv["d1e1"] == 7
+sum(energie)
+
+verkehrUndInfrastrunktur = data_csv["d1e1"] == 8
+sum(verkehrUndInfrastrunktur)
+
+umweltUndLebensraum = data_csv["d1e1"] == 9
+sum(umweltUndLebensraum)
+
+sozialpolitik = data_csv["d1e1"] == 10
+sum(sozialpolitik)
+
+bildungUndForschung = data_csv["d1e1"] == 11
+sum(bildungUndForschung)
+
+kulturReligionMedien = data_csv["d1e1"] == 12
+sum(kulturReligionMedien)
+
+#Summe aller Kategorien zur Kontrolle
+#sum(staatsordnung)+sum(aussenpolitik)+sum(sicherheitspolitik)+sum(wirtschaft)+sum(landwirtschaft)+sum(oeffentlicheFinanzen)+sum(energie)+sum(verkehrUndInfrastrunktur)+sum(umweltUndLebensraum)+sum(sozialpolitik)+sum(bildungUndForschung)+sum(kulturReligionMedien)
+
+# als Pie plot dargestellt
+werte <- c(105,34,51,83,37,67,23,57,42,132,25,20)
+kategorie <- c("Staatsordnung","Aussenpolitik","Sicherheitspolitik","Wirtschaft","Landwirtschaft","Oeffentliche Finanzen","Energie","Verkehr und Infrastrunktur","Umwelt und Lebensraum","Sozialpolitik","Bildung und Forschung","Kultur Religion Medien")
+pie(werte,labels=kategorie,main="Abstimmungen nach Kategorie")
+
+
+data <- data.frame(Kategorie= c("1","2","3","4","5","6","7","8","9","10","11","12"), Werte= c(105,34,51,83,37,67,23,57,42,132,25,20))
+
+ggplot(data,aes(x=Kategorie,y=Werte))+geom_bar(stat="identity")
+```
+
+# Position des Bundesrates
+```{r}
+befuerwortend = data_csv["br.pos"] == 1
+sum(befuerwortend)
+
+ablehnend = data_csv["br.pos"] == 2
+sum(ablehnend)
+
+keine = data_csv["br.pos"] == 3
+sum(keine)
+
+vorzugGegenentwurf = data_csv["br.pos"] == 8
+sum(vorzugGegenentwurf)
+
+vorzugVolksinitiative = data_csv["br.pos"] == 9
+sum(vorzugVolksinitiative)
+
+missing = data_csv["br.pos"] == "."
+sum(missing)
+
+#Kontrolle ob alle gezählt
+sum(befuerwortend)+sum(ablehnend)+sum(keine)+sum(vorzugGegenentwurf)+sum(vorzugVolksinitiative)+sum(missing)
+
+#in Pie plot darstellen (Vorzug Volksinitiative nicht angezeigt da = 0)
+werte <- c(316,221,7,3,129)
+kategorie <- c("Beführwortend","Ablehnend","Keine","Vorzug für den Gegenentwurf","Missing")
+pie(werte,labels=kategorie,main="Abstimmungen nach Kategorie")
+
+# in Balkendiagramm darstellen (Vorzug Volksinitiative nicht angezeigt da = 0)
+data <- data.frame(Position_Bundesrat= c("Beführwortend","Ablehnend","Keine","Vorzug Gegenentwurf","Missing"), Anzahl_Abstimmungen= c(316,221,7,3,129))
+
+ggplot(data,aes(x=Position_Bundesrat,y=Anzahl_Abstimmungen))+geom_bar(stat="identity")
+```
+
+
+# Ergebnis der Abstimmung
+```{r}
+ablehnung = data_csv["annahme"] == 0
+sum(ablehnung)
+
+annahme = data_csv["annahme"] == 1
+sum(annahme)
+
+geg.ang = data_csv["annahme"] == 8 #Bei Stichfragen: Gegenentwurf angenommen
+sum(geg.ang)
+
+volksin.ang = data_csv["annahme"] == 9  #Bei Stichfragen: Volksinitiative angenommen
+sum(volksin.ang)
+
+obsolet = data_csv["annahme"] == "."
+sum(obsolet)
+
+#dsum(ablehnung)+sum(annahme)+sum(geg.ang)+sum(volksin.ang)+sum(obsolet)
+
+
+# in Pie plot darstellen (geg.ang und volksin.ang weggelassen weil 0)
+
+werte <- c(355,315,3)
+kategorie <- c("Ablehnung","Annahme","obsolet")
+pie(werte,labels=kategorie,main="Ergebnisse der Abstimmungen")
+```
+```{r}
+
+```
+
