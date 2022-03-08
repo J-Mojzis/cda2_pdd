@@ -5,6 +5,7 @@ output: html_notebook
 ---
 ```{r}
 library(ggplot2)
+library(tidyverse)
 ```
 
 
@@ -140,7 +141,23 @@ werte <- c(355,315,3)
 kategorie <- c("Ablehnung","Annahme","obsolet")
 pie(werte,labels=kategorie,main="Ergebnisse der Abstimmungen")
 ```
-```{r}
 
+# Themenwahl: Sozialpolitik,Aussenpolitik, Sicherheitspolitik
+```{r}
+# als Pie plot dargestellt (nur ausgewählte Themen benannt)
+werte <- c(105,34,51,83,37,67,23,57,42,132,25,20)
+kategorie <- c("1","Aussenpolitik","Sicherheitspolitik","4","5","6","7","8","9","Sozialpolitik","11","12")
+pie(werte,labels=kategorie,main="Abstimmungen nach Kategorie")
+```
+
+# neuer DataFrame nur mit diesen drei ausgewählten Gebieten
+```{r}
+aus.data = data_csv[data_csv$d1e1 == 2 | data_csv$d1e1==3 | data_csv$d1e1==10, ]
+
+
+# pie plot machen
+werte <- c(34,51,132)
+kategorie <- c("Aussenpolitik","Sicherheitspolitik","Sozialpolitik")
+pie(werte,labels=kategorie,main="Verteilung der drei ausgewähten Gebieten")
 ```
 
