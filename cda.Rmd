@@ -1,0 +1,115 @@
+---
+title: "CDA2 Challenge"
+output: html_notebook
+---
+
+
+```{r}
+#Librarys installieren
+library(tidyverse)
+library(ggplot2)
+
+```
+
+
+```{r}
+#Datensatz einlesen
+data <- read.csv("C:/Users/Antonia/Downloads/swissvotes.csv", header=TRUE, sep=";", na = c("NA", "."))
+```
+
+
+```{r}
+#Datensatz anschauen
+glimpse(data)
+str(data)
+
+```
+
+
+
+```{r}
+#Variablen definieren um nachher mehrere Spalten gleichzeitig zu mutieren
+
+positionen  <- data %>%
+  select(ends_with(".pos")|starts_with("p.")|starts_with("pdev")) 
+
+hauptthema <- data %>%
+  select(d1e1, d2e1 ,d3e1)
+
+unterthema <- data %>%
+  select(d1e2, d2e2 ,d3e2)
+
+daten <- data%>%
+  select(datum, starts_with("dat."))
+
+test <- data%>%
+    mutate(across(names(daten), 
+                ~ as.Date(., "%d.%m.%Y")))
+
+```
+
+
+```{r}
+#Datensatz thematisch einschränken und neu codieren:
+data_cda <- data %>%
+  filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
+         (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
+         (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
+  select(-(ends_with(".fr")|ends_with("_f")))%>% #Entfernung französische Übersetzungen
+
+    mutate(rechtsform = factor(case_when(
+    rechtsform == 1 ~ "Obligatorisches Referendum",
+    rechtsform == 2 ~ "Fakultatives Referendum",
+    rechtsform == 3 ~ "Volksinitiative",
+    rechtsform == 4 ~ "Gegenentwurf zu Volksinitiative",
+    rechtsform == 5 ~ "Stichfrage")))%>% 
+  
+  mutate(across(names(positionen), 
+           ~ factor(case_when(. == 1 ~ "Befürwortend",
+    .== 2 ~"Ablehnend",
+    .== 3 ~"Keine",
+    .== 8 ~"Vorzug für den Gegenentwurf",
+    .== 9 ~"Vorzug für Volksinitiative",)))) %>%
+  
+  mutate(across(names(hauptthema), 
+             ~ factor(case_when(. == 1 ~ "Staatsordnung",
+    .== 2 ~ "Aussenpolitik",
+    .== 3 ~"Sicherheitspolitik",
+    .== 4 ~"Sicherheitspolitik",
+    .== 5 ~"Sicherheitspolitik",
+    .== 6 ~"Sicherheitspolitik",
+    .== 7 ~"Sicherheitspolitik",
+    .== 8 ~"Sicherheitspolitik",
+    .== 9 ~"Sicherheitspolitik",
+    .== 10 ~"Sozialpolitik",
+    .== 11 ~"Sicherheitspolitik",
+    .== 12 ~"Sicherheitspolitik",))))%>%
+  
+  mutate(across(names(unterthema), 
+             ~ factor(case_when(. == 2.1 ~ "Aussenpolitische Grundhaltung",
+    .== 2.2 ~ "Europapolitik",
+    .== 2.3 ~ "Internationale Organisationen",
+    .== 2.4 ~ "Entwicklungszusammenarbeit",
+    .== 2.5 ~ "Staatsverträge mit einzelnen Staaten",
+    .== 2.6 ~"Aussenwirtschaftspolitik",
+    .== 2.7 ~"Diplomatie",
+    .== 2.8 ~"Auslandschweizer:innen",
+    .== 3.1 ~"Öffentliche Sicherheit",
+    .== 3.2 ~"Armee",
+    .== 3.3 ~"Landesversorgung",
+    .== 10.3 ~"Ausländer & Flüchtlinge", 
+    TRUE ~"andere")))) %>%
+  mutate(across(names(daten), 
+                ~ as.Date(., "%d.%m.%Y")))
+
+
+```
+
+
+```{r}
+#neuen Datensatz untersuchen
+summary(data_cda)
+```
+
+
+
