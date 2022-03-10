@@ -6,6 +6,7 @@ output: html_notebook
 ```{r}
 library(ggplot2)
 library(tidyverse)
+library(dplyr)
 ```
 
 
@@ -161,6 +162,17 @@ kategorie <- c("Aussenpolitik","Sicherheitspolitik","Sozialpolitik")
 pie(werte,labels=kategorie,main="Verteilung der drei ausgewähten Gebieten")
 ```
 
+# neuer DataFrame erstellen wo Datum spalte als Datum gespeichert ist (Name des DataFrames = data_datum)
+```{r}
+data_datum <- data_csv%>%
+  mutate(datum=as.Date(datum, "%d.%m.%Y"))
+
+class(data_datum$datum)
+```
+
+```{r}
+data_datum
+```
 
 
 
