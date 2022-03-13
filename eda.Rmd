@@ -1,0 +1,58 @@
+---
+title: "eda"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+
+svd <- read_csv2("swissvotes_dataset.csv")
+```
+
+```{r}
+pol_ber <- svd %>% count(d1e1, sort = TRUE)
+pol_ber
+
+ggplot(pol_ber, aes(reorder(d1e1, desc(n)), n)) +
+  geom_bar(stat="identity") + 
+  theme_minimal() +
+  labs(x="Politikbereich", y="Anzahl Abstimungen")+
+  geom_text(aes(label=n), vjust=-0.3, size=3.5)
+
+```
+
+```{r}
+#erstellen einer Spalte nur mit dem Datum als Jahr
+year <- format(as.POSIXct(svd$datum, format='%d.%m.%Y'), format="%Y")
+mutate(svd, jahr=year)
+
+```
+
+```{r}
+ggplot(svd, aes(year, annahme)) + 
+  geom_jitter() + 
+  theme_minimal()+
+  theme(axis.ticks.x = element_blank(), 
+        axis.text.x = element_blank()) +
+  labs(x="Abstimmungsjahr", y="Abstimmungsresultat")+
+  geom_vline(xintercept = "1971", colour = 'grey') +
+  geom_text(aes(x='1971', label='Vor und', y="."), colour = 'blue', angle=90, vjust=-1.2, text=element_text(size = 3)) +
+  geom_text(aes(x='1971', label='Nach 1971-Frauenstimmrecht', y="0"), colour = 'hotpink', angle=90, vjust=1.2, text=element_text(size = 3))
+
+ggplot(svd, aes(year, annahme)) + 
+  geom_jitter() + 
+  facet_grid(rows = vars(d1e1)) + 
+  geom_vline(xintercept = c("1971","1910"), colour = 'red')
+
+ggplot(svd, aes(year, annahme)) + 
+  geom_jitter() + 
+  facet_grid(rows = vars(dep)) + 
+  geom_vline(xintercept = "1971", colour = 'red')
+```
+
+```{r}
+
+ber1_w <- svd %>% count(d1e1, year="1971")
+ber1_w
