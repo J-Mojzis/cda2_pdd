@@ -42,9 +42,8 @@ unterthema <- data %>%
 daten <- data%>%
   select(datum, starts_with("dat."))
 
-test <- data%>%
-    mutate(across(names(daten), 
-                ~ as.Date(., "%d.%m.%Y")))
+resultate <- data %>%
+  select(ends_with("annahme")| volk | stand)
 
 ```
 
@@ -55,7 +54,7 @@ data_cda <- data %>%
   filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
          (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
          (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
-  select(-(ends_with(".fr")|ends_with("_f")))%>% #Entfernung französische Übersetzungen
+  select(-(ends_with(".fr")|ends_with("_f")|ends_with(".en")))%>% #Entfernung französische Übersetzungen
 
     mutate(rechtsform = factor(case_when(
     rechtsform == 1 ~ "Obligatorisches Referendum",
@@ -75,15 +74,15 @@ data_cda <- data %>%
              ~ factor(case_when(. == 1 ~ "Staatsordnung",
     .== 2 ~ "Aussenpolitik",
     .== 3 ~"Sicherheitspolitik",
-    .== 4 ~"Sicherheitspolitik",
-    .== 5 ~"Sicherheitspolitik",
-    .== 6 ~"Sicherheitspolitik",
-    .== 7 ~"Sicherheitspolitik",
-    .== 8 ~"Sicherheitspolitik",
-    .== 9 ~"Sicherheitspolitik",
+    .== 4 ~"Wirtschaft",
+    .== 5 ~"Landwirtschaft",
+    .== 6 ~"Öffentliche Finanzen",
+    .== 7 ~"Energie",
+    .== 8 ~"Verkehr und Infrastruktur",
+    .== 9 ~"Umwelt und Lebensraum",
     .== 10 ~"Sozialpolitik",
-    .== 11 ~"Sicherheitspolitik",
-    .== 12 ~"Sicherheitspolitik",))))%>%
+    .== 11 ~"Bildung und Forschung",
+    .== 12 ~"Kultur, Religion, Medien",))))%>%
   
   mutate(across(names(unterthema), 
              ~ factor(case_when(. == 2.1 ~ "Aussenpolitische Grundhaltung",
@@ -100,15 +99,57 @@ data_cda <- data %>%
     .== 10.3 ~"Ausländer & Flüchtlinge", 
     TRUE ~"andere")))) %>%
   mutate(across(names(daten), 
-                ~ as.Date(., "%d.%m.%Y")))
+                ~ as.Date(., "%d.%m.%Y"))) %>%
+  
+  mutate(across(names(resultate), 
+                ~ factor(case_when(. == 0 ~"abgelehnt", 
+                .== 1 ~ "angenommen", 
+                .== 3 ~ "Ständemehr nicht nötig", 
+                .== 8 ~ "Gegenentwurf angenommen", 
+                .== 9 ~ "Volksinitiative angenommen" )))) 
+
+
+
 
 
 ```
 
-
 ```{r}
 #neuen Datensatz untersuchen
 summary(data_cda)
+```
+
+```{r} 
+#Variablen selektieren für Data Wrangling / Insight-Generierung
+
+data_eingeschränkt <- data_cda %>%
+  select(datum, titel_kurz_d, anzahl, rechtsform, d1e1:legisjahr, bv.pos:srnein, unter.quorum, dauer_bv, unter_g, unter_u, p.fdp:p.bpuk, w.fdp:neutral.summe, inserate.ja, inserate.nein, inserate.jaanteil, mediares.tot:ktjaproz)
+
+glimpse(data_eingeschränkt)
+```
+
+
+```{r}
+#Visualisierungen
+media <- data_cda %>%
+  select(titel_kurz_d, rechtsform, mediaton.d, mediaton.f, mediaton.tot) 
+
+ggplot(media, aes(rechtsform, mediaton.tot, na.rm = TRUE)) +
+  geom_boxplot()
+
+ggplot(media, aes(titel_kurz_d, mediaton.d, mediaton.f)) +
+  geom_jitter() 
+
+pos <- data_cda %>%
+  select(titel_kurz_d, names(positionen))
+
+
+
+ 
+
+
+
+
 ```
 
 
