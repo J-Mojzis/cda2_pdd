@@ -1,0 +1,38 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+daten_challenge <- read.csv2("Dataset_Challenge.csv")
+daten_challenge
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+ggplot(daten_challenge, aes(datum, annahme)) +
+  geom_jitter() +
+  facet_grid(rows = vars(d1e1)) +
+  geom_vline(xintercept = c("07.02.1971"), colour = 'red')
+```
+
+```{r}
+group_by(daten_challenge$"rechtsform")
+```
+
+```{r}
+filter(daten_challenge$rechtsform)
+```
+
+```{r}
+hist(daten_challenge$rechtsform)
+```
+
+```{r}
+
+```
+
