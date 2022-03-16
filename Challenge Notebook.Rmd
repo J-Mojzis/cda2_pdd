@@ -33,6 +33,8 @@ hist(daten_challenge$rechtsform)
 ```
 
 ```{r}
-
+rechtsform <- daten_challenge %>%
+  group_by(rechtsform) %>%
+  count()
 ```
 
