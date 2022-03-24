@@ -56,3 +56,18 @@ ggplot(svd, aes(year, annahme)) +
 
 ber1_w <- svd %>% count(d1e1, year="1971")
 ber1_w
+```
+
+
+```{r}
+svd_r <- svd %>% select(c(datum, anzahl, rechtsform, d1e1, d1e2, d1e3, dep, "br-pos", legislatur, "bv-pos", "nr-pos", nrja, nrnein, "sr-pos", srja, srnein, "dat-force", dauer_bv, sammelfrist, unter_g, "p-fdp":"p-bpuk", "w-fdp":"w-ubrige", "ja-lager", "nein-lager", "keinepar-summe", "leer-summe", "freigabe-summe", "neutral-summe", "unbekannt-summe", "inserate-ja", "inserate-nein", "inserate-jaanteil", "mediares-tot", "mediares-d", "mediares-f", "mediaton-tot", "mediaton-d", "mediaton-f", volk, stand, annahme, bet, ungultig, gultig, "volkja-proz", "kt-ja", "kt-nein", ktjaproz, matches("..-bet"), matches("..-japroz"), matches("..-annahme")))
+
+```
+
+
+
+
+
+
+
+
