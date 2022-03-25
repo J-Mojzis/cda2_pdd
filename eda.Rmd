@@ -7,6 +7,8 @@ output: html_document
 library(tidyverse)
 library(dplyr)
 library(tidyr)
+library(skimr)
+library(naniar)
 
 svd <- read_csv2("swissvotes_dataset.csv")
 ```
@@ -23,11 +25,10 @@ ggplot(pol_ber, aes(reorder(d1e1, desc(n)), n)) +
 
 ```
 
-```{r}
+```{r include=FALSE}
 #erstellen einer Spalte nur mit dem Datum als Jahr
-year <- format(as.POSIXct(svd$datum, format='%d.%m.%Y'), format="%Y")
+year <- format(as.Date(svd$datum, format='%d.%m.%Y'), format="%Y")
 mutate(svd, jahr=year)
-
 ```
 
 ```{r}
@@ -53,18 +54,55 @@ ggplot(svd, aes(year, annahme)) +
 ```
 
 ```{r}
+ber1_w <- svd %>% count(d1e1, year>="1971")
+ber1_w 
 
-ber1_w <- svd %>% count(d1e1, year="1971")
-ber1_w
+ggplot(ber1_w, aes(reorder(d1e1, desc(n)), n)) + 
+  geom_col()+ 
+  geom_label(aes(label=n), vjust=-0.1, size=3)
+
+ggplot(ber1_w, aes(reorder(d1e1, desc(n)), n, fill=`year >= "1971"`)) + 
+  geom_col(position = position_dodge()) +
+  geom_label(aes(label=n), vjust=-0.1, size=3)+
+  scale_fill_discrete(labels = c("Vor 1971 ", "Nach 1971"))+
+  labs(title = "Abstimmungen pro Politikbereich vor und nach 1971\n(Frauenstimmrecht)", x="Politikbereich", y="Anzahl Abstimungen", fill="Anzahl\nAbstimmungen")
+
+
 ```
 
+
+```{r warning=FALSE}
+dat <- svd %>% select(datum)
+svd_r <- svd %>% select(c(anzahl, rechtsform, d1e1, d1e2, d1e3, dep, "br-pos", legislatur, "bv-pos", "nr-pos", nrja, nrnein, "sr-pos", srja, srnein, "dat-force", dauer_bv, sammelfrist, unter_g, "p-fdp":"p-bpuk", "w-fdp":"w-ubrige", "ja-lager", "nein-lager", "keinepar-summe", "leer-summe", "freigabe-summe", "neutral-summe", "unbekannt-summe", "inserate-ja", "inserate-nein", "inserate-jaanteil", "mediares-tot", "mediares-d", "mediares-f", "mediaton-tot", "mediaton-d", "mediaton-f", volk, stand, annahme, bet, ungultig, gultig, "volkja-proz", "kt-ja", "kt-nein", ktjaproz, matches("..-bet"), matches("..-japroz"), matches("..-annahme")))
+
+svd_n <- lapply(svd_r,as.numeric)
+svd_n <- bind_cols(as.Date(svd$datum, format='%d.%m.%Y'), svd_n) #Datumformat korrigieren
+svd_n <- rename(svd_n, "datum" = "...1") #Unbenennen der Datumvariable
+skim(svd_n) #shows big summary with stats
+```
 
 ```{r}
-svd_r <- svd %>% select(c(datum, anzahl, rechtsform, d1e1, d1e2, d1e3, dep, "br-pos", legislatur, "bv-pos", "nr-pos", nrja, nrnein, "sr-pos", srja, srnein, "dat-force", dauer_bv, sammelfrist, unter_g, "p-fdp":"p-bpuk", "w-fdp":"w-ubrige", "ja-lager", "nein-lager", "keinepar-summe", "leer-summe", "freigabe-summe", "neutral-summe", "unbekannt-summe", "inserate-ja", "inserate-nein", "inserate-jaanteil", "mediares-tot", "mediares-d", "mediares-f", "mediaton-tot", "mediaton-d", "mediaton-f", volk, stand, annahme, bet, ungultig, gultig, "volkja-proz", "kt-ja", "kt-nein", ktjaproz, matches("..-bet"), matches("..-japroz"), matches("..-annahme")))
+svd_rr <-  svd_n[,!sapply(svd_n, function(x) mean(is.na(x)))>0.9 ] #nehmen nur Variablen denen nicht mehr als 90% der Daten fehlen. 
+#skim(svd_rr)
 
+svd_na <- svd_rr %>% 
+  replace_with_na_all(condition = ~.x == 9999) #Ersetzen alle Observationen welche 9999 haben (zu dieser Zeit nicht existieren) mit NA. Damit haben wir ein besseres Bild wie die Variable organisiert ist. 
 ```
 
+```{r}
+svd_2_3 <- filter(svd_na, d1e1 == 2 | d1e1 == 3) #nehmen die Observationen, welche dem Politikbereich 2 oder 3 angehören
+svd_2_3 <-  svd_2_3[,!sapply(svd_2_3, function(x) mean(is.na(x)))>0.883 ]
+dim(svd_2_3)
 
+svd_10 <- filter(svd_na, d1e1 == 10) #nehmen die Observationen, welche dem Politikbereich 10 angehören
+svd_10 <-  svd_10[,!sapply(svd_10, function(x) mean(is.na(x)))>0.804 ]
+dim(svd_10)
+
+skim(svd_2_3)
+```
+```{r}
+
+```
 
 
 
