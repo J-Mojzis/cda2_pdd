@@ -273,6 +273,12 @@ data <- data.frame(Jahre= c("1876-1904","1905-1933","1934-1962","1963-1991","199
 ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen_Sozialpolitik))+geom_bar(stat="identity")
 ```
 
+```{r}
+ggplot(data_csv, aes(as.Date(data_csv$datum,"%d.%m.%Y"), annahme)) +
+  geom_jitter() +
+  facet_grid(rows = vars(d1e1)) +
+  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],"%d.%m.%Y")), color="blue", colour = 'red')
+```
 
 
 
