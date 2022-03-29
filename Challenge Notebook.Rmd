@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 ```{r}
-daten_challenge <- read.csv2("Dataset_Challenge.csv")
+daten_challenge <- read.csv2("C:/Users/chant/Dokumente/Übung Deskriptive Statistik mit R/Dataset_Challenge.csv")
 daten_challenge
 ```
 
@@ -14,10 +14,10 @@ library(tidyr)
 ```
 
 ```{r}
-ggplot(daten_challenge, aes(datum, annahme)) +
+ggplot(daten_challenge, aes(as.Date(daten_challenge$datum,"%d.%m.%Y"), annahme)) +
   geom_jitter() +
   facet_grid(rows = vars(d1e1)) +
-  geom_vline(xintercept = c("07.02.1971"), colour = 'red')
+  geom_vline(data=daten_challenge, mapping=aes(xintercept=as.Date(daten_challenge$datum[229],"%d.%m.%Y")), color="blue", colour = 'red')
 ```
 
 ```{r}
@@ -36,5 +36,9 @@ hist(daten_challenge$rechtsform)
 rechtsform <- daten_challenge %>%
   group_by(rechtsform) %>%
   count()
+```
+
+```{r}
+
 ```
 
