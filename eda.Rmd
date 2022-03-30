@@ -29,6 +29,7 @@ ggplot(pol_ber, aes(reorder(d1e1, desc(n)), n)) +
 #erstellen einer Spalte nur mit dem Datum als Jahr
 year <- format(as.Date(svd$datum, format='%d.%m.%Y'), format="%Y")
 mutate(svd, jahr=year)
+svd <- svd %>% mutate(datum = as.Date(datum, format = "%d.%m.%y"))
 ```
 
 ```{r}
@@ -76,7 +77,7 @@ dat <- svd %>% select(datum)
 svd_r <- svd %>% select(c(anzahl, rechtsform, d1e1, d1e2, d1e3, dep, "br-pos", legislatur, "bv-pos", "nr-pos", nrja, nrnein, "sr-pos", srja, srnein, "dat-force", dauer_bv, sammelfrist, unter_g, "p-fdp":"p-bpuk", "w-fdp":"w-ubrige", "ja-lager", "nein-lager", "keinepar-summe", "leer-summe", "freigabe-summe", "neutral-summe", "unbekannt-summe", "inserate-ja", "inserate-nein", "inserate-jaanteil", "mediares-tot", "mediares-d", "mediares-f", "mediaton-tot", "mediaton-d", "mediaton-f", volk, stand, annahme, bet, ungultig, gultig, "volkja-proz", "kt-ja", "kt-nein", ktjaproz, matches("..-bet"), matches("..-japroz"), matches("..-annahme")))
 
 svd_n <- lapply(svd_r,as.numeric)
-svd_n <- bind_cols(as.Date(svd$datum, format='%d.%m.%Y'), svd_n) #Datumformat korrigieren
+svd_n <- bind_cols(svd$datum, svd_n) 
 svd_n <- rename(svd_n, "datum" = "...1") #Unbenennen der Datumvariable
 skim(svd_n) #shows big summary with stats
 ```
@@ -91,20 +92,67 @@ svd_na <- svd_rr %>%
 
 ```{r}
 svd_2_3 <- filter(svd_na, d1e1 == 2 | d1e1 == 3) #nehmen die Observationen, welche dem Politikbereich 2 oder 3 angehören
-svd_2_3 <-  svd_2_3[,!sapply(svd_2_3, function(x) mean(is.na(x)))>0.883 ]
+svd_2_3 <-  svd_2_3[,!sapply(svd_2_3, function(x) mean(is.na(x)))>0.883 ]  #nehmen nur Variablen denen nicht mehr als 88.3%% der Daten fehlen. Wert von Mediaton
 dim(svd_2_3)
 
 svd_10 <- filter(svd_na, d1e1 == 10) #nehmen die Observationen, welche dem Politikbereich 10 angehören
-svd_10 <-  svd_10[,!sapply(svd_10, function(x) mean(is.na(x)))>0.804 ]
+svd_10 <-  svd_10[,!sapply(svd_10, function(x) mean(is.na(x)))>0.804 ] #80.4% Wert von Mediaton
 dim(svd_10)
 
 skim(svd_2_3)
 ```
-```{r}
+1979 Kanton Jura
+1971 Frauenstimmrecht
 
+```{r}
+ggplot(svd_2_3, aes(rechtsform)) +
+  geom_histogram(binwidth = 1) + 
+  labs(title = "svd_2_3") 
+
+ggplot(svd_10, aes(rechtsform)) +
+  geom_histogram(binwidth = 1) + 
+  labs(title = "svd_10") 
+#geom_text(aes(label=n), vjust=-0.1, size=3)
 ```
 
+```{r}
+ggplot(svd_2_3, aes(rechtsform)) +
+  geom_histogram()
+  labs(title = "svd_2_3") 
+#scale_y_date(date_breaks = "100 years", date_labels = "%Y")
 
+ggplot(svd_10, aes(rechtsform)) +
+  geom_histogram() + 
+  labs(title = "svd_10") 
+```
+
+```{r}
+rf_2 <- svd_10 %>% count(d1e2)
+rf_3 <- svd_10 %>% count(d1e3)
+
+ggplot(rf_2, aes(d1e2, n)) + 
+  geom_col() + 
+  labs(x="Rechtsform", y = "Anzahl")
+  geom_text(aes(label=n), vjust=-0.1, size=5)
+
+ggplot(rf_3, aes(d1e3, n)) + 
+  geom_col()+ 
+  labs(x="Rechtsform", y = "Anzahl")+ 
+  geom_text(aes(label=d1e3), vjust=-0.1, size=3) +
+  geom_text(aes(label=n), vjust=1.2, size=3, colour = "white")
+```
+```{r}
+dep_10 <- svd_10 %>% count(dep)
+dep_23 <- svd_2_3 %>% count(dep)
+
+ggplot(dep_10, aes(dep, n)) +
+  geom_col()+ 
+  geom_text(aes(label=n), vjust=-0.1, size=5)
+
+ggplot(dep_23, aes(dep, n)) +
+  geom_col()+ 
+  geom_text(aes(label=n), vjust=-0.1, size=5)
+```
 
 
 
