@@ -20,7 +20,7 @@ data <- read.csv("C:/Users/Antonia/Downloads/swissvotes.csv", header=TRUE, sep="
 
 ```{r}
 #Datensatz anschauen
-glimpse(data)
+head(data)
 str(data)
 
 ```
@@ -39,11 +39,16 @@ hauptthema <- data %>%
 unterthema <- data %>%
   select(d1e2, d2e2 ,d3e2)
 
+unterunterthema <- data %>%
+  select(d1e3, d2e3 ,d3e3)
+
 daten <- data%>%
   select(datum, starts_with("dat."))
 
 resultate <- data %>%
   select(ends_with("annahme")| volk | stand)
+
+
 
 ```
 
@@ -51,9 +56,9 @@ resultate <- data %>%
 ```{r}
 #Datensatz thematisch einschränken und neu codieren:
 data_cda <- data %>%
-  filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
-         (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
-         (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
+  # filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
+  #        (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
+  #        (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
   select(-(ends_with(".fr")|ends_with("_f")|ends_with(".en")))%>% #Entfernung französische Übersetzungen
 
     mutate(rechtsform = factor(case_when(
@@ -62,7 +67,7 @@ data_cda <- data %>%
     rechtsform == 3 ~ "Volksinitiative",
     rechtsform == 4 ~ "Gegenentwurf zu Volksinitiative",
     rechtsform == 5 ~ "Stichfrage")))%>% 
-  
+  mutate (Jahr = as.integer(format(as.Date(datum, format='%d.%m.%Y'), format="%Y"))) %>% 
   mutate(across(names(positionen), 
            ~ factor(case_when(. == 1 ~ "Befürwortend",
     .== 2 ~"Ablehnend",
@@ -98,6 +103,11 @@ data_cda <- data %>%
     .== 3.3 ~"Landesversorgung",
     .== 10.3 ~"Ausländer & Flüchtlinge", 
     TRUE ~"andere")))) %>%
+  mutate(across(names(unterunterthema), 
+             ~ factor(case_when(. == 10.31 ~ "Ausländerpolitik",
+    .== 10.32 ~ "Flüchtlinge",
+     TRUE ~"andere")))) %>%
+  
   mutate(across(names(daten), 
                 ~ as.Date(., "%d.%m.%Y"))) %>%
   
@@ -108,24 +118,178 @@ data_cda <- data %>%
                 .== 8 ~ "Gegenentwurf angenommen", 
                 .== 9 ~ "Volksinitiative angenommen" )))) 
 
-
-
-
-
-```
-
-```{r}
 #neuen Datensatz untersuchen
-summary(data_cda)
+#summary(data_cda)
+
 ```
+
 
 ```{r} 
 #Variablen selektieren für Data Wrangling / Insight-Generierung
 
-data_eingeschränkt <- data_cda %>%
-  select(datum, titel_kurz_d, anzahl, rechtsform, d1e1:legisjahr, bv.pos:srnein, unter.quorum, dauer_bv, unter_g, unter_u, p.fdp:p.bpuk, w.fdp:neutral.summe, inserate.ja, inserate.nein, inserate.jaanteil, mediares.tot:ktjaproz)
+df <- data_cda %>%
+  select(anr,Jahr, titel_kurz_d, anzahl, rechtsform, d1e1:legisjahr, bv.pos:srnein, unter.quorum, dauer_bv, unter_g, unter_u, p.fdp:p.bpuk, w.fdp:neutral.summe, inserate.ja, inserate.nein, inserate.jaanteil, mediares.tot:ktjaproz)
 
-glimpse(data_eingeschränkt)
+#glimpse(df)
+
+#neue Variablen: prüfen, ob Thema vorkommt und wenn ja, trägt es 1 ein (sonst 0)
+df$Sicherheitspolitik <- +(rowSums(df[2:12] == 'Sicherheitspolitik', na.rm = TRUE) > 0)
+df$Aussenpolitik <- +(rowSums(df[2:12] == 'Aussenpolitik', na.rm = TRUE) > 0)
+df$Ausländer <- +(rowSums(df[2:12] == 'Ausländerpolitik', na.rm = TRUE) > 0)
+df$Flüchtlinge <- +(rowSums(df[2:12] == 'Flüchtlinge', na.rm = TRUE) > 0)
+
+
+#neue Spalte: fasst Themen der neuen Spalten zusammen, alles andere wird als "anderes" kategorisiert. 
+df <- df %>% 
+    mutate(Thema = factor(case_when(
+    Sicherheitspolitik == 1 ~ "Sicherheitspolitik",
+    Aussenpolitik == 1 ~ "Aussenpolitik",
+    Flüchtlinge == 1 ~ "Flüchtlinge",
+    Ausländer == 1 ~ "Ausländer",
+    TRUE ~"andere"))) %>% 
+    mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>% 
+    mutate(relevant = ifelse(Thema == "andere", "nein", "ja"))
+
+#glimpse(df)
+```
+
+
+
+```{r} 
+#eingeschränkter Datensatz für Visualisierung
+df_vis <- df %>% 
+  select(anr, Jahr, titel_kurz_d, rechtsform, br.pos, Sicherheitspolitik:relevant) 
+
+```
+
+
+```{r} 
+#Anzahl Abstimmungen, gruppiert nach Jahrzehnt & Thema, nebeneinander
+df_vis %>% 
+  group_by(Jahrzehnt, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = Thema)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+
+#Anzahl Abstimmungen, gruppiert nach Jahrzehnt & Thema, stacked
+df_vis %>% 
+  group_by(Jahrzehnt, relevant, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = Thema)) +
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_brewer(palette="Spectral") +
+  labs(title = "Anzahl Abstimmungen pro Jahrzehnt", subtitle =  "Gruppiert nach Themen unseres Beitrages & Rest", y = "Anzahl")
+```
+
+
+```{r} 
+#Abstimmungen, gruppiert nach Rechtsform & Jahrzehnt
+df_vis %>% 
+  filter(relevant == "ja") %>% 
+  group_by(Jahrzehnt, rechtsform, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, rechtsform, color = Thema)) +
+  geom_jitter() +
+  scale_color_brewer(palette="Spectral") 
+
+```
+
+
+```{r} 
+#Anzahl Abstimmungen pro Jahrzehnt in Zahlen (nur relevante Themen)
+df_vis %>% 
+  filter(Jahr > 1910, relevant == "ja") %>% 
+  group_by(Jahrzehnt, Thema) %>% 
+  count()
+
+#Anzahl Abstimmungen pro Rechtsform + Position Bundesrat in Zahlen (nur relevante Themen)
+df_vis %>% 
+  filter(Jahr > 1910, relevant == "ja") %>% 
+  group_by(rechtsform, Thema, br.pos) %>% 
+  count()
+
+  
+```
+
+
+```{r} 
+ggplot(df, aes(Jahr, br.pos, color = Thema, shape = rechtsform)) +
+  geom_jitter(alpha = 0.7) +
+  scale_color_brewer(palette="Spectral") 
+  #scale_y_discrete(breaks = seq(1820, 2022, 10))
+
+  df %>% 
+  filter(relevant == "ja") %>% 
+  ggplot(aes(br.pos, Thema, color = rechtsform)) +
+  geom_jitter(alpha = 0.7) +
+  scale_color_brewer(palette="Spectral") 
+  #scale_y_discrete(breaks = seq(1820, 2022, 10))
+  
+  
+  df %>% 
+  filter(relevant == "ja") %>% 
+  ggplot(aes(Thema, rechtsform, color = br.pos)) +
+  geom_jitter() 
+  #scale_color_brewer(palette="Spectral") 
+  #scale_y_discrete(breaks = seq(1820, 2022, 10))
+  
+  
+  df %>% 
+  filter(relevant == "ja") %>% 
+  ggplot(aes(Jahr, br.pos, shape = Thema, color = rechtsform)) +
+  geom_jitter(alpha = 0.7) +
+  scale_color_brewer(palette="Spectral") 
+  #scale_y_discrete(breaks = seq(1820, 2022, 10))
+```
+
+
+```{r} 
+ggplot(df, aes(Jahr, volk, color = Thema, size = volkja.proz)) +
+    geom_jitter() +
+    scale_color_brewer(palette="Spectral") 
+
+
+df %>% 
+  filter(relevant == 1) %>% 
+  ggplot(aes(Jahr, volk, color = Thema, size = volkja.proz)) +
+    geom_jitter() +
+    scale_color_brewer(palette="Spectral") 
+
+```
+
+
+```{r} 
+df_vis %>% 
+  group_by(Jahr, relevant, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahr, n, fill = Thema)) +
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+```
+
+
+```{r}
+df_vis %>% 
+  group_by(Jahrzehnt, Jahr, relevant, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahr, n, color = Thema)) +
+  geom_point() +
+  facet_wrap(~Jahrzehnt)
+
+```
+
+
+```{r} 
+df_vis %>% 
+  group_by(Jahrzehnt, relevant, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = relevant)) +
+  geom_bar(position="dodge", stat="identity") 
+
+ggplot(df_vis, aes(Jahr, Thema))+
+  geom_col()
+
 ```
 
 
@@ -142,15 +306,90 @@ ggplot(media, aes(titel_kurz_d, mediaton.d, mediaton.f)) +
 
 pos <- data_cda %>%
   select(titel_kurz_d, names(positionen))
+```
 
 
+```{r}
+ggplot(df, aes(Jahr)) + 
+  geom_histogram()
 
- 
 
+df %>% 
+  mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>%
+  group_by(Jahrzehnt, d1e1) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = d1e1)) + 
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+```
+
+
+```{r}
+df %>% 
+  select(Jahrzehnt, relevant) %>% 
+  group_by(Jahrzehnt, relevant) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, color = relevant)) + 
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+
+
+df %>% 
+  select(Jahrzehnt, titel_kurz_d) %>% 
+  group_by(Jahrzehnt) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n)) + 
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+```
+
+
+```{r}
+df %>% mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>%
+  select(Jahr, Jahrzehnt, Sicherheitspolitik, Aussenpolitik, Ausländer) %>% 
+  group_by(Jahr) %>% 
+  ggplot(aes(Jahr)) + 
+  geom_histogram() 
 
 
 
 ```
 
+
+```{r}
+df %>% 
+  mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>%
+  filter(d1e1|d2e1|d3e1 %in% c("Aussenpolitik", "Sicherheitspolitik", "Sozialpolitik")) %>% 
+  group_by(Jahrzehnt, d1e1, d2e1) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = d1e1)) + 
+  geom_col(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+
+
+
+
+df %>% 
+  mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>%
+  filter(d1e1 %in% c("Aussenpolitik", "Sicherheitspolitik", "Sozialpolitik")) %>% 
+  group_by(Jahrzehnt, d1e1, d2e1) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = d1e1)) + 
+  geom_col(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral")
+
+```
+
+
+```{r}
+df %>% 
+  mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>%
+  filter(d1e1|d2e1|d3e1 %in% c("Aussenpolitik", "Sicherheitspolitik", "Sozialpolitik")) %>% 
+  group_by(d1e1, Jahr) %>% 
+  count() 
+
+
+
+```
 
 
