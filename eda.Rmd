@@ -9,8 +9,10 @@ library(dplyr)
 library(tidyr)
 library(skimr)
 library(naniar)
+library(plotly)
 
 svd <- read_csv2("swissvotes_dataset.csv")
+svd_original <- read_csv2("swissvotes_dataset.csv")
 ```
 
 ```{r}
@@ -46,12 +48,26 @@ ggplot(svd, aes(year, annahme)) +
 ggplot(svd, aes(year, annahme)) + 
   geom_jitter() + 
   facet_grid(rows = vars(d1e1)) + 
+  theme(axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank()) +
+  scale_x_discrete(breaks = seq(1850, 2022, 10)) +
+  labs(y="Politikbereich") +
   geom_vline(xintercept = c("1971","1910"), colour = 'red')
 
 ggplot(svd, aes(year, annahme)) + 
   geom_jitter() + 
   facet_grid(rows = vars(dep)) + 
   geom_vline(xintercept = "1971", colour = 'red')
+```
+
+```{r}
+ggplot(svd, aes(year, annahme)) + 
+  geom_jitter() + 
+  facet_grid(rows = vars(d1e1)) + 
+  theme(axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank()) +
+  labs(y="Politikbereich") +
+  geom_vline(xintercept = c("1971","1910"), colour = 'red')
 ```
 
 ```{r}
@@ -79,7 +95,7 @@ svd_r <- svd %>% select(c(anzahl, rechtsform, d1e1, d1e2, d1e3, dep, "br-pos", l
 svd_n <- lapply(svd_r,as.numeric)
 svd_n <- bind_cols(svd$datum, svd_n) 
 svd_n <- rename(svd_n, "datum" = "...1") #Unbenennen der Datumvariable
-skim(svd_n) #shows big summary with stats
+#skim(svd_n) #shows big summary with stats
 ```
 
 ```{r}
@@ -99,7 +115,7 @@ svd_10 <- filter(svd_na, d1e1 == 10) #nehmen die Observationen, welche dem Polit
 svd_10 <-  svd_10[,!sapply(svd_10, function(x) mean(is.na(x)))>0.804 ] #80.4% Wert von Mediaton
 dim(svd_10)
 
-skim(svd_2_3)
+#skim(svd_2_3)
 ```
 1979 Kanton Jura
 1971 Frauenstimmrecht
@@ -154,6 +170,21 @@ ggplot(dep_23, aes(dep, n)) +
   geom_text(aes(label=n), vjust=-0.1, size=5)
 ```
 
+```{r}
+svd_einleitung <- filter(svd_na, d1e1 == "2" | d1e1 == "3" | d1e1 == "10" | d1e3 == "10.3.2")
+
+d1e1.labs <- c("Aussenpolitik", "Sicherheitspolitik", "Ausländerpolitik und\nFlüchtlinge")
+names(d1e1.labs) <- c("2", "3", "10")
+
+
+ggplot(svd_einleitung, aes(datum, annahme)) + 
+  geom_jitter() + 
+  facet_grid(rows = vars(d1e1), labeller = labeller(d1e1 = d1e1.labs)) + 
+  theme(axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank()) #+
+#  scale_x_discrete(breaks = seq(1850, 2022, 10)) +
+#  labs(y="Politikbereich")
+```
 
 
 
