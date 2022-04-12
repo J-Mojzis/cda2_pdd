@@ -48,13 +48,13 @@ daten <- data%>%
 resultate <- data %>%
   select(ends_with("annahme")| volk | stand)
 
-
+parteien <- c(".svp", ".fdp", ".sp", ".cvp", ".gsp")
 
 ```
 
 
 ```{r}
-#Datensatz thematisch einschränken und neu codieren:
+#Data-Wrangling (Variablen codieren)
 data_cda <- data %>%
   # filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
   #        (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
@@ -67,13 +67,28 @@ data_cda <- data %>%
     rechtsform == 3 ~ "Volksinitiative",
     rechtsform == 4 ~ "Gegenentwurf zu Volksinitiative",
     rechtsform == 5 ~ "Stichfrage")))%>% 
+  
+    mutate(dep = factor(case_when(
+    dep == 1 ~ "EDA",
+    dep == 2 ~ "EDI",
+    dep == 3 ~ "EJPD",
+    dep == 4 ~ "VBS",
+    dep == 5 ~ "EFD",
+    dep == 6 ~ "WBF",
+    dep == 7 ~ "UVEK",
+    dep == 8 ~ "BK")))%>%
   mutate (Jahr = as.integer(format(as.Date(datum, format='%d.%m.%Y'), format="%Y"))) %>% 
+  
   mutate(across(names(positionen), 
            ~ factor(case_when(. == 1 ~ "Befürwortend",
     .== 2 ~"Ablehnend",
     .== 3 ~"Keine",
+    .== 4 ~"Leere Abgabe",
+    .== 5 ~"Stimmfreigabe",
     .== 8 ~"Vorzug für den Gegenentwurf",
-    .== 9 ~"Vorzug für Volksinitiative",)))) %>%
+    .== 9 ~"Vorzug für Volksinitiative",
+    . == 66 ~"keine",
+    . == 9999 ~"Partei ex. nicht",)))) %>%
   
   mutate(across(names(hauptthema), 
              ~ factor(case_when(. == 1 ~ "Staatsordnung",
@@ -118,26 +133,23 @@ data_cda <- data %>%
                 .== 8 ~ "Gegenentwurf angenommen", 
                 .== 9 ~ "Volksinitiative angenommen" )))) 
 
-#neuen Datensatz untersuchen
-#summary(data_cda)
-
 ```
 
 
 ```{r} 
-#Variablen selektieren für Data Wrangling / Insight-Generierung
+#Neue Variablen generieren & Datensatz selektieren
+
+data_cda$bet_volkja.proz <- (data_cda$bet*(data_cda$volkja.proz/100))
 
 df <- data_cda %>%
-  select(anr,Jahr, titel_kurz_d, anzahl, rechtsform, d1e1:legisjahr, bv.pos:srnein, unter.quorum, dauer_bv, unter_g, unter_u, p.fdp:p.bpuk, w.fdp:neutral.summe, inserate.ja, inserate.nein, inserate.jaanteil, mediares.tot:ktjaproz)
+  select(anr,Jahr, titel_kurz_d, rechtsform, annahme, bet_volkja.proz, bet,  d1e1:br.pos, bv.pos:nr.pos, sr.pos, unter_g, unter_u, ends_with(parteien), ja.lager, nein.lager, volk:stand, volkja.proz, ktjaproz,matches("...bet"),matches("...japroz"), matches("...annahme"),swissvoteslink, anneepolitique, info_br.de, info_dep.de, info_amt.de)
 
-#glimpse(df)
 
 #neue Variablen: prüfen, ob Thema vorkommt und wenn ja, trägt es 1 ein (sonst 0)
 df$Sicherheitspolitik <- +(rowSums(df[2:12] == 'Sicherheitspolitik', na.rm = TRUE) > 0)
 df$Aussenpolitik <- +(rowSums(df[2:12] == 'Aussenpolitik', na.rm = TRUE) > 0)
 df$Ausländer <- +(rowSums(df[2:12] == 'Ausländerpolitik', na.rm = TRUE) > 0)
 df$Flüchtlinge <- +(rowSums(df[2:12] == 'Flüchtlinge', na.rm = TRUE) > 0)
-
 
 #neue Spalte: fasst Themen der neuen Spalten zusammen, alles andere wird als "anderes" kategorisiert. 
 df <- df %>% 
@@ -149,6 +161,15 @@ df <- df %>%
     TRUE ~"andere"))) %>% 
     mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>% 
     mutate(relevant = ifelse(Thema == "andere", "nein", "ja"))
+```
+
+
+```{r} 
+ausländer <- df %>% 
+  filter(Thema %in% c("Ausländer", "Flüchtlinge"))
+
+flüchtling <- df %>% 
+  filter(Thema == "Flüchtlinge") 
 
 #glimpse(df)
 ```
@@ -208,6 +229,13 @@ df_vis %>%
   filter(Jahr > 1910, relevant == "ja") %>% 
   group_by(rechtsform, Thema, br.pos) %>% 
   count()
+
+
+ausländer <- df %>% 
+  filter(Thema == "Ausländer")
+
+flucht <- data_cda %>% 
+  filter(Thema == "Flüchtlinge")
 
   
 ```
