@@ -5,9 +5,14 @@ output: html_notebook
 
 
 ```{r}
+
 #Librarys installieren
 library(tidyverse)
 library(ggplot2)
+library(networkD3)
+library(plotly)
+library(esquisse)
+library(highcharter)
 
 ```
 
@@ -60,6 +65,7 @@ data_cda <- data %>%
   #        (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
   #        (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
   select(-(ends_with(".fr")|ends_with("_f")|ends_with(".en")))%>% #Entfernung französische Übersetzungen
+  rename(Kurztitel = titel_kurz_d, Titel = titel_off_d, ) %>% 
 
     mutate(rechtsform = factor(case_when(
     rechtsform == 1 ~ "Obligatorisches Referendum",
@@ -166,7 +172,11 @@ df <- df %>%
 
 ```{r} 
 ausländer <- df %>% 
-  filter(Thema %in% c("Ausländer", "Flüchtlinge"))
+  filter(Thema %in% c("Ausländer", "Flüchtlinge")) 
+
+
+ggplot(ausländer, aes(Jahr)) + 
+  geom_histogram(binwidth = 5)
 
 flüchtling <- df %>% 
   filter(Thema == "Flüchtlinge") 
@@ -201,6 +211,29 @@ df_vis %>%
   geom_bar(position="stack", stat="identity") +
   scale_fill_brewer(palette="Spectral") +
   labs(title = "Anzahl Abstimmungen pro Jahrzehnt", subtitle =  "Gruppiert nach Themen unseres Beitrages & Rest", y = "Anzahl")
+
+
+
+
+df_vis %>% 
+  filter(Thema == "Ausländer"|Thema == "Flüchtlinge") %>% 
+  group_by(Jahrzehnt, relevant, Thema) %>% 
+  count() %>% 
+  ggplot(aes(Jahr, n, fill = Thema)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_brewer(palette="Spectral") +
+  labs(title = "Anzahl Abstimmungen pro Jahrzehnt", subtitle =  "Gruppiert nach Themen unseres Beitrages & Rest", y = "Anzahl")
+
+
+df %>% 
+  filter(Thema == "Ausländer"|Thema == "Flüchtlinge") %>% 
+  group_by(Jahrzehnt, Thema, annahme) %>% 
+  count() %>% 
+  ggplot(aes(Jahrzehnt, n, fill = annahme)) +
+  geom_bar(position="stack", stat="identity") +
+  #scale_fill_brewer(palette="Spectral") +
+  labs(title = "Anzahl Abstimmungen zu Flüchtlinge / Ausländer", subtitle =  "Angenommene & abgelehnte", y = "Anzahl")
+
 ```
 
 
@@ -219,7 +252,7 @@ df_vis %>%
 
 ```{r} 
 #Anzahl Abstimmungen pro Jahrzehnt in Zahlen (nur relevante Themen)
-df_vis %>% 
+df %>% 
   filter(Jahr > 1910, relevant == "ja") %>% 
   group_by(Jahrzehnt, Thema) %>% 
   count()
@@ -234,7 +267,7 @@ df_vis %>%
 ausländer <- df %>% 
   filter(Thema == "Ausländer")
 
-flucht <- data_cda %>% 
+flucht <- df %>% 
   filter(Thema == "Flüchtlinge")
 
   
@@ -242,6 +275,11 @@ flucht <- data_cda %>%
 
 
 ```{r} 
+
+positionen_br <- ggplot(df, aes( Jahr,rechtsform, color = br.pos )) + geom_jitter() + scale_color_brewer(palette="Spectral") 
+
+positionen_br
+
 ggplot(df, aes(Jahr, br.pos, color = Thema, shape = rechtsform)) +
   geom_jitter(alpha = 0.7) +
   scale_color_brewer(palette="Spectral") 
@@ -249,8 +287,8 @@ ggplot(df, aes(Jahr, br.pos, color = Thema, shape = rechtsform)) +
 
   df %>% 
   filter(relevant == "ja") %>% 
-  ggplot(aes(br.pos, Thema, color = rechtsform)) +
-  geom_jitter(alpha = 0.7) +
+  ggplot(aes(br.pos, Thema, color = rechtsform), na.rm = TRUE) +
+  geom_jitter(alpha = 0.7)   +
   scale_color_brewer(palette="Spectral") 
   #scale_y_discrete(breaks = seq(1820, 2022, 10))
   
@@ -415,6 +453,43 @@ df %>%
   filter(d1e1|d2e1|d3e1 %in% c("Aussenpolitik", "Sicherheitspolitik", "Sozialpolitik")) %>% 
   group_by(d1e1, Jahr) %>% 
   count() 
+
+
+
+```
+
+```{r} 
+#Sankey
+d <- df %>% 
+  filter(rechtsform != "Stichfrage", relevant == "ja") %>% 
+  select(Thema, rechtsform, bv.pos,  annahme)
+
+
+hchart(data_to_sankey(d), "sankey", name = "Resultat")
+
+
+d2 <- df %>% 
+  filter(rechtsform != "Stichfrage", relevant == "ja") %>% 
+  select(Thema, rechtsform,  p.svp, annahme) %>% 
+  drop_na(.)
+
+
+hchart(data_to_sankey(d2), "sankey", name = "Resultat")
+
+
+d3 <- df %>% 
+  filter(rechtsform != "Stichfrage", relevant == "ja") %>% 
+  select(Thema, rechtsform, br.pos, volk, stand,  annahme) %>% 
+  mutate(volk = case_when(volk == "angenommen"~ "Annahme Volk",
+                             volk == "abgelehnt"~ "Ablehnung Volk")) %>% 
+  mutate(stand = case_when(stand == "angenommen"~ "Annahme Stände",
+                           stand == "abgelehnt"~ "Ablehnung Stände",
+                           stand == "Ständemehr nicht nötig" ~ "Ständemehr nicht nötig")) %>% 
+  drop_na(.)
+
+
+(pl <- hchart(data_to_sankey(d3), "sankey", name = "Resultat", width =  5)) 
+
 
 
 
