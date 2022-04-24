@@ -478,8 +478,8 @@ hchart(data_to_sankey(d2), "sankey", name = "Resultat")
 
 
 d3 <- df %>% 
-  filter(rechtsform != "Stichfrage", relevant == "ja") %>% 
-  select(Thema, rechtsform, br.pos, volk, stand,  annahme) %>% 
+  filter(rechtsform != "Stichfrage") %>% 
+  select(rechtsform, br.pos, volk, stand,  annahme) %>% 
   mutate(volk = case_when(volk == "angenommen"~ "Annahme Volk",
                              volk == "abgelehnt"~ "Ablehnung Volk")) %>% 
   mutate(stand = case_when(stand == "angenommen"~ "Annahme Stände",
@@ -489,8 +489,9 @@ d3 <- df %>%
 
 
 (pl <- hchart(data_to_sankey(d3), "sankey", name = "Resultat", width =  5)) 
+pl <- pl %>% hc_title(text = "Zusammenhang zwischen Position des Bundesrats und Resultat der Abstimmung") 
 
-
+htmlwidgets::saveWidget(widget = pl, file = "C:/Users/Antonia/test.html")
 
 
 ```
