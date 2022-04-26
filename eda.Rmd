@@ -31,7 +31,7 @@ ggplot(pol_ber, aes(reorder(d1e1, desc(n)), n)) +
 #erstellen einer Spalte nur mit dem Datum als Jahr
 year <- format(as.Date(svd$datum, format='%d.%m.%Y'), format="%Y")
 mutate(svd, jahr=year)
-svd <- svd %>% mutate(datum = as.Date(datum, format = "%d.%m.%y"))
+#svd <- svd %>% mutate(datum = as.Date(datum, format = "%d.%m.%y"))
 ```
 
 ```{r}
@@ -177,7 +177,7 @@ d1e1.labs <- c("Aussenpolitik", "Sicherheitspolitik", "Ausländerpolitik und\nFl
 names(d1e1.labs) <- c("2", "3", "10")
 
 
-ggplot(svd_einleitung, aes(datum, annahme)) + 
+ggplot(svd_einleitung, aes(jahr, annahme, colour = d1e1)) + 
   geom_jitter() + 
   facet_grid(rows = vars(d1e1), labeller = labeller(d1e1 = d1e1.labs)) + 
   theme(axis.ticks.y = element_blank(), 
