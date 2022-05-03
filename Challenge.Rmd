@@ -1,0 +1,134 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Packete importieren
+```{r}
+library(esquisse)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(magrittr)
+```
+
+
+# Daten einlesen
+```{r}
+data_csv <- read.csv2("DatensatzAbstimmungen.csv", na = "NA")
+```
+```{r}
+data_csv <- data_csv%>%
+  mutate(datum=as.Date(datum, "%d.%m.%Y"))
+
+class(data_csv$datum)
+```
+
+# Datensatz nur mit AHV Abstimmungen
+```{r}
+ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 |anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
+ahv
+```
+# Bei Spalte annahme .,1,0 durch Worte ersetzen
+```{r}
+ahv$annahme[ahv$annahme == "0"] <- "Abgelehnt"
+ahv$annahme[ahv$annahme == "1"] <- "Angenommen"
+ahv$annahme[ahv$annahme == "."] <- "Ergebnis der Stichfrage obsolet"
+
+```
+
+# Wie viele Abstimmungen wurden abgehlehnt / angenommen / Stichfrage obsolet?
+```{r}
+# Zahlen herausfinden
+angenommen <- ahv %>%
+  group_by(annahme) %>%
+  count()
+
+# Als Boxplot darstellen
+data <- data.frame(Ergebniss= c("Ergebnis der Stichfrage obsolet","Annahme","Ablehnung"), Anzahl= c(1,6,17))
+ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
+```
+
+
+
+
+# DataFrame nur mit Datum, Abstimmung und Ergebniss
+```{r}
+ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme))
+ahv_Ergebnisse
+```
+
+# Data Frame mit Annahmen
+```{r}
+ablehnung <- subset(ahv_Ergebnisse, annahme == "Abgelehnt") 
+```
+
+# Data Frame mit Ablehnung
+```{r}
+annahmen <- subset(ahv_Ergebnisse, annahme == "Angenommen") 
+```
+
+
+# Data Frame mit Stichfrage
+```{r}
+obsolet <- subset(ahv_Ergebnisse, annahme == "Ergebnis der Stichfrage obsolet") 
+```
+
+
+# Plot Annahmen mit Jahresangaben
+```{r}
+Titel <- annahmen$titel_kurz_d
+Jahr <- annahmen$datum
+
+ggplot(annahmen) +
+ aes(x = Jahr, y = Titel) +
+ geom_tile(size = 1) +
+ theme_minimal()+
+ ggtitle("Annahmen mit Jahreszahlen")
+```
+
+
+# Plot Ablehnungen mit Jahresangaben
+```{r}
+Titel <- ablehnung$titel_kurz_d
+Jahr <- ablehnung$datum
+ggplot(ablehnung) +
+ aes(x = Jahr, y = Titel) +
+ geom_tile(size = 1.2) +
+ theme_minimal()+
+ ggtitle("Ablehnungen mit Jahreszahlen")
+```
+
+
+
+
+```{r}
+Titel <- ahv$titel_kurz_d
+Ergebnis <- ahv$annahme
+ggplot(ahv) +
+ aes(x = Ergebnis, y = Titel) +
+ geom_tile(size = 1.2) +
+ theme_minimal()+
+ ggtitle("Abstimmungen mit Ergebnissen")
+```
+
+
+```{r}
+ggplot(ahv_Ergebnisse) +
+ aes(x = datum, fill = annahme) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue(direction = 1) +
+ theme_minimal()+
+ scale_fill_manual('Ergebnis', values=c('pink', 'darkgreen',"black"))
+```
+
+
+
+```{r}
+ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = annahme) +
+  geom_tile(size = 1.2) +
+  theme_minimal()
+```
+

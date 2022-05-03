@@ -1760,204 +1760,28 @@ pre code {
 
 
 <!-- rnb-text-begin -->
+<div id="packete-importieren" class="section level1">
+<h1>Packete importieren</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShtYWdyaXR0cilcbmBgYCJ9 -->
-<pre class="r"><code>library(ggplot2)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShlc3F1aXNzZSlcbmxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShkcGx5cilcbmxpYnJhcnkobWFncml0dHIpXG5gYGAifQ== -->
+<pre class="r"><code>library(esquisse)
+library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(magrittr)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="daten-einlesen" class="section level1">
 <h1>Daten einlesen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3YgPC0gcmVhZC5jc3YyKFwiRGF0ZW5zYXR6QWJzdGltbXVuZ2VuLmNzdlwiLCBuYSA9IFwiTkFcIilcbmRhdGFfY3N2XG5gYGAifQ== -->
-<pre class="r"><code>data_csv &lt;- read.csv2(&quot;DatensatzAbstimmungen.csv&quot;, na = &quot;NA&quot;)
-data_csv</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3YgPC0gcmVhZC5jc3YyKFwiRGF0ZW5zYXR6QWJzdGltbXVuZ2VuLmNzdlwiLCBuYSA9IFwiTkFcIilcbmBgYCJ9 -->
+<pre class="r"><code>data_csv &lt;- read.csv2(&quot;DatensatzAbstimmungen.csv&quot;, na = &quot;NA&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="neuer-data-frame-erstellen" class="section level1">
-<h1>Neuer Data Frame erstellen</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2RhdHVtIDwtIHN1YnNldChkYXRhX2Nzdiwgc2VsZWN0PWMoYW5yLGRhdHVtLGFubmFobWUpKVxuI2RhdHVtXG5cbiMgQmVpc3BpZWwgNS4gWmVpbGUgdW5kIDIuIFNwYWx0ZVxuI2RhdHVtWzUsMl1cbmBgYCJ9 -->
-<pre class="r"><code>#datum &lt;- subset(data_csv, select=c(anr,datum,annahme))
-#datum
-
-# Beispiel 5. Zeile und 2. Spalte
-#datum[5,2]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="abstimmungen-pro-kategorie" class="section level1">
-<h1>Abstimmungen pro Kategorie</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFibGUoZGF0YV9jc3YkZDFlMSlcblxuc3RhYXRzb3JkbnVuZyA9IGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAxXG5zdW0oc3RhYXRzb3JkbnVuZylcblxuYXVzc2VucG9saXRpayA9IGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAyXG5zdW0oYXVzc2VucG9saXRpaylcblxuc2ljaGVyaGVpdHNwb2xpdGlrID0gZGF0YV9jc3ZbXCJkMWUxXCJdID09IDNcbnN1bShzaWNoZXJoZWl0c3BvbGl0aWspXG5cbndpcnRzY2hhZnQgPSBkYXRhX2NzdltcImQxZTFcIl0gPT0gNFxuc3VtKHdpcnRzY2hhZnQpXG5cbmxhbmR3aXJ0c2NoYWZ0ID0gZGF0YV9jc3ZbXCJkMWUxXCJdID09IDVcbnN1bShsYW5kd2lydHNjaGFmdClcblxub2VmZmVudGxpY2hlRmluYW56ZW4gPSBkYXRhX2NzdltcImQxZTFcIl0gPT0gNlxuc3VtKG9lZmZlbnRsaWNoZUZpbmFuemVuKVxuXG5lbmVyZ2llID0gZGF0YV9jc3ZbXCJkMWUxXCJdID09IDdcbnN1bShlbmVyZ2llKVxuXG52ZXJrZWhyVW5kSW5mcmFzdHJ1bmt0dXIgPSBkYXRhX2NzdltcImQxZTFcIl0gPT0gOFxuc3VtKHZlcmtlaHJVbmRJbmZyYXN0cnVua3R1cilcblxudW13ZWx0VW5kTGViZW5zcmF1bSA9IGRhdGFfY3N2W1wiZDFlMVwiXSA9PSA5XG5zdW0odW13ZWx0VW5kTGViZW5zcmF1bSlcblxuc296aWFscG9saXRpayA9IGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAxMFxuc3VtKHNvemlhbHBvbGl0aWspXG5cbmJpbGR1bmdVbmRGb3JzY2h1bmcgPSBkYXRhX2NzdltcImQxZTFcIl0gPT0gMTFcbnN1bShiaWxkdW5nVW5kRm9yc2NodW5nKVxuXG5rdWx0dXJSZWxpZ2lvbk1lZGllbiA9IGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAxMlxuc3VtKGt1bHR1clJlbGlnaW9uTWVkaWVuKVxuXG4jU3VtbWUgYWxsZXIgS2F0ZWdvcmllbiB6dXIgS29udHJvbGxlXG4jc3VtKHN0YWF0c29yZG51bmcpK3N1bShhdXNzZW5wb2xpdGlrKStzdW0oc2ljaGVyaGVpdHNwb2xpdGlrKStzdW0od2lydHNjaGFmdCkrc3VtKGxhbmR3aXJ0c2NoYWZ0KStzdW0ob2VmZmVudGxpY2hlRmluYW56ZW4pK3N1bShlbmVyZ2llKStzdW0odmVya2VoclVuZEluZnJhc3RydW5rdHVyKStzdW0odW13ZWx0VW5kTGViZW5zcmF1bSkrc3VtKHNvemlhbHBvbGl0aWspK3N1bShiaWxkdW5nVW5kRm9yc2NodW5nKStzdW0oa3VsdHVyUmVsaWdpb25NZWRpZW4pXG5cbiMgYWxzIFBpZSBwbG90IGRhcmdlc3RlbGx0XG53ZXJ0ZSA8LSBjKDEwNSwzNCw1MSw4MywzNyw2NywyMyw1Nyw0MiwxMzIsMjUsMjApXG5rYXRlZ29yaWUgPC0gYyhcIlN0YWF0c29yZG51bmdcIixcIkF1c3NlbnBvbGl0aWtcIixcIlNpY2hlcmhlaXRzcG9saXRpa1wiLFwiV2lydHNjaGFmdFwiLFwiTGFuZHdpcnRzY2hhZnRcIixcIk9lZmZlbnRsaWNoZSBGaW5hbnplblwiLFwiRW5lcmdpZVwiLFwiVmVya2VociB1bmQgSW5mcmFzdHJ1bmt0dXJcIixcIlVtd2VsdCB1bmQgTGViZW5zcmF1bVwiLFwiU296aWFscG9saXRpa1wiLFwiQmlsZHVuZyB1bmQgRm9yc2NodW5nXCIsXCJLdWx0dXIgUmVsaWdpb24gTWVkaWVuXCIpXG5waWUod2VydGUsbGFiZWxzPWthdGVnb3JpZSxtYWluPVwiQWJzdGltbXVuZ2VuIG5hY2ggS2F0ZWdvcmllXCIpXG5cblxuZGF0YSA8LSBkYXRhLmZyYW1lKEthdGVnb3JpZT0gYyhcIjFcIixcIjJcIixcIjNcIixcIjRcIixcIjVcIixcIjZcIixcIjdcIixcIjhcIixcIjlcIixcIjEwXCIsXCIxMVwiLFwiMTJcIiksIFdlcnRlPSBjKDEwNSwzNCw1MSw4MywzNyw2NywyMyw1Nyw0MiwxMzIsMjUsMjApKVxuXG5nZ3Bsb3QoZGF0YSxhZXMoeD1LYXRlZ29yaWUseT1XZXJ0ZSkpK2dlb21fYmFyKHN0YXQ9XCJpZGVudGl0eVwiKVxuYGBgIn0= -->
-<pre class="r"><code>table(data_csv$d1e1)
-
-staatsordnung = data_csv[&quot;d1e1&quot;] == 1
-sum(staatsordnung)
-
-aussenpolitik = data_csv[&quot;d1e1&quot;] == 2
-sum(aussenpolitik)
-
-sicherheitspolitik = data_csv[&quot;d1e1&quot;] == 3
-sum(sicherheitspolitik)
-
-wirtschaft = data_csv[&quot;d1e1&quot;] == 4
-sum(wirtschaft)
-
-landwirtschaft = data_csv[&quot;d1e1&quot;] == 5
-sum(landwirtschaft)
-
-oeffentlicheFinanzen = data_csv[&quot;d1e1&quot;] == 6
-sum(oeffentlicheFinanzen)
-
-energie = data_csv[&quot;d1e1&quot;] == 7
-sum(energie)
-
-verkehrUndInfrastrunktur = data_csv[&quot;d1e1&quot;] == 8
-sum(verkehrUndInfrastrunktur)
-
-umweltUndLebensraum = data_csv[&quot;d1e1&quot;] == 9
-sum(umweltUndLebensraum)
-
-sozialpolitik = data_csv[&quot;d1e1&quot;] == 10
-sum(sozialpolitik)
-
-bildungUndForschung = data_csv[&quot;d1e1&quot;] == 11
-sum(bildungUndForschung)
-
-kulturReligionMedien = data_csv[&quot;d1e1&quot;] == 12
-sum(kulturReligionMedien)
-
-#Summe aller Kategorien zur Kontrolle
-#sum(staatsordnung)+sum(aussenpolitik)+sum(sicherheitspolitik)+sum(wirtschaft)+sum(landwirtschaft)+sum(oeffentlicheFinanzen)+sum(energie)+sum(verkehrUndInfrastrunktur)+sum(umweltUndLebensraum)+sum(sozialpolitik)+sum(bildungUndForschung)+sum(kulturReligionMedien)
-
-# als Pie plot dargestellt
-werte &lt;- c(105,34,51,83,37,67,23,57,42,132,25,20)
-kategorie &lt;- c(&quot;Staatsordnung&quot;,&quot;Aussenpolitik&quot;,&quot;Sicherheitspolitik&quot;,&quot;Wirtschaft&quot;,&quot;Landwirtschaft&quot;,&quot;Oeffentliche Finanzen&quot;,&quot;Energie&quot;,&quot;Verkehr und Infrastrunktur&quot;,&quot;Umwelt und Lebensraum&quot;,&quot;Sozialpolitik&quot;,&quot;Bildung und Forschung&quot;,&quot;Kultur Religion Medien&quot;)
-pie(werte,labels=kategorie,main=&quot;Abstimmungen nach Kategorie&quot;)
-
-
-data &lt;- data.frame(Kategorie= c(&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;10&quot;,&quot;11&quot;,&quot;12&quot;), Werte= c(105,34,51,83,37,67,23,57,42,132,25,20))
-
-ggplot(data,aes(x=Kategorie,y=Werte))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="position-des-bundesrates" class="section level1">
-<h1>Position des Bundesrates</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmVmdWVyd29ydGVuZCA9IGRhdGFfY3N2W1wiYnIucG9zXCJdID09IDFcbnN1bShiZWZ1ZXJ3b3J0ZW5kKVxuXG5hYmxlaG5lbmQgPSBkYXRhX2NzdltcImJyLnBvc1wiXSA9PSAyXG5zdW0oYWJsZWhuZW5kKVxuXG5rZWluZSA9IGRhdGFfY3N2W1wiYnIucG9zXCJdID09IDNcbnN1bShrZWluZSlcblxudm9yenVnR2VnZW5lbnR3dXJmID0gZGF0YV9jc3ZbXCJici5wb3NcIl0gPT0gOFxuc3VtKHZvcnp1Z0dlZ2VuZW50d3VyZilcblxudm9yenVnVm9sa3Npbml0aWF0aXZlID0gZGF0YV9jc3ZbXCJici5wb3NcIl0gPT0gOVxuc3VtKHZvcnp1Z1ZvbGtzaW5pdGlhdGl2ZSlcblxubWlzc2luZyA9IGRhdGFfY3N2W1wiYnIucG9zXCJdID09IFwiLlwiXG5zdW0obWlzc2luZylcblxuI0tvbnRyb2xsZSBvYiBhbGxlIGdlesOkaGx0XG5zdW0oYmVmdWVyd29ydGVuZCkrc3VtKGFibGVobmVuZCkrc3VtKGtlaW5lKStzdW0odm9yenVnR2VnZW5lbnR3dXJmKStzdW0odm9yenVnVm9sa3Npbml0aWF0aXZlKStzdW0obWlzc2luZylcblxuI2luIFBpZSBwbG90IGRhcnN0ZWxsZW4gKFZvcnp1ZyBWb2xrc2luaXRpYXRpdmUgbmljaHQgYW5nZXplaWd0IGRhID0gMClcbndlcnRlIDwtIGMoMzE2LDIyMSw3LDMsMTI5KVxua2F0ZWdvcmllIDwtIGMoXCJCZWbDvGhyd29ydGVuZFwiLFwiQWJsZWhuZW5kXCIsXCJLZWluZVwiLFwiVm9yenVnIGbDvHIgZGVuIEdlZ2VuZW50d3VyZlwiLFwiTWlzc2luZ1wiKVxucGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj1cIkFic3RpbW11bmdlbiBuYWNoIEthdGVnb3JpZVwiKVxuXG4jIGluIEJhbGtlbmRpYWdyYW1tIGRhcnN0ZWxsZW4gKFZvcnp1ZyBWb2xrc2luaXRpYXRpdmUgbmljaHQgYW5nZXplaWd0IGRhID0gMClcbmRhdGEgPC0gZGF0YS5mcmFtZShQb3NpdGlvbl9CdW5kZXNyYXQ9IGMoXCJCZWbDvGhyd29ydGVuZFwiLFwiQWJsZWhuZW5kXCIsXCJLZWluZVwiLFwiVm9yenVnIEdlZ2VuZW50d3VyZlwiLFwiTWlzc2luZ1wiKSwgQW56YWhsX0Fic3RpbW11bmdlbj0gYygzMTYsMjIxLDcsMywxMjkpKVxuXG5nZ3Bsb3QoZGF0YSxhZXMoeD1Qb3NpdGlvbl9CdW5kZXNyYXQseT1BbnphaGxfQWJzdGltbXVuZ2VuKSkrZ2VvbV9iYXIoc3RhdD1cImlkZW50aXR5XCIpXG5gYGAifQ== -->
-<pre class="r"><code>befuerwortend = data_csv[&quot;br.pos&quot;] == 1
-sum(befuerwortend)
-
-ablehnend = data_csv[&quot;br.pos&quot;] == 2
-sum(ablehnend)
-
-keine = data_csv[&quot;br.pos&quot;] == 3
-sum(keine)
-
-vorzugGegenentwurf = data_csv[&quot;br.pos&quot;] == 8
-sum(vorzugGegenentwurf)
-
-vorzugVolksinitiative = data_csv[&quot;br.pos&quot;] == 9
-sum(vorzugVolksinitiative)
-
-missing = data_csv[&quot;br.pos&quot;] == &quot;.&quot;
-sum(missing)
-
-#Kontrolle ob alle gezählt
-sum(befuerwortend)+sum(ablehnend)+sum(keine)+sum(vorzugGegenentwurf)+sum(vorzugVolksinitiative)+sum(missing)
-
-#in Pie plot darstellen (Vorzug Volksinitiative nicht angezeigt da = 0)
-werte &lt;- c(316,221,7,3,129)
-kategorie &lt;- c(&quot;Beführwortend&quot;,&quot;Ablehnend&quot;,&quot;Keine&quot;,&quot;Vorzug für den Gegenentwurf&quot;,&quot;Missing&quot;)
-pie(werte,labels=kategorie,main=&quot;Abstimmungen nach Kategorie&quot;)
-
-# in Balkendiagramm darstellen (Vorzug Volksinitiative nicht angezeigt da = 0)
-data &lt;- data.frame(Position_Bundesrat= c(&quot;Beführwortend&quot;,&quot;Ablehnend&quot;,&quot;Keine&quot;,&quot;Vorzug Gegenentwurf&quot;,&quot;Missing&quot;), Anzahl_Abstimmungen= c(316,221,7,3,129))
-
-ggplot(data,aes(x=Position_Bundesrat,y=Anzahl_Abstimmungen))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="ergebnis-der-abstimmung" class="section level1">
-<h1>Ergebnis der Abstimmung</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsZWhudW5nID0gZGF0YV9jc3ZbXCJhbm5haG1lXCJdID09IDBcbnN1bShhYmxlaG51bmcpXG5cbmFubmFobWUgPSBkYXRhX2NzdltcImFubmFobWVcIl0gPT0gMVxuc3VtKGFubmFobWUpXG5cbmdlZy5hbmcgPSBkYXRhX2NzdltcImFubmFobWVcIl0gPT0gOCAjQmVpIFN0aWNoZnJhZ2VuOiBHZWdlbmVudHd1cmYgYW5nZW5vbW1lblxuc3VtKGdlZy5hbmcpXG5cbnZvbGtzaW4uYW5nID0gZGF0YV9jc3ZbXCJhbm5haG1lXCJdID09IDkgICNCZWkgU3RpY2hmcmFnZW46IFZvbGtzaW5pdGlhdGl2ZSBhbmdlbm9tbWVuXG5zdW0odm9sa3Npbi5hbmcpXG5cbm9ic29sZXQgPSBkYXRhX2NzdltcImFubmFobWVcIl0gPT0gXCIuXCJcbnN1bShvYnNvbGV0KVxuXG4jZHN1bShhYmxlaG51bmcpK3N1bShhbm5haG1lKStzdW0oZ2VnLmFuZykrc3VtKHZvbGtzaW4uYW5nKStzdW0ob2Jzb2xldClcblxuXG4jIGluIFBpZSBwbG90IGRhcnN0ZWxsZW4gKGdlZy5hbmcgdW5kIHZvbGtzaW4uYW5nIHdlZ2dlbGFzc2VuIHdlaWwgMClcblxud2VydGUgPC0gYygzNTUsMzE1LDMpXG5rYXRlZ29yaWUgPC0gYyhcIkFibGVobnVuZ1wiLFwiQW5uYWhtZVwiLFwib2Jzb2xldFwiKVxucGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj1cIkVyZ2Vibmlzc2UgZGVyIEFic3RpbW11bmdlblwiKVxuYGBgIn0= -->
-<pre class="r"><code>ablehnung = data_csv[&quot;annahme&quot;] == 0
-sum(ablehnung)
-
-annahme = data_csv[&quot;annahme&quot;] == 1
-sum(annahme)
-
-geg.ang = data_csv[&quot;annahme&quot;] == 8 #Bei Stichfragen: Gegenentwurf angenommen
-sum(geg.ang)
-
-volksin.ang = data_csv[&quot;annahme&quot;] == 9  #Bei Stichfragen: Volksinitiative angenommen
-sum(volksin.ang)
-
-obsolet = data_csv[&quot;annahme&quot;] == &quot;.&quot;
-sum(obsolet)
-
-#dsum(ablehnung)+sum(annahme)+sum(geg.ang)+sum(volksin.ang)+sum(obsolet)
-
-
-# in Pie plot darstellen (geg.ang und volksin.ang weggelassen weil 0)
-
-werte &lt;- c(355,315,3)
-kategorie &lt;- c(&quot;Ablehnung&quot;,&quot;Annahme&quot;,&quot;obsolet&quot;)
-pie(werte,labels=kategorie,main=&quot;Ergebnisse der Abstimmungen&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="themenwahl-sozialpolitikaussenpolitik-sicherheitspolitik" class="section level1">
-<h1>Themenwahl: Sozialpolitik,Aussenpolitik, Sicherheitspolitik</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhbHMgUGllIHBsb3QgZGFyZ2VzdGVsbHQgKG51ciBhdXNnZXfDpGhsdGUgVGhlbWVuIGJlbmFubnQpXG53ZXJ0ZSA8LSBjKDEwNSwzNCw1MSw4MywzNyw2NywyMyw1Nyw0MiwxMzIsMjUsMjApXG5rYXRlZ29yaWUgPC0gYyhcIjFcIixcIkF1c3NlbnBvbGl0aWtcIixcIlNpY2hlcmhlaXRzcG9saXRpa1wiLFwiNFwiLFwiNVwiLFwiNlwiLFwiN1wiLFwiOFwiLFwiOVwiLFwiU296aWFscG9saXRpa1wiLFwiMTFcIixcIjEyXCIpXG5waWUod2VydGUsbGFiZWxzPWthdGVnb3JpZSxtYWluPVwiQWJzdGltbXVuZ2VuIG5hY2ggS2F0ZWdvcmllXCIpXG5gYGAifQ== -->
-<pre class="r"><code># als Pie plot dargestellt (nur ausgewählte Themen benannt)
-werte &lt;- c(105,34,51,83,37,67,23,57,42,132,25,20)
-kategorie &lt;- c(&quot;1&quot;,&quot;Aussenpolitik&quot;,&quot;Sicherheitspolitik&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;,&quot;8&quot;,&quot;9&quot;,&quot;Sozialpolitik&quot;,&quot;11&quot;,&quot;12&quot;)
-pie(werte,labels=kategorie,main=&quot;Abstimmungen nach Kategorie&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="neuer-dataframe-nur-mit-diesen-drei-ausgewählten-gebieten" class="section level1">
-<h1>neuer DataFrame nur mit diesen drei ausgewählten Gebieten</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA9IGRhdGFfY3N2W2RhdGFfY3N2JGQxZTEgPT0gMiB8IGRhdGFfY3N2JGQxZTE9PTMgfCBkYXRhX2NzdiRkMWUxPT0xMF1cblxuXG4jIHBpZSBwbG90IG1hY2hlblxud2VydGUgPC0gYygzNCw1MSwxMzIpXG5rYXRlZ29yaWUgPC0gYyhcIkF1c3NlbnBvbGl0aWtcIixcIlNpY2hlcmhlaXRzcG9saXRpa1wiLFwiU296aWFscG9saXRpa1wiKVxucGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj1cIlZlcnRlaWx1bmcgZGVyIGRyZWkgYXVzZ2V3w6RodGVuIEdlYmlldGVuXCIpXG5gYGAifQ== -->
-<pre class="r"><code>data = data_csv[data_csv$d1e1 == 2 | data_csv$d1e1==3 | data_csv$d1e1==10]
-
-
-# pie plot machen
-werte &lt;- c(34,51,132)
-kategorie &lt;- c(&quot;Aussenpolitik&quot;,&quot;Sicherheitspolitik&quot;,&quot;Sozialpolitik&quot;)
-pie(werte,labels=kategorie,main=&quot;Verteilung der drei ausgewähten Gebieten&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="neuer-dataframe-erstellen-wo-datum-spalte-als-datum-gespeichert-ist-name-des-dataframes-data_datum" class="section level1">
-<h1>neuer DataFrame erstellen wo Datum spalte als Datum gespeichert ist
-(Name des DataFrames = data_datum)</h1>
-<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3YgPC0gZGF0YV9jc3YlPiVcbiAgbXV0YXRlKGRhdHVtPWFzLkRhdGUoZGF0dW0sIFwiJWQuJW0uJVlcIikpXG5cbmNsYXNzKGRhdGFfY3N2JGRhdHVtKVxuYGBgIn0= -->
 <pre class="r"><code>data_csv &lt;- data_csv%&gt;%
@@ -1968,275 +1792,160 @@ class(data_csv$datum)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="spalte-hinzufügen-wo-nur-das-jahr-steht" class="section level1">
-<h1>Spalte hinzufügen wo nur das Jahr steht</h1>
+<div id="datensatz-nur-mit-ahv-abstimmungen" class="section level1">
+<h1>Datensatz nur mit AHV Abstimmungen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuamFociA8LSBmb3JtYXQoYXMuUE9TSVhjdChkYXRhX2NzdiRkYXR1bSwgZm9ybWF0PSclZC4lbS4lWScpLCBmb3JtYXQ9XCIlWVwiKVxubXV0YXRlKGRhdGFfY3N2KVxuYGBgIn0= -->
-<pre class="r"><code>jahr &lt;- format(as.POSIXct(data_csv$datum, format=&#39;%d.%m.%Y&#39;), format=&quot;%Y&quot;)
-mutate(data_csv)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2IDwtIHN1YnNldChkYXRhX2NzdiwgYW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA0MjMgfCBhbnIgPT0gNDQ0IHwgYW5yID09IDQ2OSB8YW5yID09IDQ4MSB8YW5yID09IDQ4OS4xfCBhbnIgPT0gMjgwIHwgYW5yID09IDI4MSB8YW5yID09IDM1MiB8YW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSA0ODkuMiB8YW5yID09IDQ4OS4zIHxhbnIgPT0gNTA3IHwgYW5yID09IDUwOCB8IGFuciA9PSA1MjMgfGFuciA9PSA1MzYgfGFuciA9PSA1OTQgfCBhbnIgPT0gNjA2IHwgYW5yID09IDYxNCB8YW5yID09IDYyNyB8YW5yID09IDEwMSB8IGFuciA9PSAxMTUgfCBhbnIgPT0gMTQ0IHxhbnIgPT0gNDAxIHxhbnIgPT0gNDIyKVxuYWh2XG5gYGAifQ== -->
+<pre class="r"><code>ahv &lt;- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 |anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
+ahv</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="pro-abtrennung-29-jahre" class="section level1">
-<h1>Pro Abtrennung 29 Jahre</h1>
+<div id="bei-spalte-annahme-.10-durch-worte-ersetzen" class="section level1">
+<h1>Bei Spalte annahme .,1,0 durch Worte ersetzen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYSA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSlcbmIgPC0gc3VtKGphaHI+PTE5MDUgJiBqYWhyPDE5MzQpXG5jIDwtc3VtKGphaHI+PTE5MzQgJiBqYWhyIDwxOTYzKVxuZCA8LSBzdW0oamFocj49MTk2MyAmIGphaHIgPDE5OTIpXG5lIDwtIHN1bShqYWhyPj0xOTkyICYgamFociA8PTIwMjIpXG5cbiMgUGllIHBsb3RcbndlcnRlIDwtIGMoMTUsMjAsMTksNDEsMTIyKVxua2F0ZWdvcmllIDwtIGMoXCIxODc2LTE5MDRcIixcIjE5MDUtMTkzM1wiLFwiMTkzNC0xOTYyXCIsXCIxOTYzLTE5OTFcIixcIjE5OTItMjAyMlwiIClcbnBpZSh3ZXJ0ZSxsYWJlbHM9a2F0ZWdvcmllLG1haW49XCJWZXJ0ZWlsdW5nIEFic3RpbW11bmdlblwiKVxuXG5cbiMgaGlzdG9ncmFtbVxuZGF0YSA8LSBkYXRhLmZyYW1lKEphaHJlPSBjKFwiMTg3Ni0xOTA0XCIsXCIxOTA1LTE5MzNcIixcIjE5MzQtMTk2MlwiLFwiMTk2My0xOTkxXCIsXCIxOTkyLTIwMjJcIiksIEFuemFobF9BYnN0aW1tdW5nZW49IGMoMTUsMjAsMTksNDEsMTIyKSlcbmdncGxvdChkYXRhLGFlcyh4PUphaHJlLHk9QW56YWhsX0Fic3RpbW11bmdlbikpK2dlb21fYmFyKHN0YXQ9XCJpZGVudGl0eVwiKVxuYGBgIn0= -->
-<pre class="r"><code>a &lt;- sum(jahr&gt;=1876 &amp; jahr&lt;1905)
-b &lt;- sum(jahr&gt;=1905 &amp; jahr&lt;1934)
-c &lt;-sum(jahr&gt;=1934 &amp; jahr &lt;1963)
-d &lt;- sum(jahr&gt;=1963 &amp; jahr &lt;1992)
-e &lt;- sum(jahr&gt;=1992 &amp; jahr &lt;=2022)
-
-# Pie plot
-werte &lt;- c(15,20,19,41,122)
-kategorie &lt;- c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot; )
-pie(werte,labels=kategorie,main=&quot;Verteilung Abstimmungen&quot;)
-
-
-# histogramm
-data &lt;- data.frame(Jahre= c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot;), Anzahl_Abstimmungen= c(15,20,19,41,122))
-ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="die-drei-teilgebiete-einzeln-untersuchen" class="section level1">
-<h1>Die drei teilgebiete einzeln untersuchen</h1>
-</div>
-<div id="aussenpolitik-2" class="section level1">
-<h1>Aussenpolitik (2)</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYSA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSAmIGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAyKVxuYiA8LSBzdW0oamFocj49MTkwNSAmIGphaHI8MTkzNCAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDIpXG5jIDwtc3VtKGphaHI+PTE5MzQgJiBqYWhyIDwxOTYzICZkYXRhX2NzdltcImQxZTFcIl0gPT0gMilcbmQgPC0gc3VtKGphaHI+PTE5NjMgJiBqYWhyIDwxOTkyICZkYXRhX2NzdltcImQxZTFcIl0gPT0gMilcbmUgPC0gc3VtKGphaHI+PTE5OTIgJiBqYWhyIDw9MjAyMiAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDIpXG5cbiMgUGllIHBsb3RcbndlcnRlIDwtIGMoNCw0LDIsNSwxOSlcbmthdGVnb3JpZSA8LSBjKFwiMTg3Ni0xOTA0XCIsXCIxOTA1LTE5MzNcIixcIjE5MzQtMTk2MlwiLFwiMTk2My0xOTkxXCIsXCIxOTkyLTIwMjJcIiApXG5waWUod2VydGUsbGFiZWxzPWthdGVnb3JpZSxtYWluPVwiVmVydGVpbHVuZyBBYnN0aW1tdW5nZW4gQXVzc2VucG9saXRpa1wiKVxuXG5cbiMgaGlzdG9ncmFtbVxuZGF0YSA8LSBkYXRhLmZyYW1lKEphaHJlPSBjKFwiMTg3Ni0xOTA0XCIsXCIxOTA1LTE5MzNcIixcIjE5MzQtMTk2MlwiLFwiMTk2My0xOTkxXCIsXCIxOTkyLTIwMjJcIiksIEFuemFobF9BYnN0aW1tdW5nZW5fQXVzc2VucG9saXRpaz0gYyg0LDQsMiw1LDE5KSlcbmdncGxvdChkYXRhLGFlcyh4PUphaHJlLHk9QW56YWhsX0Fic3RpbW11bmdlbl9BdXNzZW5wb2xpdGlrKSkrZ2VvbV9iYXIoc3RhdD1cImlkZW50aXR5XCIpXG5gYGAifQ== -->
-<pre class="r"><code>a &lt;- sum(jahr&gt;=1876 &amp; jahr&lt;1905 &amp; data_csv[&quot;d1e1&quot;] == 2)
-b &lt;- sum(jahr&gt;=1905 &amp; jahr&lt;1934 &amp;data_csv[&quot;d1e1&quot;] == 2)
-c &lt;-sum(jahr&gt;=1934 &amp; jahr &lt;1963 &amp;data_csv[&quot;d1e1&quot;] == 2)
-d &lt;- sum(jahr&gt;=1963 &amp; jahr &lt;1992 &amp;data_csv[&quot;d1e1&quot;] == 2)
-e &lt;- sum(jahr&gt;=1992 &amp; jahr &lt;=2022 &amp;data_csv[&quot;d1e1&quot;] == 2)
-
-# Pie plot
-werte &lt;- c(4,4,2,5,19)
-kategorie &lt;- c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot; )
-pie(werte,labels=kategorie,main=&quot;Verteilung Abstimmungen Aussenpolitik&quot;)
-
-
-# histogramm
-data &lt;- data.frame(Jahre= c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot;), Anzahl_Abstimmungen_Aussenpolitik= c(4,4,2,5,19))
-ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen_Aussenpolitik))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="sicherheitspolitik" class="section level1">
-<h1>Sicherheitspolitik</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZiA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSAmIGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAzKVxuZyA8LSBzdW0oamFocj49MTkwNSAmIGphaHI8MTkzNCAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDMpXG5oIDwtIHN1bShqYWhyPj0xOTM0ICYgamFociA8MTk2MyAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDMpXG5pIDwtIHN1bShqYWhyPj0xOTYzICYgamFociA8MTk5MiAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDMpXG5qIDwtIHN1bShqYWhyPj0xOTkyICYgamFociA8PTIwMjIgJmRhdGFfY3N2W1wiZDFlMVwiXSA9PSAzKVxuZlxuZ1xuaFxuaVxualxuXG4jIFBpZSBwbG90XG53ZXJ0ZSA8LSBjKDUsMywxMywxMCwyMClcbmthdGVnb3JpZSA8LSBjKFwiMTg3Ni0xOTA0XCIsXCIxOTA1LTE5MzNcIixcIjE5MzQtMTk2MlwiLFwiMTk2My0xOTkxXCIsXCIxOTkyLTIwMjJcIiApXG5waWUod2VydGUsbGFiZWxzPWthdGVnb3JpZSxtYWluPVwiVmVydGVpbHVuZyBBYnN0aW1tdW5nZW4gU2ljaGVyaGVpdHNwb2xpdGlrXCIpXG5cblxuIyBoaXN0b2dyYW1tXG5kYXRhIDwtIGRhdGEuZnJhbWUoSmFocmU9IGMoXCIxODc2LTE5MDRcIixcIjE5MDUtMTkzM1wiLFwiMTkzNC0xOTYyXCIsXCIxOTYzLTE5OTFcIixcIjE5OTItMjAyMlwiKSwgQW56YWhsX0Fic3RpbW11bmdlbl9TaWNoZXJoZWl0c3BvbGl0aWs9IGMoNSwzLDEzLDEwLDIwKSlcbmdncGxvdChkYXRhLGFlcyh4PUphaHJlLHk9QW56YWhsX0Fic3RpbW11bmdlbl9TaWNoZXJoZWl0c3BvbGl0aWspKStnZW9tX2JhcihzdGF0PVwiaWRlbnRpdHlcIilcbmBgYCJ9 -->
-<pre class="r"><code>f &lt;- sum(jahr&gt;=1876 &amp; jahr&lt;1905 &amp; data_csv[&quot;d1e1&quot;] == 3)
-g &lt;- sum(jahr&gt;=1905 &amp; jahr&lt;1934 &amp;data_csv[&quot;d1e1&quot;] == 3)
-h &lt;- sum(jahr&gt;=1934 &amp; jahr &lt;1963 &amp;data_csv[&quot;d1e1&quot;] == 3)
-i &lt;- sum(jahr&gt;=1963 &amp; jahr &lt;1992 &amp;data_csv[&quot;d1e1&quot;] == 3)
-j &lt;- sum(jahr&gt;=1992 &amp; jahr &lt;=2022 &amp;data_csv[&quot;d1e1&quot;] == 3)
-f
-g
-h
-i
-j
-
-# Pie plot
-werte &lt;- c(5,3,13,10,20)
-kategorie &lt;- c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot; )
-pie(werte,labels=kategorie,main=&quot;Verteilung Abstimmungen Sicherheitspolitik&quot;)
-
-
-# histogramm
-data &lt;- data.frame(Jahre= c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot;), Anzahl_Abstimmungen_Sicherheitspolitik= c(5,3,13,10,20))
-ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen_Sicherheitspolitik))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="sozialpolitik" class="section level1">
-<h1>Sozialpolitik</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuayA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSAmIGRhdGFfY3N2W1wiZDFlMVwiXSA9PSAxMClcbmwgPC0gc3VtKGphaHI+PTE5MDUgJiBqYWhyPDE5MzQgJmRhdGFfY3N2W1wiZDFlMVwiXSA9PSAxMClcbm0gPC0gc3VtKGphaHI+PTE5MzQgJiBqYWhyIDwxOTYzICZkYXRhX2NzdltcImQxZTFcIl0gPT0gMTApXG5uIDwtIHN1bShqYWhyPj0xOTYzICYgamFociA8MTk5MiAmZGF0YV9jc3ZbXCJkMWUxXCJdID09IDEwKVxubyA8LSBzdW0oamFocj49MTk5MiAmIGphaHIgPD0yMDIyICZkYXRhX2NzdltcImQxZTFcIl0gPT0gMTApXG5rXG5sXG5tXG5uXG5vXG5cblxuIyBQaWUgcGxvdFxud2VydGUgPC0gYyg2LDEzLDQsMjYsODMpXG5rYXRlZ29yaWUgPC0gYyhcIjE4NzYtMTkwNFwiLFwiMTkwNS0xOTMzXCIsXCIxOTM0LTE5NjJcIixcIjE5NjMtMTk5MVwiLFwiMTk5Mi0yMDIyXCIgKVxucGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj1cIlZlcnRlaWx1bmcgQWJzdGltbXVuZ2VuIFNpY2hlcmhlaXRzcG9saXRpa1wiKVxuXG5cbiMgaGlzdG9ncmFtbVxuZGF0YSA8LSBkYXRhLmZyYW1lKEphaHJlPSBjKFwiMTg3Ni0xOTA0XCIsXCIxOTA1LTE5MzNcIixcIjE5MzQtMTk2MlwiLFwiMTk2My0xOTkxXCIsXCIxOTkyLTIwMjJcIiksIEFuemFobF9BYnN0aW1tdW5nZW5fU296aWFscG9saXRpaz0gYyg2LDEzLDQsMjYsODMpKVxuZ2dwbG90KGRhdGEsYWVzKHg9SmFocmUseT1BbnphaGxfQWJzdGltbXVuZ2VuX1NvemlhbHBvbGl0aWspKStnZW9tX2JhcihzdGF0PVwiaWRlbnRpdHlcIilcbmBgYCJ9 -->
-<pre class="r"><code>k &lt;- sum(jahr&gt;=1876 &amp; jahr&lt;1905 &amp; data_csv[&quot;d1e1&quot;] == 10)
-l &lt;- sum(jahr&gt;=1905 &amp; jahr&lt;1934 &amp;data_csv[&quot;d1e1&quot;] == 10)
-m &lt;- sum(jahr&gt;=1934 &amp; jahr &lt;1963 &amp;data_csv[&quot;d1e1&quot;] == 10)
-n &lt;- sum(jahr&gt;=1963 &amp; jahr &lt;1992 &amp;data_csv[&quot;d1e1&quot;] == 10)
-o &lt;- sum(jahr&gt;=1992 &amp; jahr &lt;=2022 &amp;data_csv[&quot;d1e1&quot;] == 10)
-k
-l
-m
-n
-o
-
-
-# Pie plot
-werte &lt;- c(6,13,4,26,83)
-kategorie &lt;- c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot; )
-pie(werte,labels=kategorie,main=&quot;Verteilung Abstimmungen Sicherheitspolitik&quot;)
-
-
-# histogramm
-data &lt;- data.frame(Jahre= c(&quot;1876-1904&quot;,&quot;1905-1933&quot;,&quot;1934-1962&quot;,&quot;1963-1991&quot;,&quot;1992-2022&quot;), Anzahl_Abstimmungen_Sozialpolitik= c(6,13,4,26,83))
-ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen_Sozialpolitik))+geom_bar(stat=&quot;identity&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9saXRpa2JlcmVpY2ggPC0gZGF0YV9jc3YkYW5uYWhtZVxuSmFocmUgPC0gYXMuRGF0ZShkYXRhX2NzdiRkYXR1bSxcIiVkLiVtLiVZXCIpXG5cbnggPC0gZ2dwbG90KGRhdGFfY3N2LCBhZXMoSmFocmUsIFBvbGl0aWtiZXJlaWNoKSkgK1xuICBnZW9tX2ppdHRlcigpICtcbiAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhkMWUxKSkgK1xuICBnZW9tX3ZsaW5lKGRhdGE9ZGF0YV9jc3YsIG1hcHBpbmc9YWVzKHhpbnRlcmNlcHQ9YXMuRGF0ZShkYXRhX2NzdiRkYXR1bVsyMjldLFwiJWQuJW0uJVlcIikpLCBjb2xvcj1cImJsdWVcIilcblxuXG5gYGAifQ== -->
-<pre class="r"><code>Politikbereich &lt;- data_csv$annahme
-Jahre &lt;- as.Date(data_csv$datum,&quot;%d.%m.%Y&quot;)
-
-x &lt;- ggplot(data_csv, aes(Jahre, Politikbereich)) +
-  geom_jitter() +
-  facet_grid(rows = vars(d1e1)) +
-  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],&quot;%d.%m.%Y&quot;)), color=&quot;blue&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIwXCJdIDwtIFwiQWJnZWxlaG50XCJcbmFodiRhbm5haG1lW2FodiRhbm5haG1lID09IFwiMVwiXSA8LSBcIkFuZ2Vub21tZW5cIlxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIuXCJdIDwtIFwiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldFwiXG5cbmBgYCJ9 -->
+<pre class="r"><code>ahv$annahme[ahv$annahme == &quot;0&quot;] &lt;- &quot;Abgelehnt&quot;
+ahv$annahme[ahv$annahme == &quot;1&quot;] &lt;- &quot;Angenommen&quot;
+ahv$annahme[ahv$annahme == &quot;.&quot;] &lt;- &quot;Ergebnis der Stichfrage obsolet&quot;
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="wie-viele-abstimmungen-wurden-abgehlehnt-angenommen-stichfrage-obsolet" class="section level1">
+<h1>Wie viele Abstimmungen wurden abgehlehnt / angenommen / Stichfrage
+obsolet?</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBaYWhsZW4gaGVyYXVzZmluZGVuXG5hbmdlbm9tbWVuIDwtIGFodiAlPiVcbiAgZ3JvdXBfYnkoYW5uYWhtZSkgJT4lXG4gIGNvdW50KClcblxuIyBBbHMgQm94cGxvdCBkYXJzdGVsbGVuXG5kYXRhIDwtIGRhdGEuZnJhbWUoRXJnZWJuaXNzPSBjKFwiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldFwiLFwiQW5uYWhtZVwiLFwiQWJsZWhudW5nXCIpLCBBbnphaGw9IGMoMSw2LDE3KSlcbmdncGxvdChkYXRhLGFlcyh4PUVyZ2Vibmlzcyx5PUFuemFobCkpK2dlb21fYmFyKHN0YXQ9XCJpZGVudGl0eVwiKVxuYGBgIn0= -->
+<pre class="r"><code># Zahlen herausfinden
+angenommen &lt;- ahv %&gt;%
+  group_by(annahme) %&gt;%
+  count()
+
+# Als Boxplot darstellen
+data &lt;- data.frame(Ergebniss= c(&quot;Ergebnis der Stichfrage obsolet&quot;,&quot;Annahme&quot;,&quot;Ablehnung&quot;), Anzahl= c(1,6,17))
+ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat=&quot;identity&quot;)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="dataframe-nur-mit-datum-abstimmung-und-ergebniss" class="section level1">
+<h1>DataFrame nur mit Datum, Abstimmung und Ergebniss</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9saXRpa2JlcmVpY2ggPC0gZGF0YV9jc3YkYW5uYWhtZVxuSmFocmUgPC0gYXMuRGF0ZShkYXRhX2NzdiRkYXR1bSxcIiVkLiVtLiVZXCIpXG5cbnkgPC0gZ2dwbG90KGRhdGFfY3N2LCBhZXMoSmFocmUsIFBvbGl0aWtiZXJlaWNoKSwgZWlucyA9IGZhY3RvcihkYXRhX2NzdiRkMWUxKSA9PSAxKSArXG4gIGdlb21faml0dGVyKCkgK1xuICBmYWNldF9ncmlkKHJvd3MgPSB2YXJzKGQxZTEpKSArXG4gIGdlb21fdmxpbmUoZGF0YT1kYXRhX2NzdiwgbWFwcGluZz1hZXMoeGludGVyY2VwdD1hcy5EYXRlKGRhdGFfY3N2JGRhdHVtWzIyOV0sXCIlZC4lbS4lWVwiKSksIGNvbG9yPVwiYmx1ZVwiKVxuYGBgIn0= -->
-<pre class="r"><code>Politikbereich &lt;- data_csv$annahme
-Jahre &lt;- as.Date(data_csv$datum,&quot;%d.%m.%Y&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2X0VyZ2Vibmlzc2UgPC0gc3Vic2V0KGFodiwgc2VsZWN0PWMoZGF0dW0sdGl0ZWxfa3Vyel9kLGFubmFobWUpKVxuYWh2X0VyZ2Vibmlzc2VcbmBgYCJ9 -->
+<pre class="r"><code>ahv_Ergebnisse &lt;- subset(ahv, select=c(datum,titel_kurz_d,annahme))
+ahv_Ergebnisse</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="data-frame-mit-annahmen" class="section level1">
+<h1>Data Frame mit Annahmen</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsZWhudW5nIDwtIHN1YnNldChhaHZfRXJnZWJuaXNzZSwgYW5uYWhtZSA9PSBcIkFiZ2VsZWhudFwiKSBcbmBgYCJ9 -->
+<pre class="r"><code>ablehnung &lt;- subset(ahv_Ergebnisse, annahme == &quot;Abgelehnt&quot;) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="data-frame-mit-ablehnung" class="section level1">
+<h1>Data Frame mit Ablehnung</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5uYWhtZW4gPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09IFwiQW5nZW5vbW1lblwiKSBcbmBgYCJ9 -->
+<pre class="r"><code>annahmen &lt;- subset(ahv_Ergebnisse, annahme == &quot;Angenommen&quot;) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="data-frame-mit-stichfrage" class="section level1">
+<h1>Data Frame mit Stichfrage</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub2Jzb2xldCA8LSBzdWJzZXQoYWh2X0VyZ2Vibmlzc2UsIGFubmFobWUgPT0gXCJFcmdlYm5pcyBkZXIgU3RpY2hmcmFnZSBvYnNvbGV0XCIpIFxuYGBgIn0= -->
+<pre class="r"><code>obsolet &lt;- subset(ahv_Ergebnisse, annahme == &quot;Ergebnis der Stichfrage obsolet&quot;) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="plot-annahmen-mit-jahresangaben" class="section level1">
+<h1>Plot Annahmen mit Jahresangaben</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVGl0ZWwgPC0gYW5uYWhtZW4kdGl0ZWxfa3Vyel9kXG5KYWhyIDwtIGFubmFobWVuJGRhdHVtXG5cbmdncGxvdChhbm5haG1lbikgK1xuIGFlcyh4ID0gSmFociwgeSA9IFRpdGVsKSArXG4gZ2VvbV90aWxlKHNpemUgPSAxKSArXG4gdGhlbWVfbWluaW1hbCgpK1xuIGdndGl0bGUoXCJBbm5haG1lbiBtaXQgSmFocmVzemFobGVuXCIpXG5gYGAifQ== -->
+<pre class="r"><code>Titel &lt;- annahmen$titel_kurz_d
+Jahr &lt;- annahmen$datum
 
-y &lt;- ggplot(data_csv, aes(Jahre, Politikbereich), eins = factor(data_csv$d1e1) == 1) +
-  geom_jitter() +
-  facet_grid(rows = vars(d1e1)) +
-  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],&quot;%d.%m.%Y&quot;)), color=&quot;blue&quot;)</code></pre>
+ggplot(annahmen) +
+ aes(x = Jahr, y = Titel) +
+ geom_tile(size = 1) +
+ theme_minimal()+
+ ggtitle(&quot;Annahmen mit Jahreszahlen&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="plot-ablehnungen-mit-jahresangaben" class="section level1">
+<h1>Plot Ablehnungen mit Jahresangaben</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVGl0ZWwgPC0gYWJsZWhudW5nJHRpdGVsX2t1cnpfZFxuSmFociA8LSBhYmxlaG51bmckZGF0dW1cbmdncGxvdChhYmxlaG51bmcpICtcbiBhZXMoeCA9IEphaHIsIHkgPSBUaXRlbCkgK1xuIGdlb21fdGlsZShzaXplID0gMS4yKSArXG4gdGhlbWVfbWluaW1hbCgpK1xuIGdndGl0bGUoXCJBYmxlaG51bmdlbiBtaXQgSmFocmVzemFobGVuXCIpXG5gYGAifQ== -->
+<pre class="r"><code>Titel &lt;- ablehnung$titel_kurz_d
+Jahr &lt;- ablehnung$datum
+ggplot(ablehnung) +
+ aes(x = Jahr, y = Titel) +
+ geom_tile(size = 1.2) +
+ theme_minimal()+
+ ggtitle(&quot;Ablehnungen mit Jahreszahlen&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueSArXG4gIGxhYnMoXG4gIGVpbnMgPSBcIlNvemlhbHBvbHRpa1wiXG4gIClcbmBgYCJ9 -->
-<pre class="r"><code>y +
-  labs(
-  eins = &quot;Sozialpoltik&quot;
-  )</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVGl0ZWwgPC0gYWh2JHRpdGVsX2t1cnpfZFxuRXJnZWJuaXMgPC0gYWh2JGFubmFobWVcbmdncGxvdChhaHYpICtcbiBhZXMoeCA9IEVyZ2VibmlzLCB5ID0gVGl0ZWwpICtcbiBnZW9tX3RpbGUoc2l6ZSA9IDEuMikgK1xuIHRoZW1lX21pbmltYWwoKStcbiBnZ3RpdGxlKFwiQWJzdGltbXVuZ2VuIG1pdCBFcmdlYm5pc3NlblwiKVxuYGBgIn0= -->
+<pre class="r"><code>Titel &lt;- ahv$titel_kurz_d
+Ergebnis &lt;- ahv$annahme
+ggplot(ahv) +
+ aes(x = Ergebnis, y = Titel) +
+ geom_tile(size = 1.2) +
+ theme_minimal()+
+ ggtitle(&quot;Abstimmungen mit Ergebnissen&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBkYXRhX2NzdiRhbm5haG1lXG55IDwtIGFzLkRhdGUoZGF0YV9jc3YkZGF0dW0sXCIlZC4lbS4lWVwiKVxucGxvdHQgPC0gZ2dwbG90KGRhdGFfY3N2LCBhZXMoeSwgeCxjb2xvciA9ZDFlMSkpICtcbiAgZ2VvbV9qaXR0ZXIoKStcbiAgIHRoZW1lKFxuICAgIGxlZ2VuZC5wb3NpdGlvbiA9IGMoMSwgMSksXG4gICAgbGVnZW5kLmp1c3RpZmljYXRpb24gPSBjKDksIDEuNSksXG4gICAgbGVnZW5kLmJhY2tncm91bmQgPSBlbGVtZW50X3JlY3QoZmlsbCA9IFwid2hpdGVcIiwgY29sb3VyID0gXCJibGFja1wiKSxcbiAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KFxuICAgICAgc2l6ZSA9IHJlbCgxLjIpLCBsaW5laGVpZ2h0ID0gLjksXG4gICAgICBmYW1pbHkgPSBcIkNhbGlicmlcIiwgZmFjZSA9IFwiYm9sZFwiLCBjb2xvdXIgPSBcImJyb3duXCJcbiAgICApKStcbiAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhkMWUxKSlcbiAgZ2VvbV92bGluZShkYXRhPWRhdGFfY3N2LCBtYXBwaW5nPWFlcyh4aW50ZXJjZXB0PWFzLkRhdGUoZGF0YV9jc3YkZGF0dW1bMjI5XSxcIiVkLiVtLiVZXCIpKSwgY29sb3I9XCJibHVlXCIpXG5wbG90dFxuYGBgIn0= -->
-<pre class="r"><code>x &lt;- data_csv$annahme
-y &lt;- as.Date(data_csv$datum,&quot;%d.%m.%Y&quot;)
-plott &lt;- ggplot(data_csv, aes(y, x,color =d1e1)) +
-  geom_jitter()+
-   theme(
-    legend.position = c(1, 1),
-    legend.justification = c(9, 1.5),
-    legend.background = element_rect(fill = &quot;white&quot;, colour = &quot;black&quot;),
-    plot.title = element_text(
-      size = rel(1.2), lineheight = .9,
-      family = &quot;Calibri&quot;, face = &quot;bold&quot;, colour = &quot;brown&quot;
-    ))+
-  facet_grid(rows = vars(d1e1))
-  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],&quot;%d.%m.%Y&quot;)), color=&quot;blue&quot;)
-plott</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gYWVzKHggPSBkYXR1bSwgZmlsbCA9IGFubmFobWUpICtcbiBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzBMKSArXG4gc2NhbGVfZmlsbF9odWUoZGlyZWN0aW9uID0gMSkgK1xuIHRoZW1lX21pbmltYWwoKStcbiBzY2FsZV9maWxsX21hbnVhbCgnRXJnZWJuaXMnLCB2YWx1ZXM9YygncGluaycsICdkYXJrZ3JlZW4nLFwiYmxhY2tcIikpXG5gYGAifQ== -->
+<pre class="r"><code>ggplot(ahv_Ergebnisse) +
+ aes(x = datum, fill = annahme) +
+ geom_histogram(bins = 30L) +
+ scale_fill_hue(direction = 1) +
+ theme_minimal()+
+ scale_fill_manual(&#39;Ergebnis&#39;, values=c(&#39;pink&#39;, &#39;darkgreen&#39;,&quot;black&quot;))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2xpbXBzZShkYXRhX2NzdilcbmRhdGFfY3N2JGRhdHVtIDwtIGx1YnJpZGF0ZTo6ZG15KGRhdGFfY3N2JGRhdHVtKVxuIyBKYWhyIGFscyBlaWdlbmUgVmFyaWFibGVcbmRhdGFfY3N2ICU8PiUgIyBtYWdyaXR0ci1QYWtldCBcbiAgbXV0YXRlKGphaHIgPSBsdWJyaWRhdGU6OnllYXIoZGF0dW0pKVxuXG4jIFdlcnRhdXNwcsOkZ3VuZyBTdGljaHByb2JlXG5kYXRhX2NzdiAlPiUgXG4gIGRpc3RpbmN0KGFubmFobWUpXG4jIyBoYXQgbnVyIEFubmFobWVuIG9kZXIgQWJsZWhudW5nZW4g4oaSIFVtd2FuZGx1bmcgaW4gSW50ZWdlclxuZGF0YV9jc3YkYW5uYWhtZSA8LSBhcy5pbnRlZ2VyKGRhdGFfY3N2JGFubmFobWUpXG5cblxueWVhcl9pbXBvcnRhbnRfd2FycyA8LSBsdWJyaWRhdGU6OnltZChjKFwiMTkxNC0wMS0wMVwiLCBcIjE5MTUtMDEtMDFcIiwgXCIxOTE2LTAxLTAxXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXCIxOTE3LTAxLTAxXCIsIFwiMTkxOC0wMS0wMVwiKSlcbmZyYXVlbnN0aW1tcmVjaHQgPC0gMTk3MVxuXG4oYWJzdGltbXVuZ3NlcmdlYm5pc3NlIDwtIFxuICAgIGdncGxvdChkYXRhX2NzdiwgYWVzKGRhdHVtLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICBhbm5haG1lKSkgK1xuICAgICAgI2dlb21faml0dGVyKCkgKyAgIyB2ZXJ0ZWlsdCBEYXRlbnB1bmt0ZSB1bmdlZsOkaHIgYWJlciBuaWNodCBleGFrdCDihpIgdW5rb3JyZWt0ZSBBdXNzYWdlXG4gICAgICBnZW9tX3BvaW50KCkgK1xuICAgICAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhwb2xpdGlrYmVyZWljaF8xKSkgK1xuICAgICAgZ2VvbV92bGluZSh4aW50ZXJjZXB0PXllYXJfaW1wb3J0YW50X3dhcnMsXG4gICAgICAgICAgICAgICAgIGNvbG9yPVwiYmx1ZVwiLFxuICAgICAgICAgICAgICAgICBhbHBoYSA9IDAuMykgKyAgIyBUcmFuc3BhcmVueiBlaW5zdGVsbGVuLCBqZSB0aWVmZXIgZGVzdG8gdHJhbnNwYXJlbnRlclxuICAgICAgZ2VvbV92bGluZSh4aW50ZXJjZXB0ID0gZnJhdWVuc3RpbW1yZWNodCxcbiAgICAgICAgICAgICAgICAgY29sb3IgPSBcIm9yYW5nZVwiLFxuICAgICAgICAgICAgICAgICBhbHBoYSA9IDAuNykgK1xuICAgICAgZ2d0aXRsZShcIlRPRE86IFRpdGVsIGVpbmbDvGdlblwiLFxuICAgICAgICAgICAgICBzdWJ0aXRsZSA9IFwiei5CLiBmw7xyIEJlc2NocmllYiBkZXIgSmFocmVzbGluaWVuIG51dHplbiAoQmxhdSA9IEtyaWVnc2phaHJlIHZvbiBiaXMpXCIpICtcbiAgICBzY2FsZV94X2RhdGUoZGF0ZV9icmVha3MgPSBcIjIwIHllYXJzXCIsIGRhdGVfbGFiZWxzID0gXCIlWVwiKSAgIyBWYXJpYWJsZSBqYWhyIHVubsO2dGlnIGRhbmsgZGllc2VtIEJlZmVobFxuKVxuXG4jIFZhbGlkaWVydW5nIHBsb3RcbmRhdGFfY3N2ICU+JSBkaXN0aW5jdChhbm5haG1lKSAgIyBSZXN1bHRhdDogZ2VvbV9qaXR0ZXIoKSBlbnRmZXJudFxuYGBgIn0= -->
-<pre class="r"><code>glimpse(data_csv)
-data_csv$datum &lt;- lubridate::dmy(data_csv$datum)
-# Jahr als eigene Variable
-data_csv %&lt;&gt;% # magrittr-Paket 
-  mutate(jahr = lubridate::year(datum))
-
-# Wertausprägung Stichprobe
-data_csv %&gt;% 
-  distinct(annahme)
-## hat nur Annahmen oder Ablehnungen → Umwandlung in Integer
-data_csv$annahme &lt;- as.integer(data_csv$annahme)
-
-
-year_important_wars &lt;- lubridate::ymd(c(&quot;1914-01-01&quot;, &quot;1915-01-01&quot;, &quot;1916-01-01&quot;,
-                                        &quot;1917-01-01&quot;, &quot;1918-01-01&quot;))
-frauenstimmrecht &lt;- 1971
-
-(abstimmungsergebnisse &lt;- 
-    ggplot(data_csv, aes(datum, 
-                         annahme)) +
-      #geom_jitter() +  # verteilt Datenpunkte ungefähr aber nicht exakt → unkorrekte Aussage
-      geom_point() +
-      facet_grid(rows = vars(politikbereich_1)) +
-      geom_vline(xintercept=year_important_wars,
-                 color=&quot;blue&quot;,
-                 alpha = 0.3) +  # Transparenz einstellen, je tiefer desto transparenter
-      geom_vline(xintercept = frauenstimmrecht,
-                 color = &quot;orange&quot;,
-                 alpha = 0.7) +
-      ggtitle(&quot;TODO: Titel einfügen&quot;,
-              subtitle = &quot;z.B. für Beschrieb der Jahreslinien nutzen (Blau = Kriegsjahre von bis)&quot;) +
-    scale_x_date(date_breaks = &quot;20 years&quot;, date_labels = &quot;%Y&quot;)  # Variable jahr unnötig dank diesem Befehl
-)
-
-# Validierung plot
-data_csv %&gt;% distinct(annahme)  # Resultat: geom_jitter() entfernt</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArXG4gIGdlb21fdGlsZShzaXplID0gMS4yKSArXG4gIHRoZW1lX21pbmltYWwoKVxuYGBgIn0= -->
+<pre class="r"><code>ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = annahme) +
+  geom_tile(size = 1.2) +
+  theme_minimal()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3ZcbmRhdGFfY3N2JHAuZmRwICU8PiUgYXMuaW50ZWdlcigpXG5wbG90KGRhdGFfY3N2JHAuZmRwKVxuXG5zdW1tYXJ5KGRhdGFfY3N2JHAuZmRwKVxuXG4oZmRwX3N0aW1tZW1wZmVobHVuZ19hbGxlcyA8LSBcbiAgZ2dwbG90KGRhdGFfY3N2KSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSBwLmZkcCkgK1xuICBnZW9tX2xpbmUoc2l6ZSA9IDAuNSwgY29sb3VyID0gXCIjMTEyNDQ2XCIpICtcbiAgbGFicyh4ID0gXCJKYWhyXCIsIHkgPSBcIldlcnQgKHAtZmRwKVwiLCB0aXRsZSA9IFwiRlRQIFN0aW1tZW1wZmVobHVuZ2VuXCIsIFxuICAgICAgIHN1YnRpdGxlID0gXCJXZXJ0IDwgMTA6IFN0aW1tZW1wZmVobHVuZyB2b3JoYW5kZW5cIikgICtcbiAgdGhlbWVfbWluaW1hbCgpXG4pXG5cbiMgVGllZmUgV2VydGUgYmVzc2VyIGJldHJhY2h0ZW4gbWl0IHBsb3RseVxuZ2dwbG90bHkoZmRwX3N0aW1tZW1wZmVobHVuZ19hbGxlcylcblxuIyBBbnR3b3J0IGF1ZiBGcmFnZTogei5CLiBudXIgRlRQLUFudGVpbGUgYW56ZWlnZW5cbiMjIG51ciBEYXRlbiBhdXN3ZXJ0ZW4sIGJlaSBkZW5lbiBGRFAgYWt0aXYgd2FyXG4oZGF0ZW5fY2hhbGxlbmdlX3N0aWNocHJvYmVfZmRwIDwtIFxuICBkYXRhX2NzdiAlPiUgXG4gICAgZmlsdGVyKHAuZmRwIDwgMTApXG4pXG5cbihmZHBfc3RpbW1lbXBmZWhsdW5nX2phIDwtIFxuICBnZ3Bsb3QoZGF0ZW5fY2hhbGxlbmdlX3N0aWNocHJvYmVfZmRwKSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSBwLmZkcCkgK1xuICBnZW9tX2xpbmUoc2l6ZSA9IDAuNSwgY29sb3VyID0gXCIjMTEyNDQ2XCIpICtcbiAgbGFicyh4ID0gXCJKYWhyXCIsIHkgPSBcIldlcnQgKHAtZmRwKVwiLCB0aXRsZSA9IFwiRlRQIFN0aW1tZW1wZmVobHVuZ2VuXCIsIFxuICAgICAgIHN1YnRpdGxlID0gXCJXZXJ0IDwgMTA6IFN0aW1tZW1wZmVobHVuZyB2b3JoYW5kZW5cIikgK1xuICB0aGVtZV9taW5pbWFsKClcbilcblxuIyBEYXRlbiBnZW5hdWVyIGVyZm9yc2NoZW5cbmdncGxvdGx5KGZkcF9zdGltbWVtcGZlaGx1bmdfamEpXG5cblxuYGBgIn0= -->
-<pre class="r"><code>data_csv
-data_csv$p.fdp %&lt;&gt;% as.integer()
-plot(data_csv$p.fdp)
-
-summary(data_csv$p.fdp)
-
-(fdp_stimmempfehlung_alles &lt;- 
-  ggplot(data_csv) +
-  aes(x = datum, y = p.fdp) +
-  geom_line(size = 0.5, colour = &quot;#112446&quot;) +
-  labs(x = &quot;Jahr&quot;, y = &quot;Wert (p-fdp)&quot;, title = &quot;FTP Stimmempfehlungen&quot;, 
-       subtitle = &quot;Wert &lt; 10: Stimmempfehlung vorhanden&quot;)  +
-  theme_minimal()
-)
-
-# Tiefe Werte besser betrachten mit plotly
-ggplotly(fdp_stimmempfehlung_alles)
-
-# Antwort auf Frage: z.B. nur FTP-Anteile anzeigen
-## nur Daten auswerten, bei denen FDP aktiv war
-(daten_challenge_stichprobe_fdp &lt;- 
-  data_csv %&gt;% 
-    filter(p.fdp &lt; 10)
-)
-
-(fdp_stimmempfehlung_ja &lt;- 
-  ggplot(daten_challenge_stichprobe_fdp) +
-  aes(x = datum, y = p.fdp) +
-  geom_line(size = 0.5, colour = &quot;#112446&quot;) +
-  labs(x = &quot;Jahr&quot;, y = &quot;Wert (p-fdp)&quot;, title = &quot;FTP Stimmempfehlungen&quot;, 
-       subtitle = &quot;Wert &lt; 10: Stimmempfehlung vorhanden&quot;) +
-  theme_minimal()
-)
-
-# Daten genauer erforschen
-ggplotly(fdp_stimmempfehlung_ja)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCg0KLS0tDQpgYGB7cn0NCmxpYnJhcnkoZ2dwbG90MikNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkobWFncml0dHIpDQpgYGANCg0KDQojIERhdGVuIGVpbmxlc2VuDQpgYGB7cn0NCmRhdGFfY3N2IDwtIHJlYWQuY3N2MigiRGF0ZW5zYXR6QWJzdGltbXVuZ2VuLmNzdiIsIG5hID0gIk5BIikNCmRhdGFfY3N2DQpgYGANCg0KDQojIE5ldWVyIERhdGEgRnJhbWUgZXJzdGVsbGVuDQpgYGB7cn0NCiNkYXR1bSA8LSBzdWJzZXQoZGF0YV9jc3YsIHNlbGVjdD1jKGFucixkYXR1bSxhbm5haG1lKSkNCiNkYXR1bQ0KDQojIEJlaXNwaWVsIDUuIFplaWxlIHVuZCAyLiBTcGFsdGUNCiNkYXR1bVs1LDJdDQpgYGANCg0KDQojIEFic3RpbW11bmdlbiBwcm8gS2F0ZWdvcmllDQpgYGB7cn0NCnRhYmxlKGRhdGFfY3N2JGQxZTEpDQoNCnN0YWF0c29yZG51bmcgPSBkYXRhX2NzdlsiZDFlMSJdID09IDENCnN1bShzdGFhdHNvcmRudW5nKQ0KDQphdXNzZW5wb2xpdGlrID0gZGF0YV9jc3ZbImQxZTEiXSA9PSAyDQpzdW0oYXVzc2VucG9saXRpaykNCg0Kc2ljaGVyaGVpdHNwb2xpdGlrID0gZGF0YV9jc3ZbImQxZTEiXSA9PSAzDQpzdW0oc2ljaGVyaGVpdHNwb2xpdGlrKQ0KDQp3aXJ0c2NoYWZ0ID0gZGF0YV9jc3ZbImQxZTEiXSA9PSA0DQpzdW0od2lydHNjaGFmdCkNCg0KbGFuZHdpcnRzY2hhZnQgPSBkYXRhX2NzdlsiZDFlMSJdID09IDUNCnN1bShsYW5kd2lydHNjaGFmdCkNCg0Kb2VmZmVudGxpY2hlRmluYW56ZW4gPSBkYXRhX2NzdlsiZDFlMSJdID09IDYNCnN1bShvZWZmZW50bGljaGVGaW5hbnplbikNCg0KZW5lcmdpZSA9IGRhdGFfY3N2WyJkMWUxIl0gPT0gNw0Kc3VtKGVuZXJnaWUpDQoNCnZlcmtlaHJVbmRJbmZyYXN0cnVua3R1ciA9IGRhdGFfY3N2WyJkMWUxIl0gPT0gOA0Kc3VtKHZlcmtlaHJVbmRJbmZyYXN0cnVua3R1cikNCg0KdW13ZWx0VW5kTGViZW5zcmF1bSA9IGRhdGFfY3N2WyJkMWUxIl0gPT0gOQ0Kc3VtKHVtd2VsdFVuZExlYmVuc3JhdW0pDQoNCnNvemlhbHBvbGl0aWsgPSBkYXRhX2NzdlsiZDFlMSJdID09IDEwDQpzdW0oc296aWFscG9saXRpaykNCg0KYmlsZHVuZ1VuZEZvcnNjaHVuZyA9IGRhdGFfY3N2WyJkMWUxIl0gPT0gMTENCnN1bShiaWxkdW5nVW5kRm9yc2NodW5nKQ0KDQprdWx0dXJSZWxpZ2lvbk1lZGllbiA9IGRhdGFfY3N2WyJkMWUxIl0gPT0gMTINCnN1bShrdWx0dXJSZWxpZ2lvbk1lZGllbikNCg0KI1N1bW1lIGFsbGVyIEthdGVnb3JpZW4genVyIEtvbnRyb2xsZQ0KI3N1bShzdGFhdHNvcmRudW5nKStzdW0oYXVzc2VucG9saXRpaykrc3VtKHNpY2hlcmhlaXRzcG9saXRpaykrc3VtKHdpcnRzY2hhZnQpK3N1bShsYW5kd2lydHNjaGFmdCkrc3VtKG9lZmZlbnRsaWNoZUZpbmFuemVuKStzdW0oZW5lcmdpZSkrc3VtKHZlcmtlaHJVbmRJbmZyYXN0cnVua3R1cikrc3VtKHVtd2VsdFVuZExlYmVuc3JhdW0pK3N1bShzb3ppYWxwb2xpdGlrKStzdW0oYmlsZHVuZ1VuZEZvcnNjaHVuZykrc3VtKGt1bHR1clJlbGlnaW9uTWVkaWVuKQ0KDQojIGFscyBQaWUgcGxvdCBkYXJnZXN0ZWxsdA0Kd2VydGUgPC0gYygxMDUsMzQsNTEsODMsMzcsNjcsMjMsNTcsNDIsMTMyLDI1LDIwKQ0Ka2F0ZWdvcmllIDwtIGMoIlN0YWF0c29yZG51bmciLCJBdXNzZW5wb2xpdGlrIiwiU2ljaGVyaGVpdHNwb2xpdGlrIiwiV2lydHNjaGFmdCIsIkxhbmR3aXJ0c2NoYWZ0IiwiT2VmZmVudGxpY2hlIEZpbmFuemVuIiwiRW5lcmdpZSIsIlZlcmtlaHIgdW5kIEluZnJhc3RydW5rdHVyIiwiVW13ZWx0IHVuZCBMZWJlbnNyYXVtIiwiU296aWFscG9saXRpayIsIkJpbGR1bmcgdW5kIEZvcnNjaHVuZyIsIkt1bHR1ciBSZWxpZ2lvbiBNZWRpZW4iKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iQWJzdGltbXVuZ2VuIG5hY2ggS2F0ZWdvcmllIikNCg0KDQpkYXRhIDwtIGRhdGEuZnJhbWUoS2F0ZWdvcmllPSBjKCIxIiwiMiIsIjMiLCI0IiwiNSIsIjYiLCI3IiwiOCIsIjkiLCIxMCIsIjExIiwiMTIiKSwgV2VydGU9IGMoMTA1LDM0LDUxLDgzLDM3LDY3LDIzLDU3LDQyLDEzMiwyNSwyMCkpDQoNCmdncGxvdChkYXRhLGFlcyh4PUthdGVnb3JpZSx5PVdlcnRlKSkrZ2VvbV9iYXIoc3RhdD0iaWRlbnRpdHkiKQ0KYGBgDQoNCiMgUG9zaXRpb24gZGVzIEJ1bmRlc3JhdGVzDQpgYGB7cn0NCmJlZnVlcndvcnRlbmQgPSBkYXRhX2NzdlsiYnIucG9zIl0gPT0gMQ0Kc3VtKGJlZnVlcndvcnRlbmQpDQoNCmFibGVobmVuZCA9IGRhdGFfY3N2WyJici5wb3MiXSA9PSAyDQpzdW0oYWJsZWhuZW5kKQ0KDQprZWluZSA9IGRhdGFfY3N2WyJici5wb3MiXSA9PSAzDQpzdW0oa2VpbmUpDQoNCnZvcnp1Z0dlZ2VuZW50d3VyZiA9IGRhdGFfY3N2WyJici5wb3MiXSA9PSA4DQpzdW0odm9yenVnR2VnZW5lbnR3dXJmKQ0KDQp2b3J6dWdWb2xrc2luaXRpYXRpdmUgPSBkYXRhX2NzdlsiYnIucG9zIl0gPT0gOQ0Kc3VtKHZvcnp1Z1ZvbGtzaW5pdGlhdGl2ZSkNCg0KbWlzc2luZyA9IGRhdGFfY3N2WyJici5wb3MiXSA9PSAiLiINCnN1bShtaXNzaW5nKQ0KDQojS29udHJvbGxlIG9iIGFsbGUgZ2V6w6RobHQNCnN1bShiZWZ1ZXJ3b3J0ZW5kKStzdW0oYWJsZWhuZW5kKStzdW0oa2VpbmUpK3N1bSh2b3J6dWdHZWdlbmVudHd1cmYpK3N1bSh2b3J6dWdWb2xrc2luaXRpYXRpdmUpK3N1bShtaXNzaW5nKQ0KDQojaW4gUGllIHBsb3QgZGFyc3RlbGxlbiAoVm9yenVnIFZvbGtzaW5pdGlhdGl2ZSBuaWNodCBhbmdlemVpZ3QgZGEgPSAwKQ0Kd2VydGUgPC0gYygzMTYsMjIxLDcsMywxMjkpDQprYXRlZ29yaWUgPC0gYygiQmVmw7xocndvcnRlbmQiLCJBYmxlaG5lbmQiLCJLZWluZSIsIlZvcnp1ZyBmw7xyIGRlbiBHZWdlbmVudHd1cmYiLCJNaXNzaW5nIikNCnBpZSh3ZXJ0ZSxsYWJlbHM9a2F0ZWdvcmllLG1haW49IkFic3RpbW11bmdlbiBuYWNoIEthdGVnb3JpZSIpDQoNCiMgaW4gQmFsa2VuZGlhZ3JhbW0gZGFyc3RlbGxlbiAoVm9yenVnIFZvbGtzaW5pdGlhdGl2ZSBuaWNodCBhbmdlemVpZ3QgZGEgPSAwKQ0KZGF0YSA8LSBkYXRhLmZyYW1lKFBvc2l0aW9uX0J1bmRlc3JhdD0gYygiQmVmw7xocndvcnRlbmQiLCJBYmxlaG5lbmQiLCJLZWluZSIsIlZvcnp1ZyBHZWdlbmVudHd1cmYiLCJNaXNzaW5nIiksIEFuemFobF9BYnN0aW1tdW5nZW49IGMoMzE2LDIyMSw3LDMsMTI5KSkNCg0KZ2dwbG90KGRhdGEsYWVzKHg9UG9zaXRpb25fQnVuZGVzcmF0LHk9QW56YWhsX0Fic3RpbW11bmdlbikpK2dlb21fYmFyKHN0YXQ9ImlkZW50aXR5IikNCmBgYA0KDQoNCiMgRXJnZWJuaXMgZGVyIEFic3RpbW11bmcNCmBgYHtyfQ0KYWJsZWhudW5nID0gZGF0YV9jc3ZbImFubmFobWUiXSA9PSAwDQpzdW0oYWJsZWhudW5nKQ0KDQphbm5haG1lID0gZGF0YV9jc3ZbImFubmFobWUiXSA9PSAxDQpzdW0oYW5uYWhtZSkNCg0KZ2VnLmFuZyA9IGRhdGFfY3N2WyJhbm5haG1lIl0gPT0gOCAjQmVpIFN0aWNoZnJhZ2VuOiBHZWdlbmVudHd1cmYgYW5nZW5vbW1lbg0Kc3VtKGdlZy5hbmcpDQoNCnZvbGtzaW4uYW5nID0gZGF0YV9jc3ZbImFubmFobWUiXSA9PSA5ICAjQmVpIFN0aWNoZnJhZ2VuOiBWb2xrc2luaXRpYXRpdmUgYW5nZW5vbW1lbg0Kc3VtKHZvbGtzaW4uYW5nKQ0KDQpvYnNvbGV0ID0gZGF0YV9jc3ZbImFubmFobWUiXSA9PSAiLiINCnN1bShvYnNvbGV0KQ0KDQojZHN1bShhYmxlaG51bmcpK3N1bShhbm5haG1lKStzdW0oZ2VnLmFuZykrc3VtKHZvbGtzaW4uYW5nKStzdW0ob2Jzb2xldCkNCg0KDQojIGluIFBpZSBwbG90IGRhcnN0ZWxsZW4gKGdlZy5hbmcgdW5kIHZvbGtzaW4uYW5nIHdlZ2dlbGFzc2VuIHdlaWwgMCkNCg0Kd2VydGUgPC0gYygzNTUsMzE1LDMpDQprYXRlZ29yaWUgPC0gYygiQWJsZWhudW5nIiwiQW5uYWhtZSIsIm9ic29sZXQiKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iRXJnZWJuaXNzZSBkZXIgQWJzdGltbXVuZ2VuIikNCmBgYA0KDQojIFRoZW1lbndhaGw6IFNvemlhbHBvbGl0aWssQXVzc2VucG9saXRpaywgU2ljaGVyaGVpdHNwb2xpdGlrDQpgYGB7cn0NCiMgYWxzIFBpZSBwbG90IGRhcmdlc3RlbGx0IChudXIgYXVzZ2V3w6RobHRlIFRoZW1lbiBiZW5hbm50KQ0Kd2VydGUgPC0gYygxMDUsMzQsNTEsODMsMzcsNjcsMjMsNTcsNDIsMTMyLDI1LDIwKQ0Ka2F0ZWdvcmllIDwtIGMoIjEiLCJBdXNzZW5wb2xpdGlrIiwiU2ljaGVyaGVpdHNwb2xpdGlrIiwiNCIsIjUiLCI2IiwiNyIsIjgiLCI5IiwiU296aWFscG9saXRpayIsIjExIiwiMTIiKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iQWJzdGltbXVuZ2VuIG5hY2ggS2F0ZWdvcmllIikNCmBgYA0KDQojIG5ldWVyIERhdGFGcmFtZSBudXIgbWl0IGRpZXNlbiBkcmVpIGF1c2dld8OkaGx0ZW4gR2ViaWV0ZW4NCmBgYHtyfQ0KZGF0YSA9IGRhdGFfY3N2W2RhdGFfY3N2JGQxZTEgPT0gMiB8IGRhdGFfY3N2JGQxZTE9PTMgfCBkYXRhX2NzdiRkMWUxPT0xMF0NCg0KDQojIHBpZSBwbG90IG1hY2hlbg0Kd2VydGUgPC0gYygzNCw1MSwxMzIpDQprYXRlZ29yaWUgPC0gYygiQXVzc2VucG9saXRpayIsIlNpY2hlcmhlaXRzcG9saXRpayIsIlNvemlhbHBvbGl0aWsiKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iVmVydGVpbHVuZyBkZXIgZHJlaSBhdXNnZXfDpGh0ZW4gR2ViaWV0ZW4iKQ0KYGBgDQoNCiMgbmV1ZXIgRGF0YUZyYW1lIGVyc3RlbGxlbiB3byBEYXR1bSBzcGFsdGUgYWxzIERhdHVtIGdlc3BlaWNoZXJ0IGlzdCAoTmFtZSBkZXMgRGF0YUZyYW1lcyA9IGRhdGFfZGF0dW0pDQpgYGB7cn0NCmRhdGFfY3N2IDwtIGRhdGFfY3N2JT4lDQogIG11dGF0ZShkYXR1bT1hcy5EYXRlKGRhdHVtLCAiJWQuJW0uJVkiKSkNCg0KY2xhc3MoZGF0YV9jc3YkZGF0dW0pDQpgYGANCg0KDQojIFNwYWx0ZSBoaW56dWbDvGdlbiB3byBudXIgZGFzIEphaHIgc3RlaHQNCmBgYHtyfQ0KamFociA8LSBmb3JtYXQoYXMuUE9TSVhjdChkYXRhX2NzdiRkYXR1bSwgZm9ybWF0PSclZC4lbS4lWScpLCBmb3JtYXQ9IiVZIikNCm11dGF0ZShkYXRhX2NzdikNCmBgYA0KDQoNCg0KIyBQcm8gQWJ0cmVubnVuZyAyOSBKYWhyZQ0KYGBge3J9DQphIDwtIHN1bShqYWhyPj0xODc2ICYgamFocjwxOTA1KQ0KYiA8LSBzdW0oamFocj49MTkwNSAmIGphaHI8MTkzNCkNCmMgPC1zdW0oamFocj49MTkzNCAmIGphaHIgPDE5NjMpDQpkIDwtIHN1bShqYWhyPj0xOTYzICYgamFociA8MTk5MikNCmUgPC0gc3VtKGphaHI+PTE5OTIgJiBqYWhyIDw9MjAyMikNCg0KIyBQaWUgcGxvdA0Kd2VydGUgPC0gYygxNSwyMCwxOSw0MSwxMjIpDQprYXRlZ29yaWUgPC0gYygiMTg3Ni0xOTA0IiwiMTkwNS0xOTMzIiwiMTkzNC0xOTYyIiwiMTk2My0xOTkxIiwiMTk5Mi0yMDIyIiApDQpwaWUod2VydGUsbGFiZWxzPWthdGVnb3JpZSxtYWluPSJWZXJ0ZWlsdW5nIEFic3RpbW11bmdlbiIpDQoNCg0KIyBoaXN0b2dyYW1tDQpkYXRhIDwtIGRhdGEuZnJhbWUoSmFocmU9IGMoIjE4NzYtMTkwNCIsIjE5MDUtMTkzMyIsIjE5MzQtMTk2MiIsIjE5NjMtMTk5MSIsIjE5OTItMjAyMiIpLCBBbnphaGxfQWJzdGltbXVuZ2VuPSBjKDE1LDIwLDE5LDQxLDEyMikpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1KYWhyZSx5PUFuemFobF9BYnN0aW1tdW5nZW4pKStnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIpDQpgYGANCg0KIyBEaWUgZHJlaSB0ZWlsZ2ViaWV0ZSBlaW56ZWxuIHVudGVyc3VjaGVuDQoNCiMgQXVzc2VucG9saXRpayAoMikNCmBgYHtyfQ0KYSA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSAmIGRhdGFfY3N2WyJkMWUxIl0gPT0gMikNCmIgPC0gc3VtKGphaHI+PTE5MDUgJiBqYWhyPDE5MzQgJmRhdGFfY3N2WyJkMWUxIl0gPT0gMikNCmMgPC1zdW0oamFocj49MTkzNCAmIGphaHIgPDE5NjMgJmRhdGFfY3N2WyJkMWUxIl0gPT0gMikNCmQgPC0gc3VtKGphaHI+PTE5NjMgJiBqYWhyIDwxOTkyICZkYXRhX2NzdlsiZDFlMSJdID09IDIpDQplIDwtIHN1bShqYWhyPj0xOTkyICYgamFociA8PTIwMjIgJmRhdGFfY3N2WyJkMWUxIl0gPT0gMikNCg0KIyBQaWUgcGxvdA0Kd2VydGUgPC0gYyg0LDQsMiw1LDE5KQ0Ka2F0ZWdvcmllIDwtIGMoIjE4NzYtMTkwNCIsIjE5MDUtMTkzMyIsIjE5MzQtMTk2MiIsIjE5NjMtMTk5MSIsIjE5OTItMjAyMiIgKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iVmVydGVpbHVuZyBBYnN0aW1tdW5nZW4gQXVzc2VucG9saXRpayIpDQoNCg0KIyBoaXN0b2dyYW1tDQpkYXRhIDwtIGRhdGEuZnJhbWUoSmFocmU9IGMoIjE4NzYtMTkwNCIsIjE5MDUtMTkzMyIsIjE5MzQtMTk2MiIsIjE5NjMtMTk5MSIsIjE5OTItMjAyMiIpLCBBbnphaGxfQWJzdGltbXVuZ2VuX0F1c3NlbnBvbGl0aWs9IGMoNCw0LDIsNSwxOSkpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1KYWhyZSx5PUFuemFobF9BYnN0aW1tdW5nZW5fQXVzc2VucG9saXRpaykpK2dlb21fYmFyKHN0YXQ9ImlkZW50aXR5IikNCmBgYA0KDQoNCg0KIyBTaWNoZXJoZWl0c3BvbGl0aWsNCmBgYHtyfQ0KZiA8LSBzdW0oamFocj49MTg3NiAmIGphaHI8MTkwNSAmIGRhdGFfY3N2WyJkMWUxIl0gPT0gMykNCmcgPC0gc3VtKGphaHI+PTE5MDUgJiBqYWhyPDE5MzQgJmRhdGFfY3N2WyJkMWUxIl0gPT0gMykNCmggPC0gc3VtKGphaHI+PTE5MzQgJiBqYWhyIDwxOTYzICZkYXRhX2NzdlsiZDFlMSJdID09IDMpDQppIDwtIHN1bShqYWhyPj0xOTYzICYgamFociA8MTk5MiAmZGF0YV9jc3ZbImQxZTEiXSA9PSAzKQ0KaiA8LSBzdW0oamFocj49MTk5MiAmIGphaHIgPD0yMDIyICZkYXRhX2NzdlsiZDFlMSJdID09IDMpDQpmDQpnDQpoDQppDQpqDQoNCiMgUGllIHBsb3QNCndlcnRlIDwtIGMoNSwzLDEzLDEwLDIwKQ0Ka2F0ZWdvcmllIDwtIGMoIjE4NzYtMTkwNCIsIjE5MDUtMTkzMyIsIjE5MzQtMTk2MiIsIjE5NjMtMTk5MSIsIjE5OTItMjAyMiIgKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iVmVydGVpbHVuZyBBYnN0aW1tdW5nZW4gU2ljaGVyaGVpdHNwb2xpdGlrIikNCg0KDQojIGhpc3RvZ3JhbW0NCmRhdGEgPC0gZGF0YS5mcmFtZShKYWhyZT0gYygiMTg3Ni0xOTA0IiwiMTkwNS0xOTMzIiwiMTkzNC0xOTYyIiwiMTk2My0xOTkxIiwiMTk5Mi0yMDIyIiksIEFuemFobF9BYnN0aW1tdW5nZW5fU2ljaGVyaGVpdHNwb2xpdGlrPSBjKDUsMywxMywxMCwyMCkpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1KYWhyZSx5PUFuemFobF9BYnN0aW1tdW5nZW5fU2ljaGVyaGVpdHNwb2xpdGlrKSkrZ2VvbV9iYXIoc3RhdD0iaWRlbnRpdHkiKQ0KYGBgDQoNCg0KDQoNCiMgU296aWFscG9saXRpaw0KYGBge3J9DQprIDwtIHN1bShqYWhyPj0xODc2ICYgamFocjwxOTA1ICYgZGF0YV9jc3ZbImQxZTEiXSA9PSAxMCkNCmwgPC0gc3VtKGphaHI+PTE5MDUgJiBqYWhyPDE5MzQgJmRhdGFfY3N2WyJkMWUxIl0gPT0gMTApDQptIDwtIHN1bShqYWhyPj0xOTM0ICYgamFociA8MTk2MyAmZGF0YV9jc3ZbImQxZTEiXSA9PSAxMCkNCm4gPC0gc3VtKGphaHI+PTE5NjMgJiBqYWhyIDwxOTkyICZkYXRhX2NzdlsiZDFlMSJdID09IDEwKQ0KbyA8LSBzdW0oamFocj49MTk5MiAmIGphaHIgPD0yMDIyICZkYXRhX2NzdlsiZDFlMSJdID09IDEwKQ0Kaw0KbA0KbQ0Kbg0Kbw0KDQoNCiMgUGllIHBsb3QNCndlcnRlIDwtIGMoNiwxMyw0LDI2LDgzKQ0Ka2F0ZWdvcmllIDwtIGMoIjE4NzYtMTkwNCIsIjE5MDUtMTkzMyIsIjE5MzQtMTk2MiIsIjE5NjMtMTk5MSIsIjE5OTItMjAyMiIgKQ0KcGllKHdlcnRlLGxhYmVscz1rYXRlZ29yaWUsbWFpbj0iVmVydGVpbHVuZyBBYnN0aW1tdW5nZW4gU2ljaGVyaGVpdHNwb2xpdGlrIikNCg0KDQojIGhpc3RvZ3JhbW0NCmRhdGEgPC0gZGF0YS5mcmFtZShKYWhyZT0gYygiMTg3Ni0xOTA0IiwiMTkwNS0xOTMzIiwiMTkzNC0xOTYyIiwiMTk2My0xOTkxIiwiMTk5Mi0yMDIyIiksIEFuemFobF9BYnN0aW1tdW5nZW5fU296aWFscG9saXRpaz0gYyg2LDEzLDQsMjYsODMpKQ0KZ2dwbG90KGRhdGEsYWVzKHg9SmFocmUseT1BbnphaGxfQWJzdGltbXVuZ2VuX1NvemlhbHBvbGl0aWspKStnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIpDQpgYGANCg0KYGBge3J9DQpQb2xpdGlrYmVyZWljaCA8LSBkYXRhX2NzdiRhbm5haG1lDQpKYWhyZSA8LSBhcy5EYXRlKGRhdGFfY3N2JGRhdHVtLCIlZC4lbS4lWSIpDQoNCnggPC0gZ2dwbG90KGRhdGFfY3N2LCBhZXMoSmFocmUsIFBvbGl0aWtiZXJlaWNoKSkgKw0KICBnZW9tX2ppdHRlcigpICsNCiAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhkMWUxKSkgKw0KICBnZW9tX3ZsaW5lKGRhdGE9ZGF0YV9jc3YsIG1hcHBpbmc9YWVzKHhpbnRlcmNlcHQ9YXMuRGF0ZShkYXRhX2NzdiRkYXR1bVsyMjldLCIlZC4lbS4lWSIpKSwgY29sb3I9ImJsdWUiKQ0KDQoNCmBgYA0KDQoNCmBgYHtyfQ0KDQpgYGANCg0KDQpgYGB7cn0NClBvbGl0aWtiZXJlaWNoIDwtIGRhdGFfY3N2JGFubmFobWUNCkphaHJlIDwtIGFzLkRhdGUoZGF0YV9jc3YkZGF0dW0sIiVkLiVtLiVZIikNCg0KeSA8LSBnZ3Bsb3QoZGF0YV9jc3YsIGFlcyhKYWhyZSwgUG9saXRpa2JlcmVpY2gpLCBlaW5zID0gZmFjdG9yKGRhdGFfY3N2JGQxZTEpID09IDEpICsNCiAgZ2VvbV9qaXR0ZXIoKSArDQogIGZhY2V0X2dyaWQocm93cyA9IHZhcnMoZDFlMSkpICsNCiAgZ2VvbV92bGluZShkYXRhPWRhdGFfY3N2LCBtYXBwaW5nPWFlcyh4aW50ZXJjZXB0PWFzLkRhdGUoZGF0YV9jc3YkZGF0dW1bMjI5XSwiJWQuJW0uJVkiKSksIGNvbG9yPSJibHVlIikNCmBgYA0KDQpgYGB7cn0NCnkgKw0KICBsYWJzKA0KICBlaW5zID0gIlNvemlhbHBvbHRpayINCiAgKQ0KYGBgDQoNCmBgYHtyfQ0KeCA8LSBkYXRhX2NzdiRhbm5haG1lDQp5IDwtIGFzLkRhdGUoZGF0YV9jc3YkZGF0dW0sIiVkLiVtLiVZIikNCnBsb3R0IDwtIGdncGxvdChkYXRhX2NzdiwgYWVzKHksIHgsY29sb3IgPWQxZTEpKSArDQogIGdlb21faml0dGVyKCkrDQogICB0aGVtZSgNCiAgICBsZWdlbmQucG9zaXRpb24gPSBjKDEsIDEpLA0KICAgIGxlZ2VuZC5qdXN0aWZpY2F0aW9uID0gYyg5LCAxLjUpLA0KICAgIGxlZ2VuZC5iYWNrZ3JvdW5kID0gZWxlbWVudF9yZWN0KGZpbGwgPSAid2hpdGUiLCBjb2xvdXIgPSAiYmxhY2siKSwNCiAgICBwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KA0KICAgICAgc2l6ZSA9IHJlbCgxLjIpLCBsaW5laGVpZ2h0ID0gLjksDQogICAgICBmYW1pbHkgPSAiQ2FsaWJyaSIsIGZhY2UgPSAiYm9sZCIsIGNvbG91ciA9ICJicm93biINCiAgICApKSsNCiAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhkMWUxKSkNCiAgZ2VvbV92bGluZShkYXRhPWRhdGFfY3N2LCBtYXBwaW5nPWFlcyh4aW50ZXJjZXB0PWFzLkRhdGUoZGF0YV9jc3YkZGF0dW1bMjI5XSwiJWQuJW0uJVkiKSksIGNvbG9yPSJibHVlIikNCnBsb3R0DQpgYGANCg0KDQoNCg0KDQpgYGB7cn0NCmdsaW1wc2UoZGF0YV9jc3YpDQpkYXRhX2NzdiRkYXR1bSA8LSBsdWJyaWRhdGU6OmRteShkYXRhX2NzdiRkYXR1bSkNCiMgSmFociBhbHMgZWlnZW5lIFZhcmlhYmxlDQpkYXRhX2NzdiAlPD4lICMgbWFncml0dHItUGFrZXQgDQogIG11dGF0ZShqYWhyID0gbHVicmlkYXRlOjp5ZWFyKGRhdHVtKSkNCg0KIyBXZXJ0YXVzcHLDpGd1bmcgU3RpY2hwcm9iZQ0KZGF0YV9jc3YgJT4lIA0KICBkaXN0aW5jdChhbm5haG1lKQ0KIyMgaGF0IG51ciBBbm5haG1lbiBvZGVyIEFibGVobnVuZ2VuIOKGkiBVbXdhbmRsdW5nIGluIEludGVnZXINCmRhdGFfY3N2JGFubmFobWUgPC0gYXMuaW50ZWdlcihkYXRhX2NzdiRhbm5haG1lKQ0KDQoNCnllYXJfaW1wb3J0YW50X3dhcnMgPC0gbHVicmlkYXRlOjp5bWQoYygiMTkxNC0wMS0wMSIsICIxOTE1LTAxLTAxIiwgIjE5MTYtMDEtMDEiLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICIxOTE3LTAxLTAxIiwgIjE5MTgtMDEtMDEiKSkNCmZyYXVlbnN0aW1tcmVjaHQgPC0gMTk3MQ0KDQooYWJzdGltbXVuZ3NlcmdlYm5pc3NlIDwtIA0KICAgIGdncGxvdChkYXRhX2NzdiwgYWVzKGRhdHVtLCANCiAgICAgICAgICAgICAgICAgICAgICAgICBhbm5haG1lKSkgKw0KICAgICAgI2dlb21faml0dGVyKCkgKyAgIyB2ZXJ0ZWlsdCBEYXRlbnB1bmt0ZSB1bmdlZsOkaHIgYWJlciBuaWNodCBleGFrdCDihpIgdW5rb3JyZWt0ZSBBdXNzYWdlDQogICAgICBnZW9tX3BvaW50KCkgKw0KICAgICAgZmFjZXRfZ3JpZChyb3dzID0gdmFycyhwb2xpdGlrYmVyZWljaF8xKSkgKw0KICAgICAgZ2VvbV92bGluZSh4aW50ZXJjZXB0PXllYXJfaW1wb3J0YW50X3dhcnMsDQogICAgICAgICAgICAgICAgIGNvbG9yPSJibHVlIiwNCiAgICAgICAgICAgICAgICAgYWxwaGEgPSAwLjMpICsgICMgVHJhbnNwYXJlbnogZWluc3RlbGxlbiwgamUgdGllZmVyIGRlc3RvIHRyYW5zcGFyZW50ZXINCiAgICAgIGdlb21fdmxpbmUoeGludGVyY2VwdCA9IGZyYXVlbnN0aW1tcmVjaHQsDQogICAgICAgICAgICAgICAgIGNvbG9yID0gIm9yYW5nZSIsDQogICAgICAgICAgICAgICAgIGFscGhhID0gMC43KSArDQogICAgICBnZ3RpdGxlKCJUT0RPOiBUaXRlbCBlaW5mw7xnZW4iLA0KICAgICAgICAgICAgICBzdWJ0aXRsZSA9ICJ6LkIuIGbDvHIgQmVzY2hyaWViIGRlciBKYWhyZXNsaW5pZW4gbnV0emVuIChCbGF1ID0gS3JpZWdzamFocmUgdm9uIGJpcykiKSArDQogICAgc2NhbGVfeF9kYXRlKGRhdGVfYnJlYWtzID0gIjIwIHllYXJzIiwgZGF0ZV9sYWJlbHMgPSAiJVkiKSAgIyBWYXJpYWJsZSBqYWhyIHVubsO2dGlnIGRhbmsgZGllc2VtIEJlZmVobA0KKQ0KDQojIFZhbGlkaWVydW5nIHBsb3QNCmRhdGFfY3N2ICU+JSBkaXN0aW5jdChhbm5haG1lKSAgIyBSZXN1bHRhdDogZ2VvbV9qaXR0ZXIoKSBlbnRmZXJudA0KYGBgDQoNCg0KYGBge3J9DQpkYXRhX2Nzdg0KZGF0YV9jc3YkcC5mZHAgJTw+JSBhcy5pbnRlZ2VyKCkNCnBsb3QoZGF0YV9jc3YkcC5mZHApDQoNCnN1bW1hcnkoZGF0YV9jc3YkcC5mZHApDQoNCihmZHBfc3RpbW1lbXBmZWhsdW5nX2FsbGVzIDwtIA0KICBnZ3Bsb3QoZGF0YV9jc3YpICsNCiAgYWVzKHggPSBkYXR1bSwgeSA9IHAuZmRwKSArDQogIGdlb21fbGluZShzaXplID0gMC41LCBjb2xvdXIgPSAiIzExMjQ0NiIpICsNCiAgbGFicyh4ID0gIkphaHIiLCB5ID0gIldlcnQgKHAtZmRwKSIsIHRpdGxlID0gIkZUUCBTdGltbWVtcGZlaGx1bmdlbiIsIA0KICAgICAgIHN1YnRpdGxlID0gIldlcnQgPCAxMDogU3RpbW1lbXBmZWhsdW5nIHZvcmhhbmRlbiIpICArDQogIHRoZW1lX21pbmltYWwoKQ0KKQ0KDQojIFRpZWZlIFdlcnRlIGJlc3NlciBiZXRyYWNodGVuIG1pdCBwbG90bHkNCmdncGxvdGx5KGZkcF9zdGltbWVtcGZlaGx1bmdfYWxsZXMpDQoNCiMgQW50d29ydCBhdWYgRnJhZ2U6IHouQi4gbnVyIEZUUC1BbnRlaWxlIGFuemVpZ2VuDQojIyBudXIgRGF0ZW4gYXVzd2VydGVuLCBiZWkgZGVuZW4gRkRQIGFrdGl2IHdhcg0KKGRhdGVuX2NoYWxsZW5nZV9zdGljaHByb2JlX2ZkcCA8LSANCiAgZGF0YV9jc3YgJT4lIA0KICAgIGZpbHRlcihwLmZkcCA8IDEwKQ0KKQ0KDQooZmRwX3N0aW1tZW1wZmVobHVuZ19qYSA8LSANCiAgZ2dwbG90KGRhdGVuX2NoYWxsZW5nZV9zdGljaHByb2JlX2ZkcCkgKw0KICBhZXMoeCA9IGRhdHVtLCB5ID0gcC5mZHApICsNCiAgZ2VvbV9saW5lKHNpemUgPSAwLjUsIGNvbG91ciA9ICIjMTEyNDQ2IikgKw0KICBsYWJzKHggPSAiSmFociIsIHkgPSAiV2VydCAocC1mZHApIiwgdGl0bGUgPSAiRlRQIFN0aW1tZW1wZmVobHVuZ2VuIiwgDQogICAgICAgc3VidGl0bGUgPSAiV2VydCA8IDEwOiBTdGltbWVtcGZlaGx1bmcgdm9yaGFuZGVuIikgKw0KICB0aGVtZV9taW5pbWFsKCkNCikNCg0KIyBEYXRlbiBnZW5hdWVyIGVyZm9yc2NoZW4NCmdncGxvdGx5KGZkcF9zdGltbWVtcGZlaGx1bmdfamEpDQoNCg0KYGBg</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoNCiMgUGFja2V0ZSBpbXBvcnRpZXJlbg0KYGBge3J9DQpsaWJyYXJ5KGVzcXVpc3NlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KGRwbHlyKQ0KbGlicmFyeShtYWdyaXR0cikNCmBgYA0KDQoNCiMgRGF0ZW4gZWlubGVzZW4NCmBgYHtyfQ0KZGF0YV9jc3YgPC0gcmVhZC5jc3YyKCJEYXRlbnNhdHpBYnN0aW1tdW5nZW4uY3N2IiwgbmEgPSAiTkEiKQ0KYGBgDQpgYGB7cn0NCmRhdGFfY3N2IDwtIGRhdGFfY3N2JT4lDQogIG11dGF0ZShkYXR1bT1hcy5EYXRlKGRhdHVtLCAiJWQuJW0uJVkiKSkNCg0KY2xhc3MoZGF0YV9jc3YkZGF0dW0pDQpgYGANCg0KIyBEYXRlbnNhdHogbnVyIG1pdCBBSFYgQWJzdGltbXVuZ2VuDQpgYGB7cn0NCmFodiA8LSBzdWJzZXQoZGF0YV9jc3YsIGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gMjgxIHxhbnIgPT0gMzUyIHxhbnIgPT0gNDIzIHwgYW5yID09IDQ0NCB8IGFuciA9PSA0NjkgfGFuciA9PSA0ODEgfGFuciA9PSA0ODkuMXwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gNDg5LjIgfGFuciA9PSA0ODkuMyB8YW5yID09IDUwNyB8IGFuciA9PSA1MDggfCBhbnIgPT0gNTIzIHxhbnIgPT0gNTM2IHxhbnIgPT0gNTk0IHwgYW5yID09IDYwNiB8IGFuciA9PSA2MTQgfGFuciA9PSA2MjcgfGFuciA9PSAxMDEgfCBhbnIgPT0gMTE1IHwgYW5yID09IDE0NCB8YW5yID09IDQwMSB8YW5yID09IDQyMikNCmFodg0KYGBgDQojIEJlaSBTcGFsdGUgYW5uYWhtZSAuLDEsMCBkdXJjaCBXb3J0ZSBlcnNldHplbg0KYGBge3J9DQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMCJdIDwtICJBYmdlbGVobnQiDQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMSJdIDwtICJBbmdlbm9tbWVuIg0KYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gIi4iXSA8LSAiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCINCg0KYGBgDQoNCiMgV2llIHZpZWxlIEFic3RpbW11bmdlbiB3dXJkZW4gYWJnZWhsZWhudCAvIGFuZ2Vub21tZW4gLyBTdGljaGZyYWdlIG9ic29sZXQ/DQpgYGB7cn0NCiMgWmFobGVuIGhlcmF1c2ZpbmRlbg0KYW5nZW5vbW1lbiA8LSBhaHYgJT4lDQogIGdyb3VwX2J5KGFubmFobWUpICU+JQ0KICBjb3VudCgpDQoNCiMgQWxzIEJveHBsb3QgZGFyc3RlbGxlbg0KZGF0YSA8LSBkYXRhLmZyYW1lKEVyZ2Vibmlzcz0gYygiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCIsIkFubmFobWUiLCJBYmxlaG51bmciKSwgQW56YWhsPSBjKDEsNiwxNykpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1FcmdlYm5pc3MseT1BbnphaGwpKStnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIpDQpgYGANCg0KDQoNCg0KIyBEYXRhRnJhbWUgbnVyIG1pdCBEYXR1bSwgQWJzdGltbXVuZyB1bmQgRXJnZWJuaXNzDQpgYGB7cn0NCmFodl9FcmdlYm5pc3NlIDwtIHN1YnNldChhaHYsIHNlbGVjdD1jKGRhdHVtLHRpdGVsX2t1cnpfZCxhbm5haG1lKSkNCmFodl9FcmdlYm5pc3NlDQpgYGANCg0KIyBEYXRhIEZyYW1lIG1pdCBBbm5haG1lbg0KYGBge3J9DQphYmxlaG51bmcgPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09ICJBYmdlbGVobnQiKSANCmBgYA0KDQojIERhdGEgRnJhbWUgbWl0IEFibGVobnVuZw0KYGBge3J9DQphbm5haG1lbiA8LSBzdWJzZXQoYWh2X0VyZ2Vibmlzc2UsIGFubmFobWUgPT0gIkFuZ2Vub21tZW4iKSANCmBgYA0KDQoNCiMgRGF0YSBGcmFtZSBtaXQgU3RpY2hmcmFnZQ0KYGBge3J9DQpvYnNvbGV0IDwtIHN1YnNldChhaHZfRXJnZWJuaXNzZSwgYW5uYWhtZSA9PSAiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCIpIA0KYGBgDQoNCg0KIyBQbG90IEFubmFobWVuIG1pdCBKYWhyZXNhbmdhYmVuDQpgYGB7cn0NClRpdGVsIDwtIGFubmFobWVuJHRpdGVsX2t1cnpfZA0KSmFociA8LSBhbm5haG1lbiRkYXR1bQ0KDQpnZ3Bsb3QoYW5uYWhtZW4pICsNCiBhZXMoeCA9IEphaHIsIHkgPSBUaXRlbCkgKw0KIGdlb21fdGlsZShzaXplID0gMSkgKw0KIHRoZW1lX21pbmltYWwoKSsNCiBnZ3RpdGxlKCJBbm5haG1lbiBtaXQgSmFocmVzemFobGVuIikNCmBgYA0KDQoNCiMgUGxvdCBBYmxlaG51bmdlbiBtaXQgSmFocmVzYW5nYWJlbg0KYGBge3J9DQpUaXRlbCA8LSBhYmxlaG51bmckdGl0ZWxfa3Vyel9kDQpKYWhyIDwtIGFibGVobnVuZyRkYXR1bQ0KZ2dwbG90KGFibGVobnVuZykgKw0KIGFlcyh4ID0gSmFociwgeSA9IFRpdGVsKSArDQogZ2VvbV90aWxlKHNpemUgPSAxLjIpICsNCiB0aGVtZV9taW5pbWFsKCkrDQogZ2d0aXRsZSgiQWJsZWhudW5nZW4gbWl0IEphaHJlc3phaGxlbiIpDQpgYGANCg0KDQoNCg0KYGBge3J9DQpUaXRlbCA8LSBhaHYkdGl0ZWxfa3Vyel9kDQpFcmdlYm5pcyA8LSBhaHYkYW5uYWhtZQ0KZ2dwbG90KGFodikgKw0KIGFlcyh4ID0gRXJnZWJuaXMsIHkgPSBUaXRlbCkgKw0KIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogdGhlbWVfbWluaW1hbCgpKw0KIGdndGl0bGUoIkFic3RpbW11bmdlbiBtaXQgRXJnZWJuaXNzZW4iKQ0KYGBgDQoNCg0KYGBge3J9DQpnZ3Bsb3QoYWh2X0VyZ2Vibmlzc2UpICsNCiBhZXMoeCA9IGRhdHVtLCBmaWxsID0gYW5uYWhtZSkgKw0KIGdlb21faGlzdG9ncmFtKGJpbnMgPSAzMEwpICsNCiBzY2FsZV9maWxsX2h1ZShkaXJlY3Rpb24gPSAxKSArDQogdGhlbWVfbWluaW1hbCgpKw0KIHNjYWxlX2ZpbGxfbWFudWFsKCdFcmdlYm5pcycsIHZhbHVlcz1jKCdwaW5rJywgJ2RhcmtncmVlbicsImJsYWNrIikpDQpgYGANCg0KDQoNCmBgYHtyfQ0KZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArDQogIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArDQogIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogIHRoZW1lX21pbmltYWwoKQ0KYGBgDQoNCg==</div>
 
 
 
@@ -2283,7 +1992,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("RNotebookChallenge.nb.Rmd");
+  window.initializeSourceEmbed("Challenge.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

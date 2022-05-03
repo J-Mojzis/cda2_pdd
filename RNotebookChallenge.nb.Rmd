@@ -7,6 +7,7 @@ output: html_notebook
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
+library(magrittr)
 ```
 
 
@@ -274,12 +275,169 @@ ggplot(data,aes(x=Jahre,y=Anzahl_Abstimmungen_Sozialpolitik))+geom_bar(stat="ide
 ```
 
 ```{r}
-ggplot(data_csv, aes(as.Date(data_csv$datum,"%d.%m.%Y"), annahme)) +
+Politikbereich <- data_csv$annahme
+Jahre <- as.Date(data_csv$datum,"%d.%m.%Y")
+
+x <- ggplot(data_csv, aes(Jahre, Politikbereich)) +
   geom_jitter() +
   facet_grid(rows = vars(d1e1)) +
-  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],"%d.%m.%Y")), color="blue", colour = 'red')
+  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],"%d.%m.%Y")), color="blue")
+
+
 ```
 
 
+```{r}
+
+```
+
+
+```{r}
+Politikbereich <- data_csv$annahme
+Jahre <- as.Date(data_csv$datum,"%d.%m.%Y")
+
+y <- ggplot(data_csv, aes(Jahre, Politikbereich), eins = factor(data_csv$d1e1) == 1) +
+  geom_jitter() +
+  facet_grid(rows = vars(d1e1)) +
+  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],"%d.%m.%Y")), color="blue")
+```
+
+```{r}
+y +
+  labs(
+  eins = "Sozialpoltik"
+  )
+```
+
+```{r}
+x <- data_csv$annahme
+y <- as.Date(data_csv$datum,"%d.%m.%Y")
+plott <- ggplot(data_csv, aes(y, x,color =d1e1)) +
+  geom_jitter()+
+   theme(
+    legend.position = c(1, 1),
+    legend.justification = c(9, 1.5),
+    legend.background = element_rect(fill = "white", colour = "black"),
+    plot.title = element_text(
+      size = rel(1.2), lineheight = .9,
+      family = "Calibri", face = "bold", colour = "brown"
+    ))+
+  facet_grid(rows = vars(d1e1))
+  geom_vline(data=data_csv, mapping=aes(xintercept=as.Date(data_csv$datum[229],"%d.%m.%Y")), color="blue")
+plott
+```
+
+
+
+
+
+```{r}
+glimpse(data_csv)
+data_csv$datum <- lubridate::dmy(data_csv$datum)
+# Jahr als eigene Variable
+data_csv %<>% # magrittr-Paket 
+  mutate(jahr = lubridate::year(datum))
+
+# Wertausprägung Stichprobe
+data_csv %>% 
+  distinct(annahme)
+## hat nur Annahmen oder Ablehnungen → Umwandlung in Integer
+data_csv$annahme <- as.integer(data_csv$annahme)
+
+
+year_important_wars <- lubridate::ymd(c("1914-01-01", "1915-01-01", "1916-01-01",
+                                        "1917-01-01", "1918-01-01"))
+frauenstimmrecht <- 1971
+
+(abstimmungsergebnisse <- 
+    ggplot(data_csv, aes(datum, 
+                         annahme)) +
+      #geom_jitter() +  # verteilt Datenpunkte ungefähr aber nicht exakt → unkorrekte Aussage
+      geom_point() +
+      facet_grid(rows = vars(politikbereich_1)) +
+      geom_vline(xintercept=year_important_wars,
+                 color="blue",
+                 alpha = 0.3) +  # Transparenz einstellen, je tiefer desto transparenter
+      geom_vline(xintercept = frauenstimmrecht,
+                 color = "orange",
+                 alpha = 0.7) +
+      ggtitle("TODO: Titel einfügen",
+              subtitle = "z.B. für Beschrieb der Jahreslinien nutzen (Blau = Kriegsjahre von bis)") +
+    scale_x_date(date_breaks = "20 years", date_labels = "%Y")  # Variable jahr unnötig dank diesem Befehl
+)
+
+# Validierung plot
+data_csv %>% distinct(annahme)  # Resultat: geom_jitter() entfernt
+```
+
+
+```{r}
+data_csv
+data_csv$p.fdp %<>% as.integer()
+plot(data_csv$p.fdp)
+
+summary(data_csv$p.fdp)
+
+(fdp_stimmempfehlung_alles <- 
+  ggplot(data_csv) +
+  aes(x = datum, y = p.fdp) +
+  geom_line(size = 0.5, colour = "#112446") +
+  labs(x = "Jahr", y = "Wert (p-fdp)", title = "FTP Stimmempfehlungen", 
+       subtitle = "Wert < 10: Stimmempfehlung vorhanden")  +
+  theme_minimal()
+)
+
+# Tiefe Werte besser betrachten mit plotly
+ggplotly(fdp_stimmempfehlung_alles)
+
+# Antwort auf Frage: z.B. nur FTP-Anteile anzeigen
+## nur Daten auswerten, bei denen FDP aktiv war
+(daten_challenge_stichprobe_fdp <- 
+  data_csv %>% 
+    filter(p.fdp < 10)
+)
+
+(fdp_stimmempfehlung_ja <- 
+  ggplot(daten_challenge_stichprobe_fdp) +
+  aes(x = datum, y = p.fdp) +
+  geom_line(size = 0.5, colour = "#112446") +
+  labs(x = "Jahr", y = "Wert (p-fdp)", title = "FTP Stimmempfehlungen", 
+       subtitle = "Wert < 10: Stimmempfehlung vorhanden") +
+  theme_minimal()
+)
+
+# Daten genauer erforschen
+ggplotly(fdp_stimmempfehlung_ja)
+
+
+```
+
+# Datensatz nur mit AHV Abstimmungen
+```{r}
+ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 |anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
+ahv
+```
+
+
+# Wie viele Abstimmungen wurden abgehlehnt / angenommen / Stichfrage obsolet?
+```{r}
+# Zahlen herausfinden
+angenommen <- ahv %>%
+  group_by(annahme) %>%
+  count()
+
+# Als Boxplot darstellen
+data <- data.frame(Ergebniss= c("Stichfrage obsolet","Annahme","Ablehnung"), Anzahl= c(1,17,6))
+ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
+```
+
+# AHV Abstimmungen verteilt auf die Jahre
+```{r}
+library(esquisse)
+```
+
+```{r}
+esquisser(ahv)
+```
 
 
