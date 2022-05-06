@@ -1760,15 +1760,18 @@ pre code {
 
 
 <!-- rnb-text-begin -->
+<div id="fragestellung-wieso-gestalltet-sich-die-finanzierung-der-ahv-so-schwierig" class="section level1">
+<h1>Fragestellung: Wieso gestalltet sich die Finanzierung der AHV so
+schwierig?</h1>
+</div>
 <div id="packete-importieren" class="section level1">
 <h1>Packete importieren</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShlc3F1aXNzZSlcbmxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShkcGx5cilcbmxpYnJhcnkobWFncml0dHIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShlc3F1aXNzZSlcbmxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShtYWdyaXR0cilcbmBgYCJ9 -->
 <pre class="r"><code>library(esquisse)
 library(ggplot2)
 library(tidyverse)
-library(dplyr)
 library(magrittr)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -1782,6 +1785,11 @@ library(magrittr)</code></pre>
 <pre class="r"><code>data_csv &lt;- read.csv2(&quot;DatensatzAbstimmungen.csv&quot;, na = &quot;NA&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="datum-spalte-zu-datentyp-date-ändern" class="section level1">
+<h1>Datum Spalte zu Datentyp “date” ändern</h1>
+<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3YgPC0gZGF0YV9jc3YlPiVcbiAgbXV0YXRlKGRhdHVtPWFzLkRhdGUoZGF0dW0sIFwiJWQuJW0uJVlcIikpXG5cbmNsYXNzKGRhdGFfY3N2JGRhdHVtKVxuYGBgIn0= -->
 <pre class="r"><code>data_csv &lt;- data_csv%&gt;%
@@ -1792,26 +1800,25 @@ class(data_csv$datum)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="datensatz-nur-mit-ahv-abstimmungen" class="section level1">
-<h1>Datensatz nur mit AHV Abstimmungen</h1>
+<div id="datensatz-nur-mit-ahv-abstimmungen-erstellen" class="section level1">
+<h1>Datensatz nur mit AHV Abstimmungen erstellen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2IDwtIHN1YnNldChkYXRhX2NzdiwgYW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA0MjMgfCBhbnIgPT0gNDQ0IHwgYW5yID09IDQ2OSB8YW5yID09IDQ4MSB8YW5yID09IDQ4OS4xfCBhbnIgPT0gMjgwIHwgYW5yID09IDI4MSB8YW5yID09IDM1MiB8YW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSA0ODkuMiB8YW5yID09IDQ4OS4zIHxhbnIgPT0gNTA3IHwgYW5yID09IDUwOCB8IGFuciA9PSA1MjMgfGFuciA9PSA1MzYgfGFuciA9PSA1OTQgfCBhbnIgPT0gNjA2IHwgYW5yID09IDYxNCB8YW5yID09IDYyNyB8YW5yID09IDEwMSB8IGFuciA9PSAxMTUgfCBhbnIgPT0gMTQ0IHxhbnIgPT0gNDAxIHxhbnIgPT0gNDIyKVxuYWh2XG5gYGAifQ== -->
-<pre class="r"><code>ahv &lt;- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 |anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2IDwtIHN1YnNldChkYXRhX2NzdiwgYW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA0MjMgfCBhbnIgPT0gNDQ0IHwgYW5yID09IDQ2OSB8YW5yID09IDQ4MSB8YW5yID09IDQ4OS4xfCBhbnIgPT0gMjgwIHwgYW5yID09IDI4MSB8YW5yID09IDM1MiB8YW5yID09IDk5IHwgYW5yID09IDI4MCB8IGFuciA9PSA0ODkuMiB8YW5yID09IDQ4OS4zIHwgYW5yID09IDUwNyB8IGFuciA9PSA1MDggfCBhbnIgPT0gNTIzIHxhbnIgPT0gNTM2IHxhbnIgPT0gNTk0IHwgYW5yID09IDYwNiB8IGFuciA9PSA2MTQgfGFuciA9PSA2MjcgfGFuciA9PSAxMDEgfCBhbnIgPT0gMTE1IHwgYW5yID09IDE0NCB8YW5yID09IDQwMSB8YW5yID09IDQyMilcbmFodlxuYGBgIn0= -->
+<pre class="r"><code>ahv &lt;- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 | anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
 ahv</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="bei-spalte-annahme-.10-durch-worte-ersetzen" class="section level1">
-<h1>Bei Spalte annahme .,1,0 durch Worte ersetzen</h1>
+<div id="bei-ahv-datensatz-spalte-annahme-.10-durch-worte-ersetzen" class="section level1">
+<h1>Bei AHV Datensatz Spalte annahme .,1,0 durch Worte ersetzen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIwXCJdIDwtIFwiQWJnZWxlaG50XCJcbmFodiRhbm5haG1lW2FodiRhbm5haG1lID09IFwiMVwiXSA8LSBcIkFuZ2Vub21tZW5cIlxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIuXCJdIDwtIFwiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldFwiXG5cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIwXCJdIDwtIFwiQWJnZWxlaG50XCJcbmFodiRhbm5haG1lW2FodiRhbm5haG1lID09IFwiMVwiXSA8LSBcIkFuZ2Vub21tZW5cIlxuYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gXCIuXCJdIDwtIFwiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldFwiXG5gYGAifQ== -->
 <pre class="r"><code>ahv$annahme[ahv$annahme == &quot;0&quot;] &lt;- &quot;Abgelehnt&quot;
 ahv$annahme[ahv$annahme == &quot;1&quot;] &lt;- &quot;Angenommen&quot;
-ahv$annahme[ahv$annahme == &quot;.&quot;] &lt;- &quot;Ergebnis der Stichfrage obsolet&quot;
-</code></pre>
+ahv$annahme[ahv$annahme == &quot;.&quot;] &lt;- &quot;Ergebnis der Stichfrage obsolet&quot;</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1834,12 +1841,12 @@ ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat=&quot;identity&quot;)</code
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="dataframe-nur-mit-datum-abstimmung-und-ergebniss" class="section level1">
-<h1>DataFrame nur mit Datum, Abstimmung und Ergebniss</h1>
+<div id="dataframe-nur-mit-datum-abstimmung-und-ergebnis" class="section level1">
+<h1>DataFrame nur mit Datum, Abstimmung und Ergebnis</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2X0VyZ2Vibmlzc2UgPC0gc3Vic2V0KGFodiwgc2VsZWN0PWMoZGF0dW0sdGl0ZWxfa3Vyel9kLGFubmFobWUpKVxuYWh2X0VyZ2Vibmlzc2VcbmBgYCJ9 -->
-<pre class="r"><code>ahv_Ergebnisse &lt;- subset(ahv, select=c(datum,titel_kurz_d,annahme))
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWh2X0VyZ2Vibmlzc2UgPC0gc3Vic2V0KGFodiwgc2VsZWN0PWMoZGF0dW0sdGl0ZWxfa3Vyel9kLGFubmFobWUsdm9sa2phLnByb3opKVxuYWh2X0VyZ2Vibmlzc2VcbmBgYCJ9 -->
+<pre class="r"><code>ahv_Ergebnisse &lt;- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
 ahv_Ergebnisse</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -1849,8 +1856,9 @@ ahv_Ergebnisse</code></pre>
 <h1>Data Frame mit Annahmen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsZWhudW5nIDwtIHN1YnNldChhaHZfRXJnZWJuaXNzZSwgYW5uYWhtZSA9PSBcIkFiZ2VsZWhudFwiKSBcbmBgYCJ9 -->
-<pre class="r"><code>ablehnung &lt;- subset(ahv_Ergebnisse, annahme == &quot;Abgelehnt&quot;) </code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsZWhudW5nIDwtIHN1YnNldChhaHZfRXJnZWJuaXNzZSwgYW5uYWhtZSA9PSBcIkFiZ2VsZWhudFwiKSBcbmFibGVobnVuZyR2b2xramEucHJvel9uIDwtYXMubnVtZXJpYyhhYmxlaG51bmckdm9sa2phLnByb3opXG5gYGAifQ== -->
+<pre class="r"><code>ablehnung &lt;- subset(ahv_Ergebnisse, annahme == &quot;Abgelehnt&quot;) 
+ablehnung$volkja.proz_n &lt;-as.numeric(ablehnung$volkja.proz)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1859,18 +1867,9 @@ ahv_Ergebnisse</code></pre>
 <h1>Data Frame mit Ablehnung</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5uYWhtZW4gPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09IFwiQW5nZW5vbW1lblwiKSBcbmBgYCJ9 -->
-<pre class="r"><code>annahmen &lt;- subset(ahv_Ergebnisse, annahme == &quot;Angenommen&quot;) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="data-frame-mit-stichfrage" class="section level1">
-<h1>Data Frame mit Stichfrage</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub2Jzb2xldCA8LSBzdWJzZXQoYWh2X0VyZ2Vibmlzc2UsIGFubmFobWUgPT0gXCJFcmdlYm5pcyBkZXIgU3RpY2hmcmFnZSBvYnNvbGV0XCIpIFxuYGBgIn0= -->
-<pre class="r"><code>obsolet &lt;- subset(ahv_Ergebnisse, annahme == &quot;Ergebnis der Stichfrage obsolet&quot;) </code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5uYWhtZW4gPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09IFwiQW5nZW5vbW1lblwiKSBcbmFubmFobWVuJHZvbGtqYS5wcm96X24gPC1hcy5udW1lcmljKGFubmFobWVuJHZvbGtqYS5wcm96KVxuYGBgIn0= -->
+<pre class="r"><code>annahmen &lt;- subset(ahv_Ergebnisse, annahme == &quot;Angenommen&quot;) 
+annahmen$volkja.proz_n &lt;-as.numeric(annahmen$volkja.proz)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1907,6 +1906,9 @@ ggplot(ablehnung) +
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="plot-mit-ahv-abstimmungen-und-ergebnissen" class="section level1">
+<h1>Plot mit AHV Abstimmungen und Ergebnissen</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVGl0ZWwgPC0gYWh2JHRpdGVsX2t1cnpfZFxuRXJnZWJuaXMgPC0gYWh2JGFubmFobWVcbmdncGxvdChhaHYpICtcbiBhZXMoeCA9IEVyZ2VibmlzLCB5ID0gVGl0ZWwpICtcbiBnZW9tX3RpbGUoc2l6ZSA9IDEuMikgK1xuIHRoZW1lX21pbmltYWwoKStcbiBnZ3RpdGxlKFwiQWJzdGltbXVuZ2VuIG1pdCBFcmdlYm5pc3NlblwiKVxuYGBgIn0= -->
@@ -1920,32 +1922,218 @@ ggplot(ahv) +
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="plot-mit-ahv-abstimmungen-und-ergebnissen-und-jahren" class="section level1">
+<h1>Plot mit AHV Abstimmungen und Ergebnissen und Jahren</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gYWVzKHggPSBkYXR1bSwgZmlsbCA9IGFubmFobWUpICtcbiBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzBMKSArXG4gc2NhbGVfZmlsbF9odWUoZGlyZWN0aW9uID0gMSkgK1xuIHRoZW1lX21pbmltYWwoKStcbiBzY2FsZV9maWxsX21hbnVhbCgnRXJnZWJuaXMnLCB2YWx1ZXM9YygncGluaycsICdkYXJrZ3JlZW4nLFwiYmxhY2tcIikpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gYWVzKHggPSBkYXR1bSwgZmlsbCA9IGFubmFobWUpICtcbiBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzBMKSArXG4gc2NhbGVfZmlsbF9odWUoZGlyZWN0aW9uID0gMSkgK1xuIHRoZW1lX21pbmltYWwoKStcbiBzY2FsZV9maWxsX21hbnVhbCgnRXJnZWJuaXMnLCB2YWx1ZXM9YygncGluazMnLCAnZGFya2dyZWVuJywgXCJibGFja1wiKSlcbmBgYCJ9 -->
 <pre class="r"><code>ggplot(ahv_Ergebnisse) +
  aes(x = datum, fill = annahme) +
  geom_histogram(bins = 30L) +
  scale_fill_hue(direction = 1) +
  theme_minimal()+
- scale_fill_manual(&#39;Ergebnis&#39;, values=c(&#39;pink&#39;, &#39;darkgreen&#39;,&quot;black&quot;))</code></pre>
+ scale_fill_manual(&#39;Ergebnis&#39;, values=c(&#39;pink3&#39;, &#39;darkgreen&#39;, &quot;black&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="ergebnisse-der-abstimmungen-und-jahreszahlen" class="section level1">
+<h1>Ergebnisse der Abstimmungen und Jahreszahlen</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArXG4gIGdlb21fdGlsZShzaXplID0gMS4yKSArXG4gIGxhYnMoXG4gICAgeCA9IFwiRGF0dW1cIixcbiAgICB5ID0gXCJFcmdlYm5pc1wiLFxuICAgIHRpdGxlID0gXCJBYnN0aW1tdW5nZW4genVyIEFIVlwiXG4gICkgK1xuICB0aGVtZV9taW5pbWFsKCkgK1xuICB0aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSAxNUwsIGhqdXN0ID0gMC41KSlcbmBgYCJ9 -->
+<pre class="r"><code>ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = annahme) +
+  geom_tile(size = 1.2) +
+  labs(
+    x = &quot;Datum&quot;,
+    y = &quot;Ergebnis&quot;,
+    title = &quot;Abstimmungen zur AHV&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="gesamtübersicht-der-ahv-abstimmungen" class="section level1">
+<h1>Gesamtübersicht der AHV Abstimmungen</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSB0aXRlbF9rdXJ6X2QsIGZpbGwgPSBhbm5haG1lKSArXG4gIGdlb21fdGlsZShzaXplID0gMS4yKSArXG4gIHNjYWxlX2ZpbGxfbWFudWFsKFxuICAgIHZhbHVlcyA9IGMoQWJnZWxlaG50ID0gXCJwaW5rMlwiLFxuICAgIEFuZ2Vub21tZW4gPSBcInNlYWdyZWVuNFwiKVxuICApICtcbiAgbGFicyhcbiAgICB4ID0gXCJKYWhyXCIsXG4gICAgeSA9IFwiVGl0ZWwgZGVyIEFic3RpbW11bmdcIixcbiAgICB0aXRsZSA9IFwiR2VzYW10w7xiZXJzaWNodCBkZXIgQUhWIEFic3RpbW11bmdlblwiXG4gICkgK1xuICBsYWJzKGZpbGwgPSBcIkVyZ2VibmlzXCIpICtcbiAgdGhlbWVfbWluaW1hbCgpICtcbiAgdGhlbWUocGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplID0gMTVMLCBoanVzdCA9IDAuNSkpXG5gYGAifQ== -->
+<pre class="r"><code>ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = titel_kurz_d, fill = annahme) +
+  geom_tile(size = 1.2) +
+  scale_fill_manual(
+    values = c(Abgelehnt = &quot;pink2&quot;,
+    Angenommen = &quot;seagreen4&quot;)
+  ) +
+  labs(
+    x = &quot;Jahr&quot;,
+    y = &quot;Titel der Abstimmung&quot;,
+    title = &quot;Gesamtübersicht der AHV Abstimmungen&quot;
+  ) +
+  labs(fill = &quot;Ergebnis&quot;) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArXG4gIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArXG4gIGdlb21fdGlsZShzaXplID0gMS4yKSArXG4gIHRoZW1lX21pbmltYWwoKVxuYGBgIn0= -->
-<pre class="r"><code>ggplot(ahv_Ergebnisse) +
-  aes(x = datum, y = annahme) +
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5haHZfamFfbmVpbiA8LSBzdWJzZXQoYWh2LCBzZWxlY3Q9YyhkYXR1bSx0aXRlbF9rdXJ6X2QsYW5uYWhtZSx2b2xramEucHJveikpXG5haHZfamFfbmVpbiR2b2xramEucHJvel9uIDwtYXMubnVtZXJpYyhhaHYkdm9sa2phLnByb3opXG5gYGAifQ== -->
+<pre class="r"><code>
+ahv_ja_nein &lt;- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
+ahv_ja_nein$volkja.proz_n &lt;-as.numeric(ahv$volkja.proz)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="abgelehtne-abstimmungen-mit-anteil-an-ja-stimmen" class="section level1">
+<h1>Abgelehtne Abstimmungen mit Anteil an Ja-Stimmen</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5nZ3Bsb3QoYWJsZWhudW5nKSArXG4gIGFlcyh4ID0gdm9sa2phLnByb3osIHkgPSB0aXRlbF9rdXJ6X2QpICtcbiAgZ2VvbV90aWxlKHNpemUgPSAxLjIpICtcbiAgbGFicyhcbiAgICB4ID0gXCJQcm96ZW50dWFsZXIgQW50ZWlsIEphLVN0aW1tZW5cIixcbiAgICB5ID0gXCJBYnN0aW1tdW5ncyBUaXRlbFwiLFxuICAgIHRpdGxlID0gXCJBYmdlbGVobnRlIEFic3RpbW11bmdlbiBtaXQgSmEtQW50ZWlsXCJcbiAgKSArXG4gIHRoZW1lX21pbmltYWwoKSArXG4gIHRoZW1lKHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDE1TCwgaGp1c3QgPSAwLjUpKVxuYGBgIn0= -->
+<pre class="r"><code>
+ggplot(ablehnung) +
+  aes(x = volkja.proz, y = titel_kurz_d) +
   geom_tile(size = 1.2) +
+  labs(
+    x = &quot;Prozentualer Anteil Ja-Stimmen&quot;,
+    y = &quot;Abstimmungs Titel&quot;,
+    title = &quot;Abgelehnte Abstimmungen mit Ja-Anteil&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFibGVobnVuZywgYWVzKHggPSB2b2xramEucHJveiwgeSA9IHRpdGVsX2t1cnpfZCkpICtcbmxhYnMoXG54ID0gXCJQcm96ZW50dWFsZXIgQW50ZWlsIEphLVN0aW1tZW5cIixcbnkgPSBcIkFic3RpbW11bmdzIFRpdGVsXCIsXG50aXRsZSA9IFwiQWJnZWxlaG50ZSBBYnN0aW1tdW5nZW4gbWl0IEphLUFudGVpbFwiXG4pICtcbmdlb21fdGlsZShzaXplID0gMy4yLCBhZXMod2lkdGg9MixmaWxsID12b2xramEucHJveikgKSArXG50aGVtZV9taW5pbWFsKCkgK1xudGhlbWUocGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplID0gMTBMLCBoanVzdCA9IDAuNSlcbilcbmBgYCJ9 -->
+<pre class="r"><code>ggplot(ablehnung, aes(x = volkja.proz, y = titel_kurz_d)) +
+labs(
+x = &quot;Prozentualer Anteil Ja-Stimmen&quot;,
+y = &quot;Abstimmungs Titel&quot;,
+title = &quot;Abgelehnte Abstimmungen mit Ja-Anteil&quot;
+) +
+geom_tile(size = 3.2, aes(width=2,fill =volkja.proz) ) +
+theme_minimal() +
+theme(plot.title = element_text(size = 10L, hjust = 0.5)
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsZWhudW5nJHZvbGtqYS5wcm96X24gPC1hcy5udW1lcmljKGFibGVobnVuZyR2b2xramEucHJveilcbmdncGxvdChhYmxlaG51bmcsIGFlcyh4ID0gdm9sa2phLnByb3pfbiwgeSA9IHRpdGVsX2t1cnpfZCkpICtcblxubGFicyhcbnggPSBcIlByb3plbnR1YWxlciBBbnRlaWwgSmEtU3RpbW1lblwiLFxueSA9IFwiQWJzdGltbXVuZ3MgVGl0ZWxcIixcbnRpdGxlID0gXCJBYmdlbGVobnRlIEFic3RpbW11bmdlbiBtaXQgSmEtQW50ZWlsXCJcbikgK1xuZ2VvbV90aWxlKHNpemUgPSAzLjIsIGFlcyh3aWR0aD0yLGZpbGwgPXZvbGtqYS5wcm96X24pICkgK1xuc2NhbGVfeF9jb250aW51b3VzKGxpbWl0cyA9IGMoMjAsIDUwKSlcbnRoZW1lX21pbmltYWwoKSArXG50aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMEwsIGhqdXN0ID0gMC41KVxuKVxuXG5gYGAifQ== -->
+<pre class="r"><code>ablehnung$volkja.proz_n &lt;-as.numeric(ablehnung$volkja.proz)
+ggplot(ablehnung, aes(x = volkja.proz_n, y = titel_kurz_d)) +
+
+labs(
+x = &quot;Prozentualer Anteil Ja-Stimmen&quot;,
+y = &quot;Abstimmungs Titel&quot;,
+title = &quot;Abgelehnte Abstimmungen mit Ja-Anteil&quot;
+) +
+geom_tile(size = 3.2, aes(width=2,fill =volkja.proz_n) ) +
+scale_x_continuous(limits = c(20, 50))
+theme_minimal() +
+theme(plot.title = element_text(size = 10L, hjust = 0.5)
+)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFibGVobnVuZykgK1xuICBhZXMoeCA9IHZvbGtqYS5wcm96X24sIHkgPSB0aXRlbF9rdXJ6X2QpICtcbiAgZ2VvbV9wb2ludChzaGFwZSA9IFwiY2lyY2xlXCIsIHNpemUgPSAxLjUsIGNvbG91ciA9IFwiIzAwMDAwMFwiKSArXG4gIGxhYnMoXG4gICAgeCA9IFwiQWJzdGltbXVuZ3MgVGl0ZWxcIixcbiAgICB5ID0gXCJKYS1TdGltbWVuIGluIFByb3plbnRcIixcbiAgICB0aXRsZSA9IFwiUHJvemVudHVhbGVyIEFudGVpbCBhbiBKYS1TdGltbWVuIGJlaSBBYmdlbGVobnRlbiBJbml0aWF0aXZlblwiXG4gICkgK1xuICB0aGVtZV9taW5pbWFsKCkgK1xuICB0aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KGhqdXN0ID0gMC41KSlcbmBgYCJ9 -->
+<pre class="r"><code>ggplot(ablehnung) +
+  aes(x = volkja.proz_n, y = titel_kurz_d) +
+  geom_point(shape = &quot;circle&quot;, size = 1.5, colour = &quot;#000000&quot;) +
+  labs(
+    x = &quot;Abstimmungs Titel&quot;,
+    y = &quot;Ja-Stimmen in Prozent&quot;,
+    title = &quot;Prozentualer Anteil an Ja-Stimmen bei Abgelehnten Initiativen&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90KGFibGVobnVuZykgK1xuICBhZXMoeCA9IHZvbGtqYS5wcm96X24sIHkgPSB0aXRlbF9rdXJ6X2QpICtcbiAgZ2VvbV9ib3hwbG90KGZpbGwgPSBcIiMxMTI0NDZcIikgK1xuICBsYWJzKFxuICAgIHggPSBcIlByb3plbnR1YWxlciBBbnRlaWwgSmEtU3RpbW1lblwiLFxuICAgIHkgPSBcIlRpdGVsIGRlciBBYnN0aW1tdW5nXCIsXG4gICAgdGl0bGUgPSBcIkFiZ2VsZWhudGUgSW5pdGlhdGl2ZW4gbWl0IHByb3plbnR1YWxlbiBKYS1TdGltbWVuXCJcbiAgKSArXG4gIHRoZW1lX21pbmltYWwoKVxuYGBgIn0= -->
+<pre class="r"><code>ggplot(ablehnung) +
+  aes(x = volkja.proz_n, y = titel_kurz_d) +
+  geom_boxplot(fill = &quot;#112446&quot;) +
+  labs(
+    x = &quot;Prozentualer Anteil Ja-Stimmen&quot;,
+    y = &quot;Titel der Abstimmung&quot;,
+    title = &quot;Abgelehnte Initiativen mit prozentualen Ja-Stimmen&quot;
+  ) +
   theme_minimal()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3ZfbnVtbWVyIDwtIGRhdGEuZnJhbWUoZGF0YV9jc3YkZDFlMSwgZGF0YV9jc3YkZDJlMSwgZGF0YV9jc3YkZDNlMSlcbmBgYCJ9 -->
+<pre class="r"><code>data_csv_nummer &lt;- data.frame(data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lciA8LSBwYXN0ZShkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDFlMSxkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDJlMSxkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDNlMSxzZXA9XCJcIilcbmRhdGFfY3N2X251bW1lclxuYGBgIn0= -->
+<pre class="r"><code>data_csv_nummer$data_csv_nummer &lt;- paste(data_csv_nummer$data_csv.d1e1,data_csv_nummer$data_csv.d2e1,data_csv_nummer$data_csv.d3e1,sep=&quot;&quot;)
+data_csv_nummer</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lciA8LSBhcy5mYWN0b3IoZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lcilcbmBgYCJ9 -->
+<pre class="r"><code>data_csv_nummer$data_csv_nummer &lt;- as.factor(data_csv_nummer$data_csv_nummer)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lcilcbmBgYCJ9 -->
+<pre class="r"><code>class(data_csv_nummer$data_csv_nummer)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdGluY3QoZGF0YV9jc3ZfbnVtbWVyLGRhdGFfY3N2X251bW1lcixrZWVwX2FsbD1GQUxTRSlcbmBgYCJ9 -->
+<pre class="r"><code>distinct(data_csv_nummer,data_csv_nummer,keep_all=FALSE)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaSA8LSAxXG5qIDwtIDJcbmZvciAoaSBpbiBkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3ZfbnVtbWVyKVxuICBmb3IgKGogaW4gZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lcilcbiAgICBqIDwtIGorMVxuICAgIGkgKz0xXG4gICAgaWYgKGkgPT0gaikge1xuICAgICAgcHJpbnQoail9XG4gICAgfVxuYGBgIn0= -->
+<pre class="r"><code>i &lt;- 1
+j &lt;- 2
+for (i in data_csv_nummer$data_csv_nummer)
+  for (j in data_csv_nummer$data_csv_nummer)
+    j &lt;- j+1
+    i +=1
+    if (i == j) {
+      print(j)}
+    }</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHVwbGljYXRlZChkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3ZfbnVtbWVyKVxuYGBgIn0= -->
+<pre class="r"><code>duplicated(data_csv_nummer$data_csv_nummer)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoNCiMgUGFja2V0ZSBpbXBvcnRpZXJlbg0KYGBge3J9DQpsaWJyYXJ5KGVzcXVpc3NlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KGRwbHlyKQ0KbGlicmFyeShtYWdyaXR0cikNCmBgYA0KDQoNCiMgRGF0ZW4gZWlubGVzZW4NCmBgYHtyfQ0KZGF0YV9jc3YgPC0gcmVhZC5jc3YyKCJEYXRlbnNhdHpBYnN0aW1tdW5nZW4uY3N2IiwgbmEgPSAiTkEiKQ0KYGBgDQpgYGB7cn0NCmRhdGFfY3N2IDwtIGRhdGFfY3N2JT4lDQogIG11dGF0ZShkYXR1bT1hcy5EYXRlKGRhdHVtLCAiJWQuJW0uJVkiKSkNCg0KY2xhc3MoZGF0YV9jc3YkZGF0dW0pDQpgYGANCg0KIyBEYXRlbnNhdHogbnVyIG1pdCBBSFYgQWJzdGltbXVuZ2VuDQpgYGB7cn0NCmFodiA8LSBzdWJzZXQoZGF0YV9jc3YsIGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gMjgxIHxhbnIgPT0gMzUyIHxhbnIgPT0gNDIzIHwgYW5yID09IDQ0NCB8IGFuciA9PSA0NjkgfGFuciA9PSA0ODEgfGFuciA9PSA0ODkuMXwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gNDg5LjIgfGFuciA9PSA0ODkuMyB8YW5yID09IDUwNyB8IGFuciA9PSA1MDggfCBhbnIgPT0gNTIzIHxhbnIgPT0gNTM2IHxhbnIgPT0gNTk0IHwgYW5yID09IDYwNiB8IGFuciA9PSA2MTQgfGFuciA9PSA2MjcgfGFuciA9PSAxMDEgfCBhbnIgPT0gMTE1IHwgYW5yID09IDE0NCB8YW5yID09IDQwMSB8YW5yID09IDQyMikNCmFodg0KYGBgDQojIEJlaSBTcGFsdGUgYW5uYWhtZSAuLDEsMCBkdXJjaCBXb3J0ZSBlcnNldHplbg0KYGBge3J9DQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMCJdIDwtICJBYmdlbGVobnQiDQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMSJdIDwtICJBbmdlbm9tbWVuIg0KYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gIi4iXSA8LSAiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCINCg0KYGBgDQoNCiMgV2llIHZpZWxlIEFic3RpbW11bmdlbiB3dXJkZW4gYWJnZWhsZWhudCAvIGFuZ2Vub21tZW4gLyBTdGljaGZyYWdlIG9ic29sZXQ/DQpgYGB7cn0NCiMgWmFobGVuIGhlcmF1c2ZpbmRlbg0KYW5nZW5vbW1lbiA8LSBhaHYgJT4lDQogIGdyb3VwX2J5KGFubmFobWUpICU+JQ0KICBjb3VudCgpDQoNCiMgQWxzIEJveHBsb3QgZGFyc3RlbGxlbg0KZGF0YSA8LSBkYXRhLmZyYW1lKEVyZ2Vibmlzcz0gYygiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCIsIkFubmFobWUiLCJBYmxlaG51bmciKSwgQW56YWhsPSBjKDEsNiwxNykpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1FcmdlYm5pc3MseT1BbnphaGwpKStnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIpDQpgYGANCg0KDQoNCg0KIyBEYXRhRnJhbWUgbnVyIG1pdCBEYXR1bSwgQWJzdGltbXVuZyB1bmQgRXJnZWJuaXNzDQpgYGB7cn0NCmFodl9FcmdlYm5pc3NlIDwtIHN1YnNldChhaHYsIHNlbGVjdD1jKGRhdHVtLHRpdGVsX2t1cnpfZCxhbm5haG1lKSkNCmFodl9FcmdlYm5pc3NlDQpgYGANCg0KIyBEYXRhIEZyYW1lIG1pdCBBbm5haG1lbg0KYGBge3J9DQphYmxlaG51bmcgPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09ICJBYmdlbGVobnQiKSANCmBgYA0KDQojIERhdGEgRnJhbWUgbWl0IEFibGVobnVuZw0KYGBge3J9DQphbm5haG1lbiA8LSBzdWJzZXQoYWh2X0VyZ2Vibmlzc2UsIGFubmFobWUgPT0gIkFuZ2Vub21tZW4iKSANCmBgYA0KDQoNCiMgRGF0YSBGcmFtZSBtaXQgU3RpY2hmcmFnZQ0KYGBge3J9DQpvYnNvbGV0IDwtIHN1YnNldChhaHZfRXJnZWJuaXNzZSwgYW5uYWhtZSA9PSAiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCIpIA0KYGBgDQoNCg0KIyBQbG90IEFubmFobWVuIG1pdCBKYWhyZXNhbmdhYmVuDQpgYGB7cn0NClRpdGVsIDwtIGFubmFobWVuJHRpdGVsX2t1cnpfZA0KSmFociA8LSBhbm5haG1lbiRkYXR1bQ0KDQpnZ3Bsb3QoYW5uYWhtZW4pICsNCiBhZXMoeCA9IEphaHIsIHkgPSBUaXRlbCkgKw0KIGdlb21fdGlsZShzaXplID0gMSkgKw0KIHRoZW1lX21pbmltYWwoKSsNCiBnZ3RpdGxlKCJBbm5haG1lbiBtaXQgSmFocmVzemFobGVuIikNCmBgYA0KDQoNCiMgUGxvdCBBYmxlaG51bmdlbiBtaXQgSmFocmVzYW5nYWJlbg0KYGBge3J9DQpUaXRlbCA8LSBhYmxlaG51bmckdGl0ZWxfa3Vyel9kDQpKYWhyIDwtIGFibGVobnVuZyRkYXR1bQ0KZ2dwbG90KGFibGVobnVuZykgKw0KIGFlcyh4ID0gSmFociwgeSA9IFRpdGVsKSArDQogZ2VvbV90aWxlKHNpemUgPSAxLjIpICsNCiB0aGVtZV9taW5pbWFsKCkrDQogZ2d0aXRsZSgiQWJsZWhudW5nZW4gbWl0IEphaHJlc3phaGxlbiIpDQpgYGANCg0KDQoNCg0KYGBge3J9DQpUaXRlbCA8LSBhaHYkdGl0ZWxfa3Vyel9kDQpFcmdlYm5pcyA8LSBhaHYkYW5uYWhtZQ0KZ2dwbG90KGFodikgKw0KIGFlcyh4ID0gRXJnZWJuaXMsIHkgPSBUaXRlbCkgKw0KIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogdGhlbWVfbWluaW1hbCgpKw0KIGdndGl0bGUoIkFic3RpbW11bmdlbiBtaXQgRXJnZWJuaXNzZW4iKQ0KYGBgDQoNCg0KYGBge3J9DQpnZ3Bsb3QoYWh2X0VyZ2Vibmlzc2UpICsNCiBhZXMoeCA9IGRhdHVtLCBmaWxsID0gYW5uYWhtZSkgKw0KIGdlb21faGlzdG9ncmFtKGJpbnMgPSAzMEwpICsNCiBzY2FsZV9maWxsX2h1ZShkaXJlY3Rpb24gPSAxKSArDQogdGhlbWVfbWluaW1hbCgpKw0KIHNjYWxlX2ZpbGxfbWFudWFsKCdFcmdlYm5pcycsIHZhbHVlcz1jKCdwaW5rJywgJ2RhcmtncmVlbicsImJsYWNrIikpDQpgYGANCg0KDQoNCmBgYHtyfQ0KZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArDQogIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArDQogIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogIHRoZW1lX21pbmltYWwoKQ0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIEZyYWdlc3RlbGx1bmc6IFdpZXNvIGdlc3RhbGx0ZXQgc2ljaCBkaWUgRmluYW56aWVydW5nIGRlciBBSFYgc28gc2Nod2llcmlnPw0KDQoNCiMgUGFja2V0ZSBpbXBvcnRpZXJlbg0KYGBge3J9DQpsaWJyYXJ5KGVzcXVpc3NlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG1hZ3JpdHRyKQ0KYGBgDQoNCg0KIyBEYXRlbiBlaW5sZXNlbg0KYGBge3J9DQpkYXRhX2NzdiA8LSByZWFkLmNzdjIoIkRhdGVuc2F0ekFic3RpbW11bmdlbi5jc3YiLCBuYSA9ICJOQSIpDQpgYGANCg0KIyBEYXR1bSBTcGFsdGUgenUgRGF0ZW50eXAgImRhdGUiIMOkbmRlcm4NCmBgYHtyfQ0KZGF0YV9jc3YgPC0gZGF0YV9jc3YlPiUNCiAgbXV0YXRlKGRhdHVtPWFzLkRhdGUoZGF0dW0sICIlZC4lbS4lWSIpKQ0KDQpjbGFzcyhkYXRhX2NzdiRkYXR1bSkNCmBgYA0KDQojIERhdGVuc2F0eiBudXIgbWl0IEFIViBBYnN0aW1tdW5nZW4gZXJzdGVsbGVuDQpgYGB7cn0NCmFodiA8LSBzdWJzZXQoZGF0YV9jc3YsIGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gMjgxIHxhbnIgPT0gMzUyIHxhbnIgPT0gNDIzIHwgYW5yID09IDQ0NCB8IGFuciA9PSA0NjkgfGFuciA9PSA0ODEgfGFuciA9PSA0ODkuMXwgYW5yID09IDI4MCB8IGFuciA9PSAyODEgfGFuciA9PSAzNTIgfGFuciA9PSA5OSB8IGFuciA9PSAyODAgfCBhbnIgPT0gNDg5LjIgfGFuciA9PSA0ODkuMyB8IGFuciA9PSA1MDcgfCBhbnIgPT0gNTA4IHwgYW5yID09IDUyMyB8YW5yID09IDUzNiB8YW5yID09IDU5NCB8IGFuciA9PSA2MDYgfCBhbnIgPT0gNjE0IHxhbnIgPT0gNjI3IHxhbnIgPT0gMTAxIHwgYW5yID09IDExNSB8IGFuciA9PSAxNDQgfGFuciA9PSA0MDEgfGFuciA9PSA0MjIpDQphaHYNCmBgYA0KIyBCZWkgQUhWIERhdGVuc2F0eiBTcGFsdGUgYW5uYWhtZSAuLDEsMCBkdXJjaCBXb3J0ZSBlcnNldHplbg0KYGBge3J9DQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMCJdIDwtICJBYmdlbGVobnQiDQphaHYkYW5uYWhtZVthaHYkYW5uYWhtZSA9PSAiMSJdIDwtICJBbmdlbm9tbWVuIg0KYWh2JGFubmFobWVbYWh2JGFubmFobWUgPT0gIi4iXSA8LSAiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCINCmBgYA0KDQoNCiMgV2llIHZpZWxlIEFic3RpbW11bmdlbiB3dXJkZW4gYWJnZWhsZWhudCAvIGFuZ2Vub21tZW4gLyBTdGljaGZyYWdlIG9ic29sZXQ/DQpgYGB7cn0NCiMgWmFobGVuIGhlcmF1c2ZpbmRlbg0KYW5nZW5vbW1lbiA8LSBhaHYgJT4lDQogIGdyb3VwX2J5KGFubmFobWUpICU+JQ0KICBjb3VudCgpDQoNCiMgQWxzIEJveHBsb3QgZGFyc3RlbGxlbg0KZGF0YSA8LSBkYXRhLmZyYW1lKEVyZ2Vibmlzcz0gYygiRXJnZWJuaXMgZGVyIFN0aWNoZnJhZ2Ugb2Jzb2xldCIsIkFubmFobWUiLCJBYmxlaG51bmciKSwgQW56YWhsPSBjKDEsNiwxNykpDQpnZ3Bsb3QoZGF0YSxhZXMoeD1FcmdlYm5pc3MseT1BbnphaGwpKStnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIpDQpgYGANCg0KDQoNCiMgRGF0YUZyYW1lIG51ciBtaXQgRGF0dW0sIEFic3RpbW11bmcgdW5kIEVyZ2VibmlzDQpgYGB7cn0NCmFodl9FcmdlYm5pc3NlIDwtIHN1YnNldChhaHYsIHNlbGVjdD1jKGRhdHVtLHRpdGVsX2t1cnpfZCxhbm5haG1lLHZvbGtqYS5wcm96KSkNCmFodl9FcmdlYm5pc3NlDQpgYGANCg0KIyBEYXRhIEZyYW1lIG1pdCBBbm5haG1lbg0KYGBge3J9DQphYmxlaG51bmcgPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09ICJBYmdlbGVobnQiKSANCmFibGVobnVuZyR2b2xramEucHJvel9uIDwtYXMubnVtZXJpYyhhYmxlaG51bmckdm9sa2phLnByb3opDQpgYGANCg0KIyBEYXRhIEZyYW1lIG1pdCBBYmxlaG51bmcNCmBgYHtyfQ0KYW5uYWhtZW4gPC0gc3Vic2V0KGFodl9FcmdlYm5pc3NlLCBhbm5haG1lID09ICJBbmdlbm9tbWVuIikgDQphbm5haG1lbiR2b2xramEucHJvel9uIDwtYXMubnVtZXJpYyhhbm5haG1lbiR2b2xramEucHJveikNCmBgYA0KDQoNCiMgUGxvdCBBbm5haG1lbiBtaXQgSmFocmVzYW5nYWJlbg0KYGBge3J9DQpUaXRlbCA8LSBhbm5haG1lbiR0aXRlbF9rdXJ6X2QNCkphaHIgPC0gYW5uYWhtZW4kZGF0dW0NCg0KZ2dwbG90KGFubmFobWVuKSArDQogYWVzKHggPSBKYWhyLCB5ID0gVGl0ZWwpICsNCiBnZW9tX3RpbGUoc2l6ZSA9IDEpICsNCiB0aGVtZV9taW5pbWFsKCkrDQogZ2d0aXRsZSgiQW5uYWhtZW4gbWl0IEphaHJlc3phaGxlbiIpDQpgYGANCg0KDQojIFBsb3QgQWJsZWhudW5nZW4gbWl0IEphaHJlc2FuZ2FiZW4NCmBgYHtyfQ0KVGl0ZWwgPC0gYWJsZWhudW5nJHRpdGVsX2t1cnpfZA0KSmFociA8LSBhYmxlaG51bmckZGF0dW0NCmdncGxvdChhYmxlaG51bmcpICsNCiBhZXMoeCA9IEphaHIsIHkgPSBUaXRlbCkgKw0KIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogdGhlbWVfbWluaW1hbCgpKw0KIGdndGl0bGUoIkFibGVobnVuZ2VuIG1pdCBKYWhyZXN6YWhsZW4iKQ0KYGBgDQoNCg0KDQojIFBsb3QgbWl0IEFIViBBYnN0aW1tdW5nZW4gdW5kIEVyZ2Vibmlzc2VuDQpgYGB7cn0NClRpdGVsIDwtIGFodiR0aXRlbF9rdXJ6X2QNCkVyZ2VibmlzIDwtIGFodiRhbm5haG1lDQpnZ3Bsb3QoYWh2KSArDQogYWVzKHggPSBFcmdlYm5pcywgeSA9IFRpdGVsKSArDQogZ2VvbV90aWxlKHNpemUgPSAxLjIpICsNCiB0aGVtZV9taW5pbWFsKCkrDQogZ2d0aXRsZSgiQWJzdGltbXVuZ2VuIG1pdCBFcmdlYm5pc3NlbiIpDQpgYGANCg0KDQojIFBsb3QgbWl0IEFIViBBYnN0aW1tdW5nZW4gdW5kIEVyZ2Vibmlzc2VuIHVuZCBKYWhyZW4NCmBgYHtyfQ0KZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArDQogYWVzKHggPSBkYXR1bSwgZmlsbCA9IGFubmFobWUpICsNCiBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzBMKSArDQogc2NhbGVfZmlsbF9odWUoZGlyZWN0aW9uID0gMSkgKw0KIHRoZW1lX21pbmltYWwoKSsNCiBzY2FsZV9maWxsX21hbnVhbCgnRXJnZWJuaXMnLCB2YWx1ZXM9YygncGluazMnLCAnZGFya2dyZWVuJywgImJsYWNrIikpDQpgYGANCg0KDQoNCg0KDQoNCiMgRXJnZWJuaXNzZSBkZXIgQWJzdGltbXVuZ2VuIHVuZCBKYWhyZXN6YWhsZW4NCmBgYHtyfQ0KZ2dwbG90KGFodl9FcmdlYm5pc3NlKSArDQogIGFlcyh4ID0gZGF0dW0sIHkgPSBhbm5haG1lKSArDQogIGdlb21fdGlsZShzaXplID0gMS4yKSArDQogIGxhYnMoDQogICAgeCA9ICJEYXR1bSIsDQogICAgeSA9ICJFcmdlYm5pcyIsDQogICAgdGl0bGUgPSAiQWJzdGltbXVuZ2VuIHp1ciBBSFYiDQogICkgKw0KICB0aGVtZV9taW5pbWFsKCkgKw0KICB0aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSAxNUwsIGhqdXN0ID0gMC41KSkNCmBgYA0KDQoNCiMgR2VzYW10w7xiZXJzaWNodCBkZXIgQUhWIEFic3RpbW11bmdlbg0KYGBge3J9DQpnZ3Bsb3QoYWh2X0VyZ2Vibmlzc2UpICsNCiAgYWVzKHggPSBkYXR1bSwgeSA9IHRpdGVsX2t1cnpfZCwgZmlsbCA9IGFubmFobWUpICsNCiAgZ2VvbV90aWxlKHNpemUgPSAxLjIpICsNCiAgc2NhbGVfZmlsbF9tYW51YWwoDQogICAgdmFsdWVzID0gYyhBYmdlbGVobnQgPSAicGluazIiLA0KICAgIEFuZ2Vub21tZW4gPSAic2VhZ3JlZW40IikNCiAgKSArDQogIGxhYnMoDQogICAgeCA9ICJKYWhyIiwNCiAgICB5ID0gIlRpdGVsIGRlciBBYnN0aW1tdW5nIiwNCiAgICB0aXRsZSA9ICJHZXNhbXTDvGJlcnNpY2h0IGRlciBBSFYgQWJzdGltbXVuZ2VuIg0KICApICsNCiAgbGFicyhmaWxsID0gIkVyZ2VibmlzIikgKw0KICB0aGVtZV9taW5pbWFsKCkgKw0KICB0aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSAxNUwsIGhqdXN0ID0gMC41KSkNCmBgYA0KDQpgYGB7cn0NCg0KYWh2X2phX25laW4gPC0gc3Vic2V0KGFodiwgc2VsZWN0PWMoZGF0dW0sdGl0ZWxfa3Vyel9kLGFubmFobWUsdm9sa2phLnByb3opKQ0KYWh2X2phX25laW4kdm9sa2phLnByb3pfbiA8LWFzLm51bWVyaWMoYWh2JHZvbGtqYS5wcm96KQ0KYGBgDQoNCg0KIyBBYmdlbGVodG5lIEFic3RpbW11bmdlbiBtaXQgQW50ZWlsIGFuIEphLVN0aW1tZW4NCmBgYHtyfQ0KDQpnZ3Bsb3QoYWJsZWhudW5nKSArDQogIGFlcyh4ID0gdm9sa2phLnByb3osIHkgPSB0aXRlbF9rdXJ6X2QpICsNCiAgZ2VvbV90aWxlKHNpemUgPSAxLjIpICsNCiAgbGFicygNCiAgICB4ID0gIlByb3plbnR1YWxlciBBbnRlaWwgSmEtU3RpbW1lbiIsDQogICAgeSA9ICJBYnN0aW1tdW5ncyBUaXRlbCIsDQogICAgdGl0bGUgPSAiQWJnZWxlaG50ZSBBYnN0aW1tdW5nZW4gbWl0IEphLUFudGVpbCINCiAgKSArDQogIHRoZW1lX21pbmltYWwoKSArDQogIHRoZW1lKHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDE1TCwgaGp1c3QgPSAwLjUpKQ0KYGBgDQoNCg0KYGBge3J9DQpnZ3Bsb3QoYWJsZWhudW5nLCBhZXMoeCA9IHZvbGtqYS5wcm96LCB5ID0gdGl0ZWxfa3Vyel9kKSkgKw0KbGFicygNCnggPSAiUHJvemVudHVhbGVyIEFudGVpbCBKYS1TdGltbWVuIiwNCnkgPSAiQWJzdGltbXVuZ3MgVGl0ZWwiLA0KdGl0bGUgPSAiQWJnZWxlaG50ZSBBYnN0aW1tdW5nZW4gbWl0IEphLUFudGVpbCINCikgKw0KZ2VvbV90aWxlKHNpemUgPSAzLjIsIGFlcyh3aWR0aD0yLGZpbGwgPXZvbGtqYS5wcm96KSApICsNCnRoZW1lX21pbmltYWwoKSArDQp0aGVtZShwbG90LnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMEwsIGhqdXN0ID0gMC41KQ0KKQ0KYGBgDQoNCg0KYGBge3J9DQphYmxlaG51bmckdm9sa2phLnByb3pfbiA8LWFzLm51bWVyaWMoYWJsZWhudW5nJHZvbGtqYS5wcm96KQ0KZ2dwbG90KGFibGVobnVuZywgYWVzKHggPSB2b2xramEucHJvel9uLCB5ID0gdGl0ZWxfa3Vyel9kKSkgKw0KDQpsYWJzKA0KeCA9ICJQcm96ZW50dWFsZXIgQW50ZWlsIEphLVN0aW1tZW4iLA0KeSA9ICJBYnN0aW1tdW5ncyBUaXRlbCIsDQp0aXRsZSA9ICJBYmdlbGVobnRlIEFic3RpbW11bmdlbiBtaXQgSmEtQW50ZWlsIg0KKSArDQpnZW9tX3RpbGUoc2l6ZSA9IDMuMiwgYWVzKHdpZHRoPTIsZmlsbCA9dm9sa2phLnByb3pfbikgKSArDQpzY2FsZV94X2NvbnRpbnVvdXMobGltaXRzID0gYygyMCwgNTApKQ0KdGhlbWVfbWluaW1hbCgpICsNCnRoZW1lKHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDEwTCwgaGp1c3QgPSAwLjUpDQopDQoNCmBgYA0KDQoNCg0KDQoNCmBgYHtyfQ0KZ2dwbG90KGFibGVobnVuZykgKw0KICBhZXMoeCA9IHZvbGtqYS5wcm96X24sIHkgPSB0aXRlbF9rdXJ6X2QpICsNCiAgZ2VvbV9wb2ludChzaGFwZSA9ICJjaXJjbGUiLCBzaXplID0gMS41LCBjb2xvdXIgPSAiIzAwMDAwMCIpICsNCiAgbGFicygNCiAgICB4ID0gIkFic3RpbW11bmdzIFRpdGVsIiwNCiAgICB5ID0gIkphLVN0aW1tZW4gaW4gUHJvemVudCIsDQogICAgdGl0bGUgPSAiUHJvemVudHVhbGVyIEFudGVpbCBhbiBKYS1TdGltbWVuIGJlaSBBYmdlbGVobnRlbiBJbml0aWF0aXZlbiINCiAgKSArDQogIHRoZW1lX21pbmltYWwoKSArDQogIHRoZW1lKHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoaGp1c3QgPSAwLjUpKQ0KYGBgDQpgYGB7cn0NCmdncGxvdChhYmxlaG51bmcpICsNCiAgYWVzKHggPSB2b2xramEucHJvel9uLCB5ID0gdGl0ZWxfa3Vyel9kKSArDQogIGdlb21fYm94cGxvdChmaWxsID0gIiMxMTI0NDYiKSArDQogIGxhYnMoDQogICAgeCA9ICJQcm96ZW50dWFsZXIgQW50ZWlsIEphLVN0aW1tZW4iLA0KICAgIHkgPSAiVGl0ZWwgZGVyIEFic3RpbW11bmciLA0KICAgIHRpdGxlID0gIkFiZ2VsZWhudGUgSW5pdGlhdGl2ZW4gbWl0IHByb3plbnR1YWxlbiBKYS1TdGltbWVuIg0KICApICsNCiAgdGhlbWVfbWluaW1hbCgpDQpgYGANCg0KDQoNCmBgYHtyfQ0KZGF0YV9jc3ZfbnVtbWVyIDwtIGRhdGEuZnJhbWUoZGF0YV9jc3YkZDFlMSwgZGF0YV9jc3YkZDJlMSwgZGF0YV9jc3YkZDNlMSkNCmBgYA0KDQoNCmBgYHtyfQ0KZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lciA8LSBwYXN0ZShkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDFlMSxkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDJlMSxkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3YuZDNlMSxzZXA9IiIpDQpkYXRhX2Nzdl9udW1tZXINCmBgYA0KDQoNCmBgYHtyfQ0KZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lciA8LSBhcy5mYWN0b3IoZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lcikNCmBgYA0KDQpgYGB7cn0NCmNsYXNzKGRhdGFfY3N2X251bW1lciRkYXRhX2Nzdl9udW1tZXIpDQpgYGANCg0KDQpgYGB7cn0NCmRpc3RpbmN0KGRhdGFfY3N2X251bW1lcixkYXRhX2Nzdl9udW1tZXIsa2VlcF9hbGw9RkFMU0UpDQpgYGANCmBgYHtyfQ0KaSA8LSAxDQpqIDwtIDINCmZvciAoaSBpbiBkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3ZfbnVtbWVyKQ0KICBmb3IgKGogaW4gZGF0YV9jc3ZfbnVtbWVyJGRhdGFfY3N2X251bW1lcikNCiAgICBqIDwtIGorMQ0KICAgIGkgKz0xDQogICAgaWYgKGkgPT0gaikgew0KICAgICAgcHJpbnQoail9DQogICAgfQ0KYGBgDQoNCmBgYHtyfQ0KZHVwbGljYXRlZChkYXRhX2Nzdl9udW1tZXIkZGF0YV9jc3ZfbnVtbWVyKQ0KYGBgDQoNCg==</div>
 
 
 

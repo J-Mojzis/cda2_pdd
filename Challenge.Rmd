@@ -3,13 +3,14 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+# Fragestellung: Wieso gestalltet sich die Finanzierung der AHV so schwierig?
+
 
 # Packete importieren
 ```{r}
 library(esquisse)
 library(ggplot2)
 library(tidyverse)
-library(dplyr)
 library(magrittr)
 ```
 
@@ -18,6 +19,8 @@ library(magrittr)
 ```{r}
 data_csv <- read.csv2("DatensatzAbstimmungen.csv", na = "NA")
 ```
+
+# Datum Spalte zu Datentyp "date" ändern
 ```{r}
 data_csv <- data_csv%>%
   mutate(datum=as.Date(datum, "%d.%m.%Y"))
@@ -25,18 +28,18 @@ data_csv <- data_csv%>%
 class(data_csv$datum)
 ```
 
-# Datensatz nur mit AHV Abstimmungen
+# Datensatz nur mit AHV Abstimmungen erstellen
 ```{r}
-ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 |anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
+ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 | anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
 ahv
 ```
-# Bei Spalte annahme .,1,0 durch Worte ersetzen
+# Bei AHV Datensatz Spalte annahme .,1,0 durch Worte ersetzen
 ```{r}
 ahv$annahme[ahv$annahme == "0"] <- "Abgelehnt"
 ahv$annahme[ahv$annahme == "1"] <- "Angenommen"
 ahv$annahme[ahv$annahme == "."] <- "Ergebnis der Stichfrage obsolet"
-
 ```
+
 
 # Wie viele Abstimmungen wurden abgehlehnt / angenommen / Stichfrage obsolet?
 ```{r}
@@ -52,27 +55,22 @@ ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
 
 
 
-
-# DataFrame nur mit Datum, Abstimmung und Ergebniss
+# DataFrame nur mit Datum, Abstimmung und Ergebnis
 ```{r}
-ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme))
+ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
 ahv_Ergebnisse
 ```
 
 # Data Frame mit Annahmen
 ```{r}
 ablehnung <- subset(ahv_Ergebnisse, annahme == "Abgelehnt") 
+ablehnung$volkja.proz_n <-as.numeric(ablehnung$volkja.proz)
 ```
 
 # Data Frame mit Ablehnung
 ```{r}
 annahmen <- subset(ahv_Ergebnisse, annahme == "Angenommen") 
-```
-
-
-# Data Frame mit Stichfrage
-```{r}
-obsolet <- subset(ahv_Ergebnisse, annahme == "Ergebnis der Stichfrage obsolet") 
+annahmen$volkja.proz_n <-as.numeric(annahmen$volkja.proz)
 ```
 
 
@@ -102,7 +100,7 @@ ggplot(ablehnung) +
 
 
 
-
+# Plot mit AHV Abstimmungen und Ergebnissen
 ```{r}
 Titel <- ahv$titel_kurz_d
 Ergebnis <- ahv$annahme
@@ -114,21 +112,175 @@ ggplot(ahv) +
 ```
 
 
+# Plot mit AHV Abstimmungen und Ergebnissen und Jahren
 ```{r}
 ggplot(ahv_Ergebnisse) +
  aes(x = datum, fill = annahme) +
  geom_histogram(bins = 30L) +
  scale_fill_hue(direction = 1) +
  theme_minimal()+
- scale_fill_manual('Ergebnis', values=c('pink', 'darkgreen',"black"))
+ scale_fill_manual('Ergebnis', values=c('pink3', 'darkgreen', "black"))
+```
+
+
+
+
+
+
+# Ergebnisse der Abstimmungen und Jahreszahlen
+```{r}
+ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = annahme) +
+  geom_tile(size = 1.2) +
+  labs(
+    x = "Datum",
+    y = "Ergebnis",
+    title = "Abstimmungen zur AHV"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))
+```
+
+
+# Gesamtübersicht der AHV Abstimmungen
+```{r}
+ggplot(ahv_Ergebnisse) +
+  aes(x = datum, y = titel_kurz_d, fill = annahme) +
+  geom_tile(size = 1.2) +
+  scale_fill_manual(
+    values = c(Abgelehnt = "pink2",
+    Angenommen = "seagreen4")
+  ) +
+  labs(
+    x = "Jahr",
+    y = "Titel der Abstimmung",
+    title = "Gesamtübersicht der AHV Abstimmungen"
+  ) +
+  labs(fill = "Ergebnis") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))
+```
+
+```{r}
+
+ahv_ja_nein <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
+ahv_ja_nein$volkja.proz_n <-as.numeric(ahv$volkja.proz)
+```
+
+
+# Abgelehtne Abstimmungen mit Anteil an Ja-Stimmen
+```{r}
+
+ggplot(ablehnung) +
+  aes(x = volkja.proz, y = titel_kurz_d) +
+  geom_tile(size = 1.2) +
+  labs(
+    x = "Prozentualer Anteil Ja-Stimmen",
+    y = "Abstimmungs Titel",
+    title = "Abgelehnte Abstimmungen mit Ja-Anteil"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15L, hjust = 0.5))
+```
+
+
+```{r}
+ggplot(ablehnung, aes(x = volkja.proz, y = titel_kurz_d)) +
+labs(
+x = "Prozentualer Anteil Ja-Stimmen",
+y = "Abstimmungs Titel",
+title = "Abgelehnte Abstimmungen mit Ja-Anteil"
+) +
+geom_tile(size = 3.2, aes(width=2,fill =volkja.proz) ) +
+theme_minimal() +
+theme(plot.title = element_text(size = 10L, hjust = 0.5)
+)
+```
+
+
+```{r}
+ablehnung$volkja.proz_n <-as.numeric(ablehnung$volkja.proz)
+ggplot(ablehnung, aes(x = volkja.proz_n, y = titel_kurz_d)) +
+
+labs(
+x = "Prozentualer Anteil Ja-Stimmen",
+y = "Abstimmungs Titel",
+title = "Abgelehnte Abstimmungen mit Ja-Anteil"
+) +
+geom_tile(size = 3.2, aes(width=2,fill =volkja.proz_n) ) +
+scale_x_continuous(limits = c(20, 50))
+theme_minimal() +
+theme(plot.title = element_text(size = 10L, hjust = 0.5)
+)
+
+```
+
+
+
+
+
+```{r}
+ggplot(ablehnung) +
+  aes(x = volkja.proz_n, y = titel_kurz_d) +
+  geom_point(shape = "circle", size = 1.5, colour = "#000000") +
+  labs(
+    x = "Abstimmungs Titel",
+    y = "Ja-Stimmen in Prozent",
+    title = "Prozentualer Anteil an Ja-Stimmen bei Abgelehnten Initiativen"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+```{r}
+ggplot(ablehnung) +
+  aes(x = volkja.proz_n, y = titel_kurz_d) +
+  geom_boxplot(fill = "#112446") +
+  labs(
+    x = "Prozentualer Anteil Ja-Stimmen",
+    y = "Titel der Abstimmung",
+    title = "Abgelehnte Initiativen mit prozentualen Ja-Stimmen"
+  ) +
+  theme_minimal()
 ```
 
 
 
 ```{r}
-ggplot(ahv_Ergebnisse) +
-  aes(x = datum, y = annahme) +
-  geom_tile(size = 1.2) +
-  theme_minimal()
+data_csv_nummer <- data.frame(data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)
+```
+
+
+```{r}
+data_csv_nummer$data_csv_nummer <- paste(data_csv_nummer$data_csv.d1e1,data_csv_nummer$data_csv.d2e1,data_csv_nummer$data_csv.d3e1,sep="")
+data_csv_nummer
+```
+
+
+```{r}
+data_csv_nummer$data_csv_nummer <- as.factor(data_csv_nummer$data_csv_nummer)
+```
+
+```{r}
+class(data_csv_nummer$data_csv_nummer)
+```
+
+
+```{r}
+distinct(data_csv_nummer,data_csv_nummer,keep_all=FALSE)
+```
+```{r}
+i <- 1
+j <- 2
+for (i in data_csv_nummer$data_csv_nummer)
+  for (j in data_csv_nummer$data_csv_nummer)
+    j <- j+1
+    i +=1
+    if (i == j) {
+      print(j)}
+    }
+```
+
+```{r}
+duplicated(data_csv_nummer$data_csv_nummer)
 ```
 
