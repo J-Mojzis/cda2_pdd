@@ -33,12 +33,59 @@ class(data_csv$datum)
 ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 | anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
 ahv
 ```
+
+
 # Bei AHV Datensatz Spalte annahme .,1,0 durch Worte ersetzen
 ```{r}
 ahv$annahme[ahv$annahme == "0"] <- "Abgelehnt"
 ahv$annahme[ahv$annahme == "1"] <- "Angenommen"
 ahv$annahme[ahv$annahme == "."] <- "Ergebnis der Stichfrage obsolet"
 ```
+
+
+
+# Grafik 1
+```{r}
+
+
+ggplot(ahv_Ergebnisse) +
+ aes(x = datum, fill = annahme) +
+ geom_histogram(bins = 31L) +
+ scale_fill_hue(direction = 1) +
+ labs(x = " ", y = "Anzahl Abstimmungen") +
+ theme_minimal()+
+ scale_fill_manual('Ergebnis', values=c('tan2', '#0C4C8A', "black"))
+```
+
+
+# Grfik 2
+
+# Data Frame mit benötigten Kateogiren erstellen
+```{r}
+kategorien <- c("Finanzierung","Revision","Rentenalter", "Anderes")
+Anzahl <- c(11,4,4,5)
+
+dfKategorien <- data.frame(kategorien,Anzahl)
+```
+
+# Plot erstellen
+```{r}
+ggplot(dfKategorien) +
+ aes(x = kategorien, weight = Anzahl) +
+ geom_bar(fill = "#0C4C8A") +
+ labs(x = " ", y = " ") +
+ theme_minimal()
+```
+
+
+
+
+
+
+
+
+
+
 
 
 # Wie viele Abstimmungen wurden abgehlehnt / angenommen / Stichfrage obsolet?
@@ -102,14 +149,22 @@ ggplot(ablehnung) +
 
 # Plot mit AHV Abstimmungen und Ergebnissen
 ```{r}
-Titel <- ahv$titel_kurz_d
-Ergebnis <- ahv$annahme
 ggplot(ahv) +
- aes(x = Ergebnis, y = Titel) +
+ aes(x = annahme, y = titel_kurz_d) +
  geom_tile(size = 1.2) +
- theme_minimal()+
- ggtitle("Abstimmungen mit Ergebnissen")
+ labs(x = " ", y = " ", 
+ title = "Wie oft wurde schon über die AHV abgestimmt?") +
+ theme_minimal() +
+ theme(plot.title = element_text(size = 16L, 
+ face = "bold"))
 ```
+
+
+
+
+
+
+
 
 
 # Plot mit AHV Abstimmungen und Ergebnissen und Jahren
@@ -121,6 +176,9 @@ ggplot(ahv_Ergebnisse) +
  theme_minimal()+
  scale_fill_manual('Ergebnis', values=c('pink3', 'darkgreen', "black"))
 ```
+
+
+
 
 
 
@@ -244,43 +302,171 @@ ggplot(ablehnung) +
 ```
 
 
-
+# DataFrame mit d1e1 d2e1 d3e1 Spalten
 ```{r}
-data_csv_nummer <- data.frame(data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)
+abstimmungen_nummern <- data.frame(data_csv$titel_kurz_d,data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)
+```
+
+# Spalte hinzufügen wo alle drei Zahlen zusammen sind
+```{r}
+abstimmungen_nummern$nummern_zusammen <- paste(abstimmungen_nummern$data_csv.d1e1,abstimmungen_nummern$data_csv.d2e1,abstimmungen_nummern$data_csv.d3e1,sep="")
+abstimmungen_nummern
+```
+
+# Die neue Spalte als int speichern
+```{r}
+abstimmungen_nummern$nummern_zusammen <- as.factor(abstimmungen_nummern$nummern_zusammen )
+```
+
+# Kontrolle
+```{r}
+class(abstimmungen_nummern$nummern_zusammen )
+```
+
+# Wie oft welche Kombination
+```{r}
+CountKombinationen <- abstimmungen_nummern %>%
+  group_by(nummern_zusammen) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count))
+```
+
+# Abstimmungen mit 10.. (53)
+```{r}
+Abstimmungen_10.. <- subset(abstimmungen_nummern, nummern_zusammen == "10..")
+```
+
+# Abstimmungen mit 4.. (26)
+```{r}
+Abstimmungen_4.. <- subset(abstimmungen_nummern, nummern_zusammen == "4..")
+```
+
+# Abstimmungen mit 11. (25)
+```{r}
+Abstimmungen_11. <- subset(abstimmungen_nummern, nummern_zusammen == "11.")
+```
+
+# Abstimmungen mit 1010. (23)
+```{r}
+Abstimmungen_1010. <- subset(abstimmungen_nummern, nummern_zusammen == "1010.")
+```
+
+# Abstimmungen mit 1.. (20)
+```{r}
+Abstimmungen_1.. <- subset(abstimmungen_nummern, nummern_zusammen == "1..")
+```
+
+# Abstimmungen mit 3.. (18)
+```{r}
+Abstimmungen_3.. <- subset(abstimmungen_nummern, nummern_zusammen == "3..")
+```
+
+
+
+
+
+
+
+
+
+# Serafe / Medien Abstimmungen (mit 12)
+
+# Abstimmungen mit 12.. (7)
+```{r}
+Abstimmungen_12.. <- subset(abstimmungen_nummern, nummern_zusammen == "12..")
+```
+
+# Abstimmungen mit 121. (5)
+```{r}
+Abstimmungen_121. <- subset(abstimmungen_nummern, nummern_zusammen == "121.")
+```
+
+# Abstimmungen mit 12. (3)
+```{r}
+Abstimmungen_12. <- subset(abstimmungen_nummern, nummern_zusammen == "12.")
+```
+
+# Abstimmungen mit 124. (3)
+```{r}
+Abstimmungen_124. <- subset(abstimmungen_nummern, nummern_zusammen == "124.")
+```
+
+# Abstimmungen mit 3112
+```{r}
+Abstimmungen_3112 <- subset(abstimmungen_nummern, nummern_zusammen == "3112")
 ```
 
 
 ```{r}
-data_csv_nummer$data_csv_nummer <- paste(data_csv_nummer$data_csv.d1e1,data_csv_nummer$data_csv.d2e1,data_csv_nummer$data_csv.d3e1,sep="")
-data_csv_nummer
+bbbb <- subset(abstimmungen_nummern,data_csv.d1e1 == 12)
 ```
+
+
 
 
 ```{r}
-data_csv_nummer$data_csv_nummer <- as.factor(data_csv_nummer$data_csv_nummer)
+Kategorie <- c(" Staatsordnung ","Aussenpolitik","Sicherheitspolitik", "Wirtschaft", "Landwirtschaft", " Öffentliche Finanzen", "Energie"," Verkehr und Infrastruktur", " Umwelt und Lebensraum", "Sozialpolitik", " Bildung und Forschung ", " Kultur, Religion, Medien ")
+Nummer <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+
+dfKategorien <- data.frame(Nummer,Kategorie)
+dfKategorien
+```
+
+# d1e1 == 3 oder d1e1 == 12
+```{r}
+d1e1_3_oder_12 <- subset(data_csv, d1e1 == 3 | d1e1 == 12)
+d1e1_3_oder_12
+```
+
+# d1e2 == 3.2(Militär) oder 12.5(Medien)
+```{r}
+d1e2_3.2_oder_12.5 <- subset(d1e1_3_oder_12, d1e2 == 3.2 | d1e2 == 12.5)
+```
+
+# Was hat mit Finanzen zu tun?
+```{r}
+d2e1_6 <- subset(d1e2_3.2_oder_12.5, d2e1 == 6)
+```
+
+
+# Pie Chart AVH Finanzierungen Annahme, Ablehnung
+```{r}
+ahv_Finanzierung <- subset(ahv, anr==401 |anr == 481 | anr == 489.1 | anr == 489.2 | anr == 489.3 | anr == 508 | anr == 508 | anr == 523 | anr == 594 | anr == 606 | anr == 614 | anr == 627)
+```
+# Wie viele davon abgehehnt / angenommen?
+
+```{r}
+zahlen_ang_abg <- ahv_Finanzierung %>%
+  group_by(annahme) %>%
+  count()
+```
+
+# Pie Chart
+```{r}
+pie(zahlen_ang_abg$n,col = "red")
 ```
 
 ```{r}
-class(data_csv_nummer$data_csv_nummer)
-```
-
-
-```{r}
-distinct(data_csv_nummer,data_csv_nummer,keep_all=FALSE)
-```
-```{r}
-i <- 1
-j <- 2
-for (i in data_csv_nummer$data_csv_nummer)
-  for (j in data_csv_nummer$data_csv_nummer)
-    j <- j+1
-    i +=1
-    if (i == j) {
-      print(j)}
-    }
+anzahl <- c(8,2,1)
+kategorie <- c("Ablehnung", "Annahme", "Stichfrage")
+pie(anzahl,labels=kategorie)
 ```
 
 ```{r}
-duplicated(data_csv_nummer$data_csv_nummer)
+# Geschichte AHV lesen
+# drei pie charts
+ # Militär d2e1_6
+  #Medien d2e2_3.2oder12.5 alle ausser 1796 1984
+
+#Falls geht direkt von tabelle sondst mit Zahlen / Fernando fragen)
 ```
+
+
+
+
+
+
+
+
+
 
