@@ -42,6 +42,11 @@ ahv$annahme[ahv$annahme == "1"] <- "Angenommen"
 ahv$annahme[ahv$annahme == "."] <- "Ergebnis der Stichfrage obsolet"
 ```
 
+# DataFrame nur mit Datum, Abstimmung und Ergebnis
+```{r}
+ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
+ahv_Ergebnisse
+```
 
 
 # Grafik 1
@@ -102,11 +107,7 @@ ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
 
 
 
-# DataFrame nur mit Datum, Abstimmung und Ergebnis
-```{r}
-ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
-ahv_Ergebnisse
-```
+
 
 # Data Frame mit Annahmen
 ```{r}
