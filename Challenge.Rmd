@@ -51,8 +51,6 @@ ahv_Ergebnisse
 
 # Grafik 1
 ```{r}
-
-
 ggplot(ahv_Ergebnisse) +
  aes(x = datum, fill = annahme) +
  geom_histogram(bins = 31L) +
@@ -63,33 +61,23 @@ ggplot(ahv_Ergebnisse) +
 ```
 
 
-# Grfik 2
-
-# Data Frame mit benötigten Kateogiren erstellen
+# Grafik 2 
 ```{r}
+# Data Frame mit benötigten Kateogiren erstellen
 kategorien <- c("Finanzierung","Revision","Rentenalter", "Anderes")
 Anzahl <- c(11,4,4,5)
 
 dfKategorien <- data.frame(kategorien,Anzahl)
 ```
 
-# Plot erstellen
 ```{r}
+# Plot erstellen
 ggplot(dfKategorien) +
  aes(x = kategorien, weight = Anzahl) +
  geom_bar(fill = "#0C4C8A") +
  labs(x = " ", y = " ") +
  theme_minimal()
 ```
-
-
-
-
-
-
-
-
-
 
 
 
@@ -104,9 +92,6 @@ angenommen <- ahv %>%
 data <- data.frame(Ergebniss= c("Ergebnis der Stichfrage obsolet","Annahme","Ablehnung"), Anzahl= c(1,6,17))
 ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
 ```
-
-
-
 
 
 # Data Frame mit Annahmen
@@ -162,12 +147,6 @@ ggplot(ahv) +
 
 
 
-
-
-
-
-
-
 # Plot mit AHV Abstimmungen und Ergebnissen und Jahren
 ```{r}
 ggplot(ahv_Ergebnisse) +
@@ -177,8 +156,6 @@ ggplot(ahv_Ergebnisse) +
  theme_minimal()+
  scale_fill_manual('Ergebnis', values=c('pink3', 'darkgreen', "black"))
 ```
-
-
 
 
 
@@ -368,8 +345,6 @@ Abstimmungen_3.. <- subset(abstimmungen_nummern, nummern_zusammen == "3..")
 
 
 
-
-
 # Serafe / Medien Abstimmungen (mit 12)
 
 # Abstimmungen mit 12.. (7)
@@ -434,24 +409,25 @@ d2e1_6 <- subset(d1e2_3.2_oder_12.5, d2e1 == 6)
 ```{r}
 ahv_Finanzierung <- subset(ahv, anr==401 |anr == 481 | anr == 489.1 | anr == 489.2 | anr == 489.3 | anr == 508 | anr == 508 | anr == 523 | anr == 594 | anr == 606 | anr == 614 | anr == 627)
 ```
-# Wie viele davon abgehehnt / angenommen?
-
 ```{r}
-zahlen_ang_abg <- ahv_Finanzierung %>%
-  group_by(annahme) %>%
-  count()
+ggplot(zahlen_ang_abg, aes(x="", y=n, fill=annahme))+
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y",start=0)+
+  geom_text(aes(label = paste0((round(100/11)*n), "%")), position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+  scale_fill_manual(values=c("tan2", "#0C4C8A","grey"))+
+    labs(
+    title = "Abstimmungereignisse im Bereich der AHV Finanzierung")
 ```
 
-# Pie Chart
-```{r}
-pie(zahlen_ang_abg$n,col = "red")
-```
 
-```{r}
-anzahl <- c(8,2,1)
-kategorie <- c("Ablehnung", "Annahme", "Stichfrage")
-pie(anzahl,labels=kategorie)
-```
+
+
+
 
 ```{r}
 # Geschichte AHV lesen
@@ -463,11 +439,51 @@ pie(anzahl,labels=kategorie)
 ```
 
 
+# Militär und Finanzierung
+# Wie viele davon abgehehnt / angenommen?
+```{r}
+zahlen_ang_abg1 <- d2e1_6 %>%
+  group_by(annahme) %>%
+  count()
+```
+
+```{r}
+anzahl <- c(6,1)
+kategorie <- c("Ablehnung", "Annahme")
+pie(anzahl,labels=kategorie)
+```
+
+
+```{r}
+d1e2_12.5 <- subset(d1e1_3_oder_12, d1e2 == 12.5)
+```
 
 
 
 
 
+# Abstimmungereignisse im Bereich Medien
+```{r}
+d1es_12.5_anr <- subset(d1e2_12.5, anr == 181 | anr == 595 | anr ==617 | anr ==654)
+```
+```{r}
+zahlen_ang_abg2$annahme[zahlen_ang_abg2$annahme == "0"] <- "Abgelehnt"
+zahlen_ang_abg2$annahme[zahlen_ang_abg2$annahme == "1"] <- "Angenommen"
+```
+```{r}
+ggplot(zahlen_ang_abg2, aes(x="", y=n, fill=annahme))+
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y",start=0)+
+  geom_text(aes(label = paste0((100/4)*n, "%")), position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+  scale_fill_manual(values=c("tan2", "#0C4C8A"))+
+    labs(
+    title = "Abstimmungereignisse im Bereich Medien")
+```
 
 
 
