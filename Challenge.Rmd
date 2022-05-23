@@ -5,21 +5,19 @@ output: html_notebook
 
 # Fragestellung: Wieso gestalltet sich die Finanzierung der AHV so schwierig?
 
-
+                                                  # Packete importieren und Daten einlesen und vorbereiten
 # Packete importieren
 ```{r}
 library(esquisse)
 library(ggplot2)
 library(tidyverse)
 library(magrittr)
+library(rmarkdown)
 ```
-
-
 # Daten einlesen
 ```{r}
 data_csv <- read.csv2("DatensatzAbstimmungen.csv", na = "NA")
 ```
-
 # Datum Spalte zu Datentyp "date" ändern
 ```{r}
 data_csv <- data_csv%>%
@@ -28,12 +26,13 @@ data_csv <- data_csv%>%
 class(data_csv$datum)
 ```
 
-# Datensatz nur mit AHV Abstimmungen erstellen
+
+
+                                                     # Datensatz nur mit AHV Abstimmungen erstellen
 ```{r}
 ahv <- subset(data_csv, anr == 99 | anr == 280 | anr == 281 |anr == 352 |anr == 423 | anr == 444 | anr == 469 |anr == 481 |anr == 489.1| anr == 280 | anr == 281 |anr == 352 |anr == 99 | anr == 280 | anr == 489.2 |anr == 489.3 | anr == 507 | anr == 508 | anr == 523 |anr == 536 |anr == 594 | anr == 606 | anr == 614 |anr == 627 |anr == 101 | anr == 115 | anr == 144 |anr == 401 |anr == 422)
 ahv
 ```
-
 
 # Bei AHV Datensatz Spalte annahme .,1,0 durch Worte ersetzen
 ```{r}
@@ -42,14 +41,27 @@ ahv$annahme[ahv$annahme == "1"] <- "Angenommen"
 ahv$annahme[ahv$annahme == "."] <- "Ergebnis der Stichfrage obsolet"
 ```
 
-# DataFrame nur mit Datum, Abstimmung und Ergebnis
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                        # Grafik 1
+
+DataFrame nur mit Datum, Abstimmung und Ergebnis
 ```{r}
 ahv_Ergebnisse <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
 ahv_Ergebnisse
 ```
-
-
-# Grafik 1
+# Plot erstellen
 ```{r}
 ggplot(ahv_Ergebnisse) +
  aes(x = datum, fill = annahme) +
@@ -57,27 +69,279 @@ ggplot(ahv_Ergebnisse) +
  scale_fill_hue(direction = 1) +
  labs(x = " ", y = "Anzahl Abstimmungen") +
  theme_minimal()+
- scale_fill_manual('Ergebnis', values=c('tan2', '#0C4C8A', "black"))
+ scale_fill_manual('Ergebnis', values=c('#0C4C8A', 'tan2', "black"))
 ```
 
 
-# Grafik 2 
-```{r}
+
+
+
+
+
+
+
+
+
+
+                                                                        # Grafik 2 
+
 # Data Frame mit benötigten Kateogiren erstellen
+```{r}
 kategorien <- c("Finanzierung","Revision","Rentenalter", "Anderes")
 Anzahl <- c(11,4,4,5)
 
 dfKategorien <- data.frame(kategorien,Anzahl)
 ```
 
-```{r}
 # Plot erstellen
+```{r}
 ggplot(dfKategorien) +
  aes(x = kategorien, weight = Anzahl) +
  geom_bar(fill = "#0C4C8A") +
  labs(x = " ", y = " ") +
  theme_minimal()
 ```
+
+
+
+
+
+
+
+
+
+                                                    # Suchen nach Abstimmungen zum vergleichen
+
+
+# DataFrame mit d1e1 d2e1 d3e1 Spalten
+```{r}
+abstimmungen_nummern <- data.frame(data_csv$titel_kurz_d,data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)
+```
+
+# Spalte hinzufügen wo alle drei Zahlen zusammen sind
+```{r}
+abstimmungen_nummern$nummern_zusammen <- paste(abstimmungen_nummern$data_csv.d1e1,abstimmungen_nummern$data_csv.d2e1,abstimmungen_nummern$data_csv.d3e1,sep="")
+abstimmungen_nummern
+```
+
+# Die neue Spalte als int speichern
+```{r}
+abstimmungen_nummern$nummern_zusammen <- as.factor(abstimmungen_nummern$nummern_zusammen )
+```
+# Kontrolle
+```{r}
+class(abstimmungen_nummern$nummern_zusammen )
+```
+
+# Wie oft welche Kombination
+```{r}
+CountKombinationen <- abstimmungen_nummern %>%
+  group_by(nummern_zusammen) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count))
+```
+
+# Abstimmungen mit 10.. (53)
+```{r}
+#Abstimmungen_10.. <- subset(abstimmungen_nummern, nummern_zusammen == "10..")
+```
+
+# Abstimmungen mit 4.. (26)
+```{r}
+#Abstimmungen_4.. <- subset(abstimmungen_nummern, nummern_zusammen == "4..")
+```
+
+# Abstimmungen mit 11. (25)
+```{r}
+#Abstimmungen_11. <- subset(abstimmungen_nummern, nummern_zusammen == "11.")
+```
+
+# Abstimmungen mit 1010. (23)
+```{r}
+#Abstimmungen_1010. <- subset(abstimmungen_nummern, nummern_zusammen == "1010.")
+```
+
+# Abstimmungen mit 1.. (20)
+```{r}
+#Abstimmungen_1.. <- subset(abstimmungen_nummern, nummern_zusammen == "1..")
+```
+
+# Abstimmungen mit 3.. (18)
+```{r}
+#Abstimmungen_3.. <- subset(abstimmungen_nummern, nummern_zusammen == "3..")
+```
+
+
+
+
+
+
+
+
+
+                                                             # Tabelle mit den 12 Gebieten
+```{r}
+Kategorie <- c(" Staatsordnung ","Aussenpolitik","Sicherheitspolitik", "Wirtschaft", "Landwirtschaft", " Öffentliche Finanzen", "Energie"," Verkehr und Infrastruktur", " Umwelt und Lebensraum", "Sozialpolitik", " Bildung und Forschung ", " Kultur, Religion, Medien ")
+Nummer <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+
+dfKategorien <- data.frame(Nummer,Kategorie)
+dfKategorien
+```
+
+
+
+
+
+
+
+                                            # Data Frame mit Militär und Finanzierung und Meiden und Finanzierung 
+                                            
+# d1e1 == 3 oder d1e1 == 12 (3= Sicherheitspolitik, 12 = Kultur, Bldung, Medien)
+```{r}
+d1e1_3_oder_12 <- subset(data_csv, d1e1 == 3 | d1e1 == 12)
+d1e1_3_oder_12
+```
+# d1e2 == 3.2(Militär) oder 12.5(Medien)
+```{r}
+d1e2_3.2_oder_12.5 <- subset(d1e1_3_oder_12, d1e2 == 3.2 | d1e2 == 12.5)
+```
+
+# Was hat mit Finanzen zu tun?
+```{r}
+d2e1_6 <- subset(d1e2_3.2_oder_12.5, d2e1 == 6)
+
+# Hier als Ergebnis nur Abstimmungen mit Verbindung zum Militär rausgekommen
+```
+
+# Was ist 12.5 (Medien)
+```{r}
+d1e2_12.5 <- subset(d1e1_3_oder_12, d1e2 == 12.5)
+```
+
+# Neuer DF nur mit diesen Abstimmungen im Berich Medien, welche für uns relevant
+```{r}
+d1e2_12.5_finanzierung <- subset(d1e2_12.5, anr == 181 | anr == 595 | anr ==617 | anr ==654)
+```
+```{r}
+zahlen_ang_abg2 <- d1e2_12.5_finanzierung %>%
+  group_by(annahme) %>%
+  count()
+```
+
+# Bei Bilag abgelehnt durch angenommen ersetzen (in d1e2_12.5_Finanzierung), da Frage anders Formuliert.
+```{r}
+d1e2_12.5_finanzierung %>%
+  filter(d1e2_12.5_finanzierung, anr == 617) %>%
+  d1e2_12.5_finanzierung$annahme[d1e2_12.5_finanzierung$annahme == "0"] <- "1"
+```
+
+```{r}
+d1e2_12.5$annahme[d1e2_12.5$annahme == "0"] <- "Abgelehnt"
+d1e2_12.5$annahme[d1e2_12.5$annahme == "1"] <- "Angenommen"
+```
+
+
+
+
+
+
+ 
+                              # 1. Kreisdiagramm Abstimmungereignisse im Bereich Medien in Verbindung mit Finanzierung
+```{r}
+ggplot(zahlen_ang_abg2, aes(x="", y=n, fill=annahme))+
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y",start=0)+
+  geom_text(aes(label = paste0((100/4)*n, "%")), position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+  scale_fill_manual(values=c("tan2", "#0C4C8A"))+
+    labs(
+    title = "Abstimmungereignisse im Bereich Medien in Verbindung mit Finanzierung")
+```
+
+
+
+
+
+
+
+
+                                                    # 2. Kreisdiagramm Abstimmungen AHV Finanzierung
+```{r}
+ahv_Finanzierung <- subset(ahv, anr==401 |anr == 481 | anr == 489.1 | anr == 489.2 | anr == 489.3 | anr == 508 | anr == 508 | anr == 523 | anr == 594 | anr == 606 | anr == 614 | anr == 627)
+```
+```{r}
+zahlen_ang_abg <- ahv_Finanzierung %>%
+  group_by(annahme) %>%
+  count()
+```
+```{r}
+ggplot(zahlen_ang_abg, aes(x="", y=n, fill=annahme))+
+  geom_bar(stat="identity", width = 1)+
+  coord_polar("y",start=0)+
+  geom_text(aes(label = paste0((round(100/11)*n), "%")), position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL, fill = NULL) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+  scale_fill_manual(values=c("tan2", "#0C4C8A","grey"))+
+    labs(
+    title = "Abstimmungereignisse im Bereich der AHV Finanzierung")
+```
+
+
+
+
+                      
+                      
+                                        
+                                        
+                                                      # 3. Kreisdiagramm Militär und Finanzierung
+                                                      
+# Data Frame mit relevanten Abstimmungen erstellen
+```{r}
+militär_finanzierung <- subset(d1e2_3.2_oder_12.5, anr == 16 | anr == 18 | anr == 86 | anr == 161 | anr == 162 | anr == 131 | anr == 471 | anr == 393 | anr == 635 | anr == 584 | anr == 427)
+```
+
+# Entweder neue Spalte mit für / gegen Finanzierung oder Spalte annahme anpassen
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                # Grafik bei Erklärung Demokratie: Übersicht in welcher Rechtsform wie oft abgestimmt wurde
+
+```{r}
+data_csv$rechtsform[data_csv$rechtsform == "1"] <- "Obligatorisches Referendum"
+data_csv$rechtsform[data_csv$rechtsform == "2"] <- "Fakultatives Referendum"
+data_csv$rechtsform[data_csv$rechtsform == "3"] <- "Volksinitiative"
+data_csv$rechtsform[data_csv$rechtsform == "4"] <- "Direkter Gegenentwurf zu einer Volksinitiative"
+```
+
+```{r}
+ggplot(data_csv) +
+ aes(x = rechtsform) +
+ geom_bar(fill = "#0C4C8A") +
+ labs(x = "Rechtsform", y = " ", 
+ title = "Rechtsform der Initiativen seit 1848") +
+ theme_minimal() +
+ theme(plot.title = element_text(size = 15L, 
+ hjust = 0.5))
+data_csv$rechtsform[data_csv$rechtsform == "5"] <- "Stichfrage"
+```
+
 
 
 
@@ -94,6 +358,13 @@ ggplot(data,aes(x=Ergebniss,y=Anzahl))+geom_bar(stat="identity")
 ```
 
 
+
+
+
+
+
+
+
 # Data Frame mit Annahmen
 ```{r}
 ablehnung <- subset(ahv_Ergebnisse, annahme == "Abgelehnt") 
@@ -105,7 +376,6 @@ ablehnung$volkja.proz_n <-as.numeric(ablehnung$volkja.proz)
 annahmen <- subset(ahv_Ergebnisse, annahme == "Angenommen") 
 annahmen$volkja.proz_n <-as.numeric(annahmen$volkja.proz)
 ```
-
 
 # Plot Annahmen mit Jahresangaben
 ```{r}
@@ -120,6 +390,7 @@ ggplot(annahmen) +
 ```
 
 
+
 # Plot Ablehnungen mit Jahresangaben
 ```{r}
 Titel <- ablehnung$titel_kurz_d
@@ -130,7 +401,6 @@ ggplot(ablehnung) +
  theme_minimal()+
  ggtitle("Ablehnungen mit Jahreszahlen")
 ```
-
 
 
 # Plot mit AHV Abstimmungen und Ergebnissen
@@ -198,7 +468,6 @@ ggplot(ahv_Ergebnisse) +
 ```
 
 ```{r}
-
 ahv_ja_nein <- subset(ahv, select=c(datum,titel_kurz_d,annahme,volkja.proz))
 ahv_ja_nein$volkja.proz_n <-as.numeric(ahv$volkja.proz)
 ```
@@ -278,212 +547,3 @@ ggplot(ablehnung) +
   ) +
   theme_minimal()
 ```
-
-
-# DataFrame mit d1e1 d2e1 d3e1 Spalten
-```{r}
-abstimmungen_nummern <- data.frame(data_csv$titel_kurz_d,data_csv$d1e1, data_csv$d2e1, data_csv$d3e1)
-```
-
-# Spalte hinzufügen wo alle drei Zahlen zusammen sind
-```{r}
-abstimmungen_nummern$nummern_zusammen <- paste(abstimmungen_nummern$data_csv.d1e1,abstimmungen_nummern$data_csv.d2e1,abstimmungen_nummern$data_csv.d3e1,sep="")
-abstimmungen_nummern
-```
-
-# Die neue Spalte als int speichern
-```{r}
-abstimmungen_nummern$nummern_zusammen <- as.factor(abstimmungen_nummern$nummern_zusammen )
-```
-
-# Kontrolle
-```{r}
-class(abstimmungen_nummern$nummern_zusammen )
-```
-
-# Wie oft welche Kombination
-```{r}
-CountKombinationen <- abstimmungen_nummern %>%
-  group_by(nummern_zusammen) %>%
-  summarize(count = n()) %>%
-  arrange(desc(count))
-```
-
-# Abstimmungen mit 10.. (53)
-```{r}
-Abstimmungen_10.. <- subset(abstimmungen_nummern, nummern_zusammen == "10..")
-```
-
-# Abstimmungen mit 4.. (26)
-```{r}
-Abstimmungen_4.. <- subset(abstimmungen_nummern, nummern_zusammen == "4..")
-```
-
-# Abstimmungen mit 11. (25)
-```{r}
-Abstimmungen_11. <- subset(abstimmungen_nummern, nummern_zusammen == "11.")
-```
-
-# Abstimmungen mit 1010. (23)
-```{r}
-Abstimmungen_1010. <- subset(abstimmungen_nummern, nummern_zusammen == "1010.")
-```
-
-# Abstimmungen mit 1.. (20)
-```{r}
-Abstimmungen_1.. <- subset(abstimmungen_nummern, nummern_zusammen == "1..")
-```
-
-# Abstimmungen mit 3.. (18)
-```{r}
-Abstimmungen_3.. <- subset(abstimmungen_nummern, nummern_zusammen == "3..")
-```
-
-
-
-
-
-
-
-# Serafe / Medien Abstimmungen (mit 12)
-
-# Abstimmungen mit 12.. (7)
-```{r}
-Abstimmungen_12.. <- subset(abstimmungen_nummern, nummern_zusammen == "12..")
-```
-
-# Abstimmungen mit 121. (5)
-```{r}
-Abstimmungen_121. <- subset(abstimmungen_nummern, nummern_zusammen == "121.")
-```
-
-# Abstimmungen mit 12. (3)
-```{r}
-Abstimmungen_12. <- subset(abstimmungen_nummern, nummern_zusammen == "12.")
-```
-
-# Abstimmungen mit 124. (3)
-```{r}
-Abstimmungen_124. <- subset(abstimmungen_nummern, nummern_zusammen == "124.")
-```
-
-# Abstimmungen mit 3112
-```{r}
-Abstimmungen_3112 <- subset(abstimmungen_nummern, nummern_zusammen == "3112")
-```
-
-
-```{r}
-bbbb <- subset(abstimmungen_nummern,data_csv.d1e1 == 12)
-```
-
-
-
-
-```{r}
-Kategorie <- c(" Staatsordnung ","Aussenpolitik","Sicherheitspolitik", "Wirtschaft", "Landwirtschaft", " Öffentliche Finanzen", "Energie"," Verkehr und Infrastruktur", " Umwelt und Lebensraum", "Sozialpolitik", " Bildung und Forschung ", " Kultur, Religion, Medien ")
-Nummer <- c(1,2,3,4,5,6,7,8,9,10,11,12)
-
-dfKategorien <- data.frame(Nummer,Kategorie)
-dfKategorien
-```
-
-# d1e1 == 3 oder d1e1 == 12
-```{r}
-d1e1_3_oder_12 <- subset(data_csv, d1e1 == 3 | d1e1 == 12)
-d1e1_3_oder_12
-```
-
-# d1e2 == 3.2(Militär) oder 12.5(Medien)
-```{r}
-d1e2_3.2_oder_12.5 <- subset(d1e1_3_oder_12, d1e2 == 3.2 | d1e2 == 12.5)
-```
-
-# Was hat mit Finanzen zu tun?
-```{r}
-d2e1_6 <- subset(d1e2_3.2_oder_12.5, d2e1 == 6)
-```
-
-
-# Pie Chart AVH Finanzierungen Annahme, Ablehnung
-```{r}
-ahv_Finanzierung <- subset(ahv, anr==401 |anr == 481 | anr == 489.1 | anr == 489.2 | anr == 489.3 | anr == 508 | anr == 508 | anr == 523 | anr == 594 | anr == 606 | anr == 614 | anr == 627)
-```
-```{r}
-ggplot(zahlen_ang_abg, aes(x="", y=n, fill=annahme))+
-  geom_bar(stat="identity", width = 1)+
-  coord_polar("y",start=0)+
-  geom_text(aes(label = paste0((round(100/11)*n), "%")), position = position_stack(vjust=0.5)) +
-  labs(x = NULL, y = NULL, fill = NULL) +
-  theme_classic() +
-  theme(axis.line = element_blank(),
-          axis.text = element_blank(),
-          axis.ticks = element_blank()) +
-  scale_fill_manual(values=c("tan2", "#0C4C8A","grey"))+
-    labs(
-    title = "Abstimmungereignisse im Bereich der AHV Finanzierung")
-```
-
-
-
-
-
-
-```{r}
-# Geschichte AHV lesen
-# drei pie charts
- # Militär d2e1_6
-  #Medien d2e2_3.2oder12.5 alle ausser 1796 1984
-
-#Falls geht direkt von tabelle sondst mit Zahlen / Fernando fragen)
-```
-
-
-# Militär und Finanzierung
-# Wie viele davon abgehehnt / angenommen?
-```{r}
-zahlen_ang_abg1 <- d2e1_6 %>%
-  group_by(annahme) %>%
-  count()
-```
-
-```{r}
-anzahl <- c(6,1)
-kategorie <- c("Ablehnung", "Annahme")
-pie(anzahl,labels=kategorie)
-```
-
-
-```{r}
-d1e2_12.5 <- subset(d1e1_3_oder_12, d1e2 == 12.5)
-```
-
-
-
-
-
-# Abstimmungereignisse im Bereich Medien
-```{r}
-d1es_12.5_anr <- subset(d1e2_12.5, anr == 181 | anr == 595 | anr ==617 | anr ==654)
-```
-```{r}
-zahlen_ang_abg2$annahme[zahlen_ang_abg2$annahme == "0"] <- "Abgelehnt"
-zahlen_ang_abg2$annahme[zahlen_ang_abg2$annahme == "1"] <- "Angenommen"
-```
-```{r}
-ggplot(zahlen_ang_abg2, aes(x="", y=n, fill=annahme))+
-  geom_bar(stat="identity", width = 1)+
-  coord_polar("y",start=0)+
-  geom_text(aes(label = paste0((100/4)*n, "%")), position = position_stack(vjust=0.5)) +
-  labs(x = NULL, y = NULL, fill = NULL) +
-  theme_classic() +
-  theme(axis.line = element_blank(),
-          axis.text = element_blank(),
-          axis.ticks = element_blank()) +
-  scale_fill_manual(values=c("tan2", "#0C4C8A"))+
-    labs(
-    title = "Abstimmungereignisse im Bereich Medien")
-```
-
-
-
