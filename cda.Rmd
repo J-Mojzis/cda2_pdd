@@ -8,7 +8,6 @@ output: html_notebook
 
 #Librarys installieren
 library(tidyverse)
-library(ggplot2)
 library(networkD3)
 library(plotly)
 library(esquisse)
@@ -19,14 +18,14 @@ library(highcharter)
 
 ```{r}
 #Datensatz einlesen
-data <- read.csv("C:/Users/Antonia/Downloads/swissvotes.csv", header=TRUE, sep=";", na = c("NA", "."))
+df_original <- read.csv("https://swissvotes.ch/page/dataset/swissvotes_dataset.csv", header=TRUE, sep=";", na = c("NA", "."))
 ```
 
 
 ```{r}
 #Datensatz anschauen
-head(data)
-str(data)
+head(df_original)
+str(df_original)
 
 ```
 
@@ -35,32 +34,32 @@ str(data)
 ```{r}
 #Variablen definieren um nachher mehrere Spalten gleichzeitig zu mutieren
 
-positionen  <- data %>%
+positionen  <- df_original %>%
   select(ends_with(".pos")|starts_with("p.")|starts_with("pdev")) 
 
-hauptthema <- data %>%
+hauptthema <- df_original %>%
   select(d1e1, d2e1 ,d3e1)
 
-unterthema <- data %>%
+unterthema <- df_original %>%
   select(d1e2, d2e2 ,d3e2)
 
-unterunterthema <- data %>%
+unterunterthema <- df_original %>%
   select(d1e3, d2e3 ,d3e3)
 
-daten <- data%>%
+daten <- df_original%>%
   select(datum, starts_with("dat."))
 
-resultate <- data %>%
+resultate <- df_original %>%
   select(ends_with("annahme")| volk | stand)
 
-parteien <- c(".svp", ".fdp", ".sp", ".cvp", ".gsp")
+parteien <- c(".svp", ".fdp", ".sp", ".cvp", ".gsp", ".sps")
 
 ```
 
 
 ```{r}
 #Data-Wrangling (Variablen codieren)
-data_cda <- data %>%
+data <- df_original %>%
   # filter((d1e2 > 2 & d1e2 < 4 | (d1e3 > 10.30 & d1e3 < 10.33)) |
   #        (d2e2 > 2 & d2e2 < 4 | (d2e3 > 10.30 & d2e3 < 10.33))|
   #        (d3e2 > 2 & d3e2 < 4 | (d3e3 > 10.30 & d3e3 < 10.33)) ) %>% #Filter der Themengebiete
@@ -137,18 +136,21 @@ data_cda <- data %>%
                 .== 1 ~ "angenommen", 
                 .== 3 ~ "Ständemehr nicht nötig", 
                 .== 8 ~ "Gegenentwurf angenommen", 
-                .== 9 ~ "Volksinitiative angenommen" )))) 
+                .== 9 ~ "Volksinitiative angenommen" )))) %>% 
+  mutate(anr = as.factor(anr)) 
+  
 
+  
 ```
 
 
 ```{r} 
 #Neue Variablen generieren & Datensatz selektieren
 
-data_cda$bet_volkja.proz <- (data_cda$bet*(data_cda$volkja.proz/100))
+data$bet_volkja.proz <- (data$bet*(data$volkja.proz/100))
 
-df <- data_cda %>%
-  select(anr,Jahr, titel_kurz_d, rechtsform, annahme, bet_volkja.proz, bet,  d1e1:br.pos, bv.pos:nr.pos, sr.pos, unter_g, unter_u, ends_with(parteien), ja.lager, nein.lager, volk:stand, volkja.proz, ktjaproz,matches("...bet"),matches("...japroz"), matches("...annahme"),swissvoteslink, anneepolitique, info_br.de, info_dep.de, info_amt.de)
+df <- data %>%
+  select(anr,Jahr, Kurztitel, rechtsform, annahme, bet_volkja.proz, bet,  d1e1:br.pos, bv.pos:nr.pos, sr.pos, unter_g, unter_u, ends_with(parteien), ja.lager, nein.lager, volk:stand, volkja.proz, ktjaproz,matches("...bet"),matches("...japroz"), matches("...annahme"),swissvoteslink, anneepolitique, info_br.de, info_dep.de, info_amt.de)
 
 
 #neue Variablen: prüfen, ob Thema vorkommt und wenn ja, trägt es 1 ein (sonst 0)
@@ -166,20 +168,101 @@ df <- df %>%
     Ausländer == 1 ~ "Ausländer",
     TRUE ~"andere"))) %>% 
     mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>% 
-    mutate(relevant = ifelse(Thema == "andere", "nein", "ja"))
+    mutate(relevant = ifelse(Thema == "andere", "nein", "ja")) 
+
 ```
 
 
 ```{r} 
 ausländer <- df %>% 
-  filter(Thema %in% c("Ausländer", "Flüchtlinge")) 
+  filter(Thema %in% c("Ausländer", "Flüchtlinge")) %>%
+  filter(rechtsform != "Stichfrage") %>% 
+  mutate (Faktor = c(0, 0, 0, 0, 0, 0, 0, -100, -100, 0, 0, 0, -100, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, -100 )) %>% 
+  mutate(volkja.proz = abs(volkja.proz+Faktor))
 
 
+x <- ausländer %>% 
+  select(ends_with("proz")) %>% 
+  mutate(lapply(., ~ .+Faktor))
+  
+lapply(x, +ausländer$Faktor)
+x
+
+#Durchschnitt allg. Schweiz bei Abstimmungen vs. Abstimmungen über Ausländer
+mean(df$bet, na.rm = TRUE)
+mean(ausländer$bet)
+
+
+
+
+
+kantone_bet <- ausländer %>%
+  select(ends_with(".bet")) %>% 
+  summarize(mean = colMeans(., na.rm = TRUE))
+
+kantone_japroz <- ausländer %>% 
+  select(ends_with(".japroz"))
+
+Liste_kantone <- list(names(colMeans(ausländer[39:64])))
+
+
+
+svp_ja <- ausländer %>% 
+  filter(p.svp == "Befürwortend") %>% 
+  summarize(Durchschnitt = colMeans(ausländer[39:64], na.rm = TRUE))
+
+
+
+svp_nein <- ausländer %>% 
+  filter(p.svp == "Ablehnend") %>% 
+  summarise_at(c(names(kantone_japroz)), mean, na.rm = TRUE)
+
+
+svp_total <- ausländer %>% 
+  group_by(p.svp) %>% 
+  summarise_at(c(names(kantone_japroz)), mean, na.rm = TRUE)
+
+
+ggplot(svp_total, aes(p.svp, zh.japroz))+
+  geom_jitter()
+
+SVP_kt <- cbind(argh = Liste_kantone, svp_ja, svp_nein) 
+
+colnames(SVP_kt)[1] <- "Kanton"
+
+
+mean(df$volkja.proz, na.rm = TRUE)
+
+annahmen_ausländer <- ausländer %>% 
+  group_by(rechtsform) %>% 
+  summarize(mean = mean(volkja.proz, na.rm = TRUE))
+mean(ausländer$volkja.proz)
+
+
+parteien_japroz <- ausländer %>% 
+  group_by(p.svp, p.fdp, p.sps, p.cvp) %>% 
+  summarize(jastimmen = mean(volkja.proz))
+  
 ggplot(ausländer, aes(Jahr)) + 
   geom_histogram(binwidth = 5)
 
+
+
+
+ausländer[39:61]
+
+
+colMeans(ausländer["zh.bet":"ge.bet"], na.rm = TRUE)
+ggplot(ausländer, aes(Jahrzehnt, fill = Thema)) + 
+  geom_bar()
+
 flüchtling <- df %>% 
   filter(Thema == "Flüchtlinge") 
+
+
+#Stimmbeteiligung Kantone im Vergleich für Abstimmungen
+ggplot(ausländer, aes(anr, bet, fill= annahme))+
+  geom_col()
 
 #glimpse(df)
 ```
@@ -189,7 +272,7 @@ flüchtling <- df %>%
 ```{r} 
 #eingeschränkter Datensatz für Visualisierung
 df_vis <- df %>% 
-  select(anr, Jahr, titel_kurz_d, rechtsform, br.pos, Sicherheitspolitik:relevant) 
+  select(anr, Jahr, Kurztitel, rechtsform, br.pos, Sicherheitspolitik:relevant) 
 
 ```
 
@@ -219,7 +302,7 @@ df_vis %>%
   filter(Thema == "Ausländer"|Thema == "Flüchtlinge") %>% 
   group_by(Jahrzehnt, relevant, Thema) %>% 
   count() %>% 
-  ggplot(aes(Jahr, n, fill = Thema)) +
+  ggplot(aes(Jahrzehnt, n, fill = Thema)) +
   geom_bar(position="dodge", stat="identity") +
   scale_fill_brewer(palette="Spectral") +
   labs(title = "Anzahl Abstimmungen pro Jahrzehnt", subtitle =  "Gruppiert nach Themen unseres Beitrages & Rest", y = "Anzahl")
@@ -239,13 +322,14 @@ df %>%
 
 ```{r} 
 #Abstimmungen, gruppiert nach Rechtsform & Jahrzehnt
-df_vis %>% 
+df %>% 
   filter(relevant == "ja") %>% 
-  group_by(Jahrzehnt, rechtsform, Thema) %>% 
+  group_by(Jahrzehnt, rechtsform, Thema,annahme) %>% 
   count() %>% 
-  ggplot(aes(Jahrzehnt, rechtsform, color = Thema)) +
+  ggplot(aes(Jahrzehnt, rechtsform, color = annahme)) +
   geom_jitter() +
-  scale_color_brewer(palette="Spectral") 
+  #scale_color_brewer(palette="Spectral") +
+  facet_wrap(~Thema)
 
 ```
 
@@ -361,17 +445,17 @@ ggplot(df_vis, aes(Jahr, Thema))+
 
 ```{r}
 #Visualisierungen
-media <- data_cda %>%
-  select(titel_kurz_d, rechtsform, mediaton.d, mediaton.f, mediaton.tot) 
+media <- ausländer %>%
+  select(Kurztitel, rechtsform, mediaton.d, mediaton.f, mediaton.tot) 
 
 ggplot(media, aes(rechtsform, mediaton.tot, na.rm = TRUE)) +
   geom_boxplot()
 
-ggplot(media, aes(titel_kurz_d, mediaton.d, mediaton.f)) +
+ggplot(media, aes(Titel, mediaton.d, mediaton.f)) +
   geom_jitter() 
 
 pos <- data_cda %>%
-  select(titel_kurz_d, names(positionen))
+  select(Titel, names(positionen))
 ```
 
 
@@ -477,6 +561,16 @@ d2 <- df %>%
 hchart(data_to_sankey(d2), "sankey", name = "Resultat")
 
 
+d4 <- df %>% 
+  filter(rechtsform != "Stichfrage", Thema == "Ausländer") %>% 
+  select(Thema, rechtsform,  bv.pos, annahme) %>% 
+  drop_na(.)
+
+
+hchart(data_to_sankey(d4), "sankey", name = "Resultat")
+
+
+
 d3 <- df %>% 
   filter(rechtsform != "Stichfrage") %>% 
   select(rechtsform, br.pos, volk, stand,  annahme) %>% 
@@ -489,11 +583,28 @@ d3 <- df %>%
 
 
 (pl <- hchart(data_to_sankey(d3), "sankey", name = "Resultat", width =  5)) 
-pl <- pl %>% hc_title(text = "Zusammenhang zwischen Position des Bundesrats und Resultat der Abstimmung") 
+pl <- pl %>% hc_title(text = "Zusammenhang zwischen Position des Bundesrats und Resultat der Abstimmung") %>% 
+  hc_size(height = 500, width = 600)
 
 htmlwidgets::saveWidget(widget = pl, file = "C:/Users/Antonia/test.html")
 
 
 ```
 
+```{r}
+# Alter code-chunk
+# df_neu <- df_clean %>%
+#  filter(d1e3|d2e3|d3e3 %in% themen) %>%
+#  select_if(~sum(!is.na(.)) > 0) %>% #nur Spalten wählen, die nicht zu 100% NAs sind
+#  rowwise() %>%
+#  mutate(alle_kat = list(c(d1e3,  d2e3,  d3e3))) %>%
+#  mutate(alle_kat = list(alle_kat[!is.na(alle_kat)])) 
+```
+```{r}
+test <- ausländer %>% 
+  select(Kurztitel, zhja.proz)
 
+
+
+
+```
