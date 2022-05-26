@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 
-```{r}
+```{r include=FALSE}
 
 #Librarys installieren
 library(tidyverse)
@@ -12,7 +12,7 @@ library(networkD3)
 library(plotly)
 library(esquisse)
 library(highcharter)
-
+library(openxlsx)
 ```
 
 
@@ -20,6 +20,7 @@ library(highcharter)
 #Datensatz einlesen
 df_original <- read.csv("https://swissvotes.ch/page/dataset/swissvotes_dataset.csv", header=TRUE, sep=";", na = c("NA", "."))
 ```
+
 
 
 ```{r}
@@ -181,12 +182,12 @@ ausländer <- df %>%
   mutate(volkja.proz = abs(volkja.proz+Faktor))
 
 
-x <- ausländer %>% 
-  select(ends_with("proz")) %>% 
-  mutate(lapply(., ~ .+Faktor))
+#x <- ausländer %>% 
+#  select(ends_with("proz")) %>% 
+ # mutate(lapply(., ~ .+Faktor))
   
-lapply(x, +ausländer$Faktor)
-x
+#lapply(x, +ausländer$Faktor)
+#x
 
 #Durchschnitt allg. Schweiz bei Abstimmungen vs. Abstimmungen über Ausländer
 mean(df$bet, na.rm = TRUE)
@@ -204,9 +205,10 @@ kantone_japroz <- ausländer %>%
   select(ends_with(".japroz"))
 
 Liste_kantone <- list(names(colMeans(ausländer[39:64])))
+```
 
 
-
+```{r} 
 svp_ja <- ausländer %>% 
   filter(p.svp == "Befürwortend") %>% 
   summarize(Durchschnitt = colMeans(ausländer[39:64], na.rm = TRUE))
@@ -252,7 +254,7 @@ ggplot(ausländer, aes(Jahr)) +
 ausländer[39:61]
 
 
-colMeans(ausländer["zh.bet":"ge.bet"], na.rm = TRUE)
+#colMeans(ausländer["zh.bet":"ge.bet"], na.rm = TRUE)
 ggplot(ausländer, aes(Jahrzehnt, fill = Thema)) + 
   geom_bar()
 
@@ -443,7 +445,7 @@ ggplot(df_vis, aes(Jahr, Thema))+
 ```
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 #Visualisierungen
 media <- ausländer %>%
   select(Kurztitel, rechtsform, mediaton.d, mediaton.f, mediaton.tot) 
@@ -542,7 +544,7 @@ df %>%
 
 ```
 
-```{r} 
+```{r eval=FALSE, include=FALSE}
 #Sankey
 d <- df %>% 
   filter(rechtsform != "Stichfrage", relevant == "ja") %>% 
@@ -600,6 +602,65 @@ htmlwidgets::saveWidget(widget = pl, file = "C:/Users/Antonia/test.html")
 #  mutate(alle_kat = list(c(d1e3,  d2e3,  d3e3))) %>%
 #  mutate(alle_kat = list(alle_kat[!is.na(alle_kat)])) 
 ```
+
+```{r}
+
+volkja_proz_tab <- select(df,anr, volkja.proz)
+
+aus_anr <- select(ausländer, anr)
+aus_anr = aus_anr[aus_anr['anr'] != "552.3"]
+aus_anr <- as.data.frame(aus_anr) %>% 
+  rename(anr=aus_anr)
+#flu_anr <- select(flüchtling, anr)
+#anr_tot <- bind_rows(aus_anr, flu_anr) 
+#anr_tot <- transform(anr_tot, anr = as.numeric(anr))
+#anr_tot <- arrange(anr_tot, anr)
+
+#volkja_proz_tab <- transform(volkja_proz_tab, anr = as.numeric(anr))
+
+thema_volk <- inner_join(aus_anr, volkja_proz_tab)
+thema_volk$anr <- NULL
+
+#thema_volk$anr <- NULL
+
+#bind_cols(thema_volk, kantone_japroz_korr)
+```
+
+
+```{r}
+korrektur <- c(0,0,0,0,0,0,0,100,100,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,100)
+kantone_japroz_korr <- data.frame(kantone_japroz)
+kantone_japroz_korr <- bind_cols(kantone_japroz_korr, thema_volk)
+
+for (i in 1:length(kantone_japroz_korr)) {
+  kantone_japroz_korr[,i] <- abs(kantone_japroz_korr[,i] -korrektur)
+}
+
+kantone_japroz_korr$ju.japroz <- NULL
+kantone_japroz_mean <- data.frame(colMeans(kantone_japroz_korr))
+kantone_japroz_mean <- kantone_japroz_mean %>% 
+  mutate(contra_verschärfung = 100- kantone_japroz_mean$colMeans.kantone_japroz_korr.)
+
+kantone_japroz_mean <- kantone_japroz_mean %>% 
+  rename(pro_verschärfung = colMeans.kantone_japroz_korr.)
+
+kantone_japroz_mean["Kantone"] <- rownames(kantone_japroz_mean)
+
+kantone_japroz_mean <- kantone_japroz_mean %>% 
+  pivot_longer(
+    cols = pro_verschärfung:contra_verschärfung, 
+    names_to = "Position", 
+    values_to = "Prozent"
+)
+
+verschärfung <- ggplot(kantone_japroz_mean, aes(x=reorder(Kantone, Prozent), y=Prozent, fill=Position))+
+  geom_bar(position="stack", stat = "identity")+
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(verschärfung)
+```
+
+
 ```{r}
 test <- ausländer %>% 
   select(Kurztitel, zhja.proz)
@@ -607,4 +668,65 @@ test <- ausländer %>%
 
 
 
+```
+
+```{r}
+xlsxFile <- "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/asylstatistik/uebersichten/gesuche-nation-ab-1986-d.xlsx.download.xlsx/gesuche-nation-ab-1986-d.xlsx"
+as_nation <- read.xlsx(xlsxFile)
+as_nation[1,1] <- "Country"
+as_nation[1,38] <- "2022"
+as.character(as_nation[1, ])
+names(as_nation) <- as_nation[1,]
+as_nation <- as_nation[-1,]
+total <- as_nation[186,]
+as_nation <- as_nation[-186,]
+
+```
+
+```{r}
+cum_nat <- as_nation %>% 
+  pivot_longer(
+    cols = "1986":"2022",
+    names_to = "Jahr", 
+    values_to = "Anzahl"
+  )
+
+cum_nat <- transform(cum_nat, Anzahl = as.numeric(Anzahl))
+
+top_land <- aggregate(cum_nat$Anzahl, by=list(Land=cum_nat$Country), FUN=sum)
+top_land <- top_land %>% 
+  arrange(desc(x)) %>% 
+  ungroup()
+
+laender <- as_nation[,1]
+
+top_20 <- top_land %>% 
+  mutate(Land=ifelse(Land %in% head(Land, 20), 
+                     Land, "Andere"))
+top_20 <- aggregate(top_20$x, by=list(Herkunftsland=top_20$Land), FUN=sum)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+
+as_nation[2:38] <- sapply(as_nation[2:38],as.numeric)
+sapply(as_nation, class)
+
+cum_nat <- transform(cum_nat, Anzahl = as.numeric(Anzahl))
+
+
+
+top_land <- aggregate(cum_nat$Anzahl, by=list(Land=cum_nat$Country), FUN=sum)
+top_land <- top_land %>% 
+  arrange(desc(x)) %>% 
+  ungroup()
+
+laender <- as_nation[,1]
+
+top_20 <- top_land %>% 
+  mutate(Land=ifelse(Land %in% head(Land, 20), 
+                     Land, "Andere"))
+top_20 <- aggregate(top_20$x, by=list(Herkunftsland=top_20$Land), FUN=sum)
+#ggplot(cum_nat, aes(x=Jahr, y=Anzahl, fill=Country))+
+ # geom_area()
 ```
