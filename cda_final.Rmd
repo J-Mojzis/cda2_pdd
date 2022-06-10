@@ -6,65 +6,64 @@ output: html_notebook
 #Setting_up
 ```{r Libraries installieren, include=FALSE}
 
-library(tidyverse) #Data-wrangling, Visualisierungen
-library(networkD3) #Sankey
-library(plotly) #Interaktive Visualisierungen
+library(tidyverse) # Data-wrangling, Visualisierungen
+library(networkD3) # Sankey
+library(plotly) # Interaktive Visualisierungen
 library(esquisse) # tool um Visualisierungen zu prüfen
-library(highcharter) #Sankey
-library(openxlsx) #xlsx Dateien öffnen
-library(reshape2) #Daten umformen für Korrelationsmatrix
-library("RColorBrewer") 
+library(highcharter) # Sankey
+library(openxlsx) # xlsx Dateien öffnen
+library(reshape2) # Daten umformen für Korrelationsmatrix
+library("RColorBrewer")
+library(styler) #Dokument Übersicht geben
 
 
-#initialisierung für chart plotly
-Sys.setenv("plotly_username"="abonfa")
-Sys.setenv("plotly_api_key"="SAAzkhO9E35RQFzYG9PI")
-
+# initialisierung für chart plotly
+Sys.setenv("plotly_username" = "abonfa")
+Sys.setenv("plotly_api_key" = "SAAzkhO9E35RQFzYG9PI")
 ```
 
 ```{r Datensätze einlesen, include = FALSE}
-df_swissvotes <- read.csv("https://swissvotes.ch/page/dataset/swissvotes_dataset.csv", header=TRUE, sep=";", na = c("NA", "."))
+df_swissvotes <- read.csv("https://swissvotes.ch/page/dataset/swissvotes_dataset.csv", header = TRUE, sep = ";", na = c("NA", "."))
 df_as_nation <- read.xlsx("https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/asylstatistik/uebersichten/gesuche-nation-ab-1986-d.xlsx.download.xlsx/gesuche-nation-ab-1986-d.xlsx")
-df_ausländeranteil <- read.xlsx("https://dam-api.bfs.admin.ch/hub/api/dam/assets/18344345/master") #Entwicklung ausländische Population
-df_bevoelkerungsstatistik <- read.xlsx("https://dam-api.bfs.admin.ch/hub/api/dam/assets/18344355/master") #Bevölkerungsstatistik
+df_ausländeranteil <- read.xlsx("https://dam-api.bfs.admin.ch/hub/api/dam/assets/18344345/master") # Entwicklung ausländische Population
+df_bevoelkerungsstatistik <- read.xlsx("https://dam-api.bfs.admin.ch/hub/api/dam/assets/18344355/master") # Bevölkerungsstatistik
 ```
 
 ```{r Datawrangling Swissvotes: Bereinigung des Datensatzes}
-#Variablen definieren um nachher mehrere Spalten gleichzeitig zu mutieren
+# Variablen definieren um nachher mehrere Spalten gleichzeitig zu mutieren
 
-var_positionen  <- df_swissvotes %>%
-  select(ends_with(".pos")|starts_with("p.")|starts_with("pdev")) 
+var_positionen <- df_swissvotes %>%
+  select(ends_with(".pos") | starts_with("p.") | starts_with("pdev"))
 
 var_hauptthema <- df_swissvotes %>%
-  select(d1e1, d2e1 ,d3e1)
+  select(d1e1, d2e1, d3e1)
 
 var_unterthema <- df_swissvotes %>%
-  select(d1e2, d2e2 ,d3e2)
+  select(d1e2, d2e2, d3e2)
 
 var_unterunterthema <- df_swissvotes %>%
-  select(d1e3, d2e3 ,d3e3)
+  select(d1e3, d2e3, d3e3)
 
-var_datum <- df_swissvotes%>%
+var_datum <- df_swissvotes %>%
   select(datum, starts_with("dat."))
 
 var_resultate <- df_swissvotes %>%
-  select(ends_with("annahme")| volk | stand)
+  select(ends_with("annahme") | volk | stand)
 
 var_parteien <- c(".svp", ".fdp", ".sp", ".cvp", ".gsp", ".sps")
 
-#Data-Wrangling (Variablen codieren)
+# Data-Wrangling (Variablen codieren)
 data <- df_swissvotes %>%
-  select(-(ends_with(".fr")|ends_with("_f")|ends_with(".en")))%>% #Entfernung französische Übersetzungen
-  rename(Kurztitel = titel_kurz_d, Titel = titel_off_d, ) %>% 
-
-    mutate(rechtsform = factor(case_when(
+  select(-(ends_with(".fr") | ends_with("_f") | ends_with(".en"))) %>% # Entfernung französische Übersetzungen
+  rename(Kurztitel = titel_kurz_d, Titel = titel_off_d, ) %>%
+  mutate(rechtsform = factor(case_when(
     rechtsform == 1 ~ "Obligatorisches Referendum",
     rechtsform == 2 ~ "Fakultatives Referendum",
     rechtsform == 3 ~ "Volksinitiative",
     rechtsform == 4 ~ "Gegenentwurf zu Volksinitiative",
-    rechtsform == 5 ~ "Stichfrage")))%>% 
-  
-    mutate(dep = factor(case_when(
+    rechtsform == 5 ~ "Stichfrage"
+  ))) %>%
+  mutate(dep = factor(case_when(
     dep == 1 ~ "EDA",
     dep == 2 ~ "EDI",
     dep == 3 ~ "EJPD",
@@ -72,118 +71,141 @@ data <- df_swissvotes %>%
     dep == 5 ~ "EFD",
     dep == 6 ~ "WBF",
     dep == 7 ~ "UVEK",
-    dep == 8 ~ "BK")))%>%
-  mutate (Jahr = as.integer(format(as.Date(datum, format='%d.%m.%Y'), format="%Y"))) %>% 
-  
-  mutate(across(names(var_positionen), 
-           ~ factor(case_when(. == 1 ~ "Befürwortend",
-    .== 2 ~"Ablehnend",
-    .== 3 ~"Keine",
-    .== 4 ~"Leere Abgabe",
-    .== 5 ~"Stimmfreigabe",
-    .== 8 ~"Vorzug für den Gegenentwurf",
-    .== 9 ~"Vorzug für Volksinitiative",
-    . == 66 ~"keine",
-    . == 9999 ~"Partei ex. nicht",)))) %>%
-  
-  mutate(across(names(var_hauptthema), 
-             ~ factor(case_when(. == 1 ~ "Staatsordnung",
-    .== 2 ~ "Aussenpolitik",
-    .== 3 ~"Sicherheitspolitik",
-    .== 4 ~"Wirtschaft",
-    .== 5 ~"Landwirtschaft",
-    .== 6 ~"Öffentliche Finanzen",
-    .== 7 ~"Energie",
-    .== 8 ~"Verkehr und Infrastruktur",
-    .== 9 ~"Umwelt und Lebensraum",
-    .== 10 ~"Sozialpolitik",
-    .== 11 ~"Bildung und Forschung",
-    .== 12 ~"Kultur, Religion, Medien",))))%>%
-  
-  mutate(across(names(var_unterthema), 
-             ~ factor(case_when(. == 2.1 ~ "Aussenpolitische Grundhaltung",
-    .== 2.2 ~ "Europapolitik",
-    .== 2.3 ~ "Internationale Organisationen",
-    .== 2.4 ~ "Entwicklungszusammenarbeit",
-    .== 2.5 ~ "Staatsverträge mit einzelnen Staaten",
-    .== 2.6 ~"Aussenwirtschaftspolitik",
-    .== 2.7 ~"Diplomatie",
-    .== 2.8 ~"Auslandschweizer:innen",
-    .== 3.1 ~"Öffentliche Sicherheit",
-    .== 3.2 ~"Armee",
-    .== 3.3 ~"Landesversorgung",
-    .== 10.3 ~"Ausländer & Flüchtlinge", 
-    TRUE ~"andere")))) %>%
-  mutate(across(names(var_unterunterthema), 
-             ~ factor(case_when(. == 10.31 ~ "Ausländerpolitik",
-    .== 10.32 ~ "Flüchtlinge",
-     TRUE ~"andere")))) %>%
-  
-  mutate(across(names(var_datum), 
-                ~ as.Date(., "%d.%m.%Y"))) %>%
-  
-  mutate(across(names(var_resultate), 
-                ~ factor(case_when(. == 0 ~"abgelehnt", 
-                .== 1 ~ "angenommen", 
-                .== 3 ~ "Ständemehr nicht nötig", 
-                .== 8 ~ "Gegenentwurf angenommen", 
-                .== 9 ~ "Volksinitiative angenommen" )))) %>% 
-  mutate(anr = as.factor(anr)) 
-  
-
-  
+    dep == 8 ~ "BK"
+  ))) %>%
+  mutate(Jahr = as.integer(format(as.Date(datum, format = "%d.%m.%Y"), format = "%Y"))) %>%
+  mutate(across(
+    names(var_positionen),
+    ~ factor(case_when(
+      . == 1 ~ "Befürwortend",
+      . == 2 ~ "Ablehnend",
+      . == 3 ~ "Keine",
+      . == 4 ~ "Leere Abgabe",
+      . == 5 ~ "Stimmfreigabe",
+      . == 8 ~ "Vorzug für den Gegenentwurf",
+      . == 9 ~ "Vorzug für Volksinitiative",
+      . == 66 ~ "keine",
+      . == 9999 ~ "Partei ex. nicht",
+    ))
+  )) %>%
+  mutate(across(
+    names(var_hauptthema),
+    ~ factor(case_when(
+      . == 1 ~ "Staatsordnung",
+      . == 2 ~ "Aussenpolitik",
+      . == 3 ~ "Sicherheitspolitik",
+      . == 4 ~ "Wirtschaft",
+      . == 5 ~ "Landwirtschaft",
+      . == 6 ~ "Öffentliche Finanzen",
+      . == 7 ~ "Energie",
+      . == 8 ~ "Verkehr und Infrastruktur",
+      . == 9 ~ "Umwelt und Lebensraum",
+      . == 10 ~ "Sozialpolitik",
+      . == 11 ~ "Bildung und Forschung",
+      . == 12 ~ "Kultur, Religion, Medien",
+    ))
+  )) %>%
+  mutate(across(
+    names(var_unterthema),
+    ~ factor(case_when(
+      . == 2.1 ~ "Aussenpolitische Grundhaltung",
+      . == 2.2 ~ "Europapolitik",
+      . == 2.3 ~ "Internationale Organisationen",
+      . == 2.4 ~ "Entwicklungszusammenarbeit",
+      . == 2.5 ~ "Staatsverträge mit einzelnen Staaten",
+      . == 2.6 ~ "Aussenwirtschaftspolitik",
+      . == 2.7 ~ "Diplomatie",
+      . == 2.8 ~ "Auslandschweizer:innen",
+      . == 3.1 ~ "Öffentliche Sicherheit",
+      . == 3.2 ~ "Armee",
+      . == 3.3 ~ "Landesversorgung",
+      . == 10.3 ~ "Ausländer & Flüchtlinge",
+      TRUE ~ "andere"
+    ))
+  )) %>%
+  mutate(across(
+    names(var_unterunterthema),
+    ~ factor(case_when(
+      . == 10.31 ~ "Ausländerpolitik",
+      . == 10.32 ~ "Flüchtlinge",
+      TRUE ~ "andere"
+    ))
+#  )) %>%
+#  mutate(across(
+#    names(var_datum),
+#    ~ as.Date(., "%d.%m.%Y")
+  )) %>%
+  mutate(across(
+    names(var_resultate),
+    ~ factor(case_when(
+      . == 0 ~ "abgelehnt",
+      . == 1 ~ "angenommen",
+      . == 3 ~ "Ständemehr nicht nötig",
+      . == 8 ~ "Gegenentwurf angenommen",
+      . == 9 ~ "Volksinitiative angenommen"
+    ))
+  )) %>%
+  mutate(anr = as.factor(anr))
 ```
 
 ```{r Reduzierten Datensatz erstellen, neue Variablen erzeugen} 
-data$bet_volkja.proz <- (data$bet*(data$volkja.proz/100)) #Ja-Prozentsatz multipliziert mit Beteiligung -> soviel % haben wirklich ja gesagt
+data$bet_volkja.proz <- (data$bet * (data$volkja.proz / 100)) # Ja-Prozentsatz multipliziert mit Beteiligung -> soviel % haben wirklich ja gesagt
 
 df <- data %>%
-  select(anr,Jahr, Kurztitel, rechtsform, annahme, bet_volkja.proz, bet,  d1e1:br.pos, bv.pos:nr.pos, sr.pos, unter_g, unter_u, ends_with(var_parteien), ja.lager, nein.lager, volk:stand, volkja.proz, ktjaproz,matches("...bet"),matches("...japroz"), matches("...annahme"),swissvoteslink, anneepolitique, info_br.de, info_dep.de, info_amt.de)
+  select(
+    anr, Jahr, Kurztitel, rechtsform, annahme, bet_volkja.proz, bet,
+    d1e1:br.pos, bv.pos:nr.pos, sr.pos, unter_g, unter_u,
+    ends_with(var_parteien), ja.lager, nein.lager, volk:stand, volkja.proz, ktjaproz, matches("...bet"), matches("...japroz"), matches("...annahme"),
+    swissvoteslink, anneepolitique, info_br.de, info_dep.de, info_amt.de
+  )
 
 
-#neue Variablen: prüfen, ob Thema vorkommt und wenn ja, trägt es 1 ein (sonst 0)
-df$Sicherheitspolitik <- +(rowSums(df[2:12] == 'Sicherheitspolitik', na.rm = TRUE) > 0)
-df$Aussenpolitik <- +(rowSums(df[2:12] == 'Aussenpolitik', na.rm = TRUE) > 0)
-df$Ausländer <- +(rowSums(df[2:12] == 'Ausländerpolitik', na.rm = TRUE) > 0)
-df$Flüchtlinge <- +(rowSums(df[2:12] == 'Flüchtlinge', na.rm = TRUE) > 0)
+# neue Variablen: prüfen, ob Thema vorkommt und wenn ja, trägt es 1 ein (sonst 0)
+df$Sicherheitspolitik <- +(rowSums(df[2:12] == "Sicherheitspolitik", na.rm = TRUE) > 0)
+df$Aussenpolitik <- +(rowSums(df[2:12] == "Aussenpolitik", na.rm = TRUE) > 0)
+df$Ausländer <- +(rowSums(df[2:12] == "Ausländerpolitik", na.rm = TRUE) > 0)
+df$Flüchtlinge <- +(rowSums(df[2:12] == "Flüchtlinge", na.rm = TRUE) > 0)
 
-#neue Spalte: fasst Themen der neuen Spalten zusammen, alles andere wird als "anderes" kategorisiert. 
-df <- df %>% 
-    mutate(Thema = factor(case_when(
+# neue Spalte: fasst Themen der neuen Spalten zusammen, alles andere wird als "anderes" kategorisiert.
+df <- df %>%
+  mutate(Thema = factor(case_when(
     Sicherheitspolitik == 1 ~ "Sicherheitspolitik",
     Aussenpolitik == 1 ~ "Aussenpolitik",
     Flüchtlinge == 1 ~ "Flüchtlinge",
     Ausländer == 1 ~ "Ausländer",
-    TRUE ~"andere"))) %>% 
-    mutate(Jahrzehnt = as.factor(floor(Jahr/10)*10)) %>% 
-    mutate(relevant = ifelse(Thema == "andere", "nein", "ja"))
+    TRUE ~ "andere"
+  ))) %>%
+  mutate(Jahrzehnt = as.factor(floor(Jahr / 10) * 10)) %>%
+  mutate(relevant = ifelse(Thema == "andere", "nein", "ja"))
 ```
 
 ```{r Datensätze erstellen: ausländer & df_kantone_japroz} 
-#Reduzierter Datensatz mit Ausländer & Flüchtlingsthemen
-df_ausländer <- df %>% 
+# Reduzierter Datensatz mit Ausländer & Flüchtlingsthemen
+df_ausländer <- df %>%
   filter(Thema %in% c("Ausländer", "Flüchtlinge")) %>%
   filter(rechtsform != "Stichfrage")
 
-#Korrekturvektor: dreht Ergebnis von Prozent Ja-Stimmen bei pro-Ausländer Vorlagen um (aus 23% ja wird 77% ja)
-korrektur = c(0,0,0,0,0,0,0,100,100,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,100)
+# Korrekturvektor: dreht Ergebnis von Prozent Ja-Stimmen bei pro-Ausländer Vorlagen um (aus 23% ja wird 77% ja)
+korrektur <- c(0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100)
 
-#Datensatz nur mit Spalten mit Ja-Prozenten, ohne Jura
-df_japroz_ausländer <- df_ausländer %>% 
-  select(ends_with(".japroz")) 
+# Datensatz nur mit Spalten mit Ja-Prozenten, ohne Jura
+df_japroz_ausländer <- df_ausländer %>%
+  select(ends_with(".japroz"))
 
-cor(df_japroz_ausländer$zh.japroz,df_ausländer$zh.japroz)
+cor(df_japroz_ausländer$zh.japroz, df_ausländer$zh.japroz)
 
-#Korrekturvektor auf allen Spalten anwenden
+# Korrekturvektor auf allen Spalten anwenden
 for (i in 1:length(df_japroz_ausländer)) {
-  df_japroz_ausländer[,i] <- abs(df_japroz_ausländer[,i] -korrektur)}
+  df_japroz_ausländer[, i] <- abs(df_japroz_ausländer[, i] - korrektur)
+}
 
-#prüfen, ob Korrektur erfolgreich war: Wenn Korrelation nicht = 1, wurde Korrektur durchgeführt
-cor(df_japroz_ausländer$zh.japroz,df_ausländer$zh.japroz) 
-cor(df_japroz_ausländer$ge.japroz,df_ausländer$ge.japroz)
+# prüfen, ob Korrektur erfolgreich war: Wenn Korrelation nicht = 1, wurde Korrektur durchgeführt
+cor(df_japroz_ausländer$zh.japroz, df_ausländer$zh.japroz)
+cor(df_japroz_ausländer$ge.japroz, df_ausländer$ge.japroz)
 
-#Neuen Datensatz komplett mit den korrigierten Werten
-df_ausländer_korr <- select(df_ausländer, -c(names(df_japroz_ausländer))) %>% bind_cols(df_japroz_ausländer)
+# Neuen Datensatz komplett mit den korrigierten Werten
+df_ausländer_korr <- select(df_ausländer, -c(names(df_japroz_ausländer))) %>%
+  bind_cols(df_japroz_ausländer)
 
 
 
@@ -193,45 +215,47 @@ quantile(df_ausländer_korr$volkja.proz, na.rm = TRUE)
 
 #Analyse
 ```{r Summary statistics anschauen, include = FALSE} 
-#Datensätze überprüfen
+# Datensätze überprüfen
 summary(df_ausländer)
 summary(df_japroz_ausländer)
 summary(df)
 ```
 
 ```{r statistische Kennzahlen} 
-#Durchschnitt allg. Schweiz bei Abstimmungen vs. Abstimmungen über Ausländer
-mean_bet <-mean(df$bet, na.rm = TRUE)
+# Durchschnitt allg. Schweiz bei Abstimmungen vs. Abstimmungen über Ausländer
+mean_bet <- mean(df$bet, na.rm = TRUE)
 mean_bet_ausl <- mean(df_ausländer$bet, na.rm = TRUE)
 mean_japroz <- mean(df$volkja.proz, na.rm = TRUE)
 mean_japroz_ausl <- mean(df_ausländer$volkja.proz, na.rm = TRUE)
-
-
 ```
 
 
 ##Analyse Einwanderung 
 ```{r Datawrangling Einwanderung (Datensatz bevoelkerung_total erstellen)}
-df_einwanderungen <- df_ausländeranteil[-c(1:4, 75:83),c(1,2,6:9)] 
-colnames(df_einwanderungen) <- c("Jahr","Bilanz", "Einwanderung", "Auswanderung", "Saldo", "Einbürgerungen")
-df_einwanderungen[df_einwanderungen =="…"] <- "NA"
-df_einwanderungen[60:61,1] <- c(2010, 2011)
-df_einwanderungen <- mutate_all(df_einwanderungen, ~as.numeric(.))
-df_einwanderungen[58,6] <- df_einwanderungen[58,6]*-1
-df_einwanderungen[59,6] <- df_einwanderungen[59,6]*-1
-df_einwanderungen$Einbürgerungen <- df_einwanderungen$Einbürgerungen*-1
+df_einwanderungen <- df_ausländeranteil[-c(1:4, 75:83), c(1, 2, 6:9)]
+colnames(df_einwanderungen) <- c(
+  "Jahr", "Bilanz", "Einwanderung",
+  "Auswanderung", "Saldo", "Einbürgerungen"
+)
+df_einwanderungen[df_einwanderungen == "…"] <- "NA"
+df_einwanderungen[60:61, 1] <- c(2010, 2011)
+df_einwanderungen <- mutate_all(df_einwanderungen, ~ as.numeric(.))
+df_einwanderungen[58, 6] <- df_einwanderungen[58, 6] * -1
+df_einwanderungen[59, 6] <- df_einwanderungen[59, 6] * -1
+df_einwanderungen$Einbürgerungen <- df_einwanderungen$Einbürgerungen * -1
 glimpse(df_einwanderungen)
 
-#Datawrangling Bevölkerungsstatistik
-df_bevoelkerung <- df_bevoelkerungsstatistik[-c(1:4, 165:175),c(1,2)] 
+# Datawrangling Bevölkerungsstatistik
+df_bevoelkerung <- df_bevoelkerungsstatistik[-c(1:4, 165:175), c(1, 2)]
 colnames(df_bevoelkerung) <- c("Jahr", "Bevölkerung")
-df_bevoelkerung <- mutate_all(df_bevoelkerung, ~as.numeric(.))
+df_bevoelkerung <- mutate_all(df_bevoelkerung, ~ as.numeric(.))
 
-#Kombinierter Datensatz
-df_bevoelkerung_total  <- inner_join(df_einwanderungen, df_bevoelkerung) %>% mutate(Anteil = Einbürgerungen * 100 / Bilanz, Anteil_ausl = Bilanz * 100 / Bevölkerung)
-
-
-
+# Kombinierter Datensatz
+df_bevoelkerung_total <- inner_join(df_einwanderungen, df_bevoelkerung) %>%
+  mutate(
+    Anteil = Einbürgerungen * 100 / Bilanz,
+    Anteil_ausl = Bilanz * 100 / Bevölkerung
+  )
 ```
 
 ```{r Grafik Einwanderungen vs. Einbürgerungen}
@@ -245,321 +269,406 @@ df_bevoelkerung_total  <- inner_join(df_einwanderungen, df_bevoelkerung) %>% mut
 #   scale_x_continuous(breaks = seq(1950, 2022, 5))+
 #   scale_y_continuous(n.breaks = 10))
 
-#api_create(graf_Einbürgerungen, filename = "Einbürgerung")
+# api_create(graf_Einbürgerungen, filename = "Einbürgerung")
 
-graf_einbürgerungen_neu <- ggplotly(ggplot(df_bevoelkerung_total)+
-   geom_line(aes(Jahr, Einbürgerungen, color = "Einbürgerungen"))+
-   geom_line(aes(Jahr,Saldo, color = "Wanderungssaldo" ))+
-   geom_line(aes(Jahr,Anteil, color = "Einbürgerungen in % der ausl. Bevölkerung" )))
-
-
+graf_einbürgerungen_neu <- ggplotly(ggplot(df_bevoelkerung_total) +
+  geom_line(aes(Jahr, Einbürgerungen, color = "Einbürgerungen")) +
+  geom_line(aes(Jahr, Saldo, color = "Wanderungssaldo")) +
+  geom_line(aes(Jahr, Anteil, color = "Einbürgerungen in % der ausl. Bevölkerung")))
 
 
-(graf_anteil_ausländer <- ggplotly(ggplot(df_bevoelkerung_total)+
-  geom_line(aes(Jahr, Anteil_ausl, color = "Ausländeranteil"))+
-  geom_line(aes(Jahr,Anteil, color = "Einbürgerungsanteil" ))+
-  scale_color_brewer(palette = "Set1")+
-  theme_minimal()+
-  labs(title = "Anteil Ausländer in der Bevölkerung",
-       y = "Anteil in %")
-  ))
 
 
+(graf_anteil_ausländer <- ggplotly(ggplot(df_bevoelkerung_total) +
+  geom_line(aes(Jahr, Anteil_ausl, color = "Ausländeranteil")) +
+  geom_line(aes(Jahr, Anteil, color = "Einbürgerungsanteil")) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal() +
+  labs(
+    title = "Anteil Ausländer/innen in der Bevölkerung",
+    y = "Anteil in %",
+    fill = "Bevölkerungsteil"
+  )))
 ```
 
 ##Folgen Kantone der Empfehlung
 ```{r Datawrangling (Datensätze positionen, positionen_ausl, positionen_total)}
-#Positionen vom allgemeinen Datensatz
-df_positionen <- df %>% 
-  select(br.pos, ends_with("japroz")) %>% 
-  filter(br.pos == "Befürwortend"|br.pos == "Ablehnend") %>% 
-  group_by(br.pos) %>% 
+# Positionen vom allgemeinen Datensatz
+df_positionen <- df %>%
+  select(br.pos, ends_with("japroz")) %>%
+  filter(br.pos == "Befürwortend" | br.pos == "Ablehnend") %>%
+  group_by(br.pos) %>%
   summarise_at(c(names(df_japroz_ausländer)), mean, na.rm = TRUE)
-colnames(df_positionen) <- gsub(".japroz", "", colnames(df_positionen), fixed=TRUE)
+colnames(df_positionen) <- gsub(".japroz", "", colnames(df_positionen), fixed = TRUE)
 
-#pivotieren für Grafik
-df_positionen_pivoted <-df_positionen %>% 
-    pivot_longer(
-    cols = zh:ge, 
-    names_to = "Kanton", 
+# pivotieren für Grafik
+df_positionen_pivoted <- df_positionen %>%
+  pivot_longer(
+    cols = zh:ge,
+    names_to = "Kanton",
     values_to = "Prozent"
-)
+  )
 
-#Durchschnitt für yintercept
-durchschnitt <- df %>% 
-  select(br.pos, volkja.proz) %>% 
-  filter(br.pos == "Befürwortend"|br.pos == "Ablehnend") %>% 
+# Durchschnitt für yintercept
+durchschnitt <- df %>%
+  select(br.pos, volkja.proz) %>%
+  filter(br.pos == "Befürwortend" | br.pos == "Ablehnend") %>%
   group_by(br.pos) %>%
-  summarize(mean = mean(volkja.proz, na.rm = TRUE)) %>% 
+  summarize(mean = mean(volkja.proz, na.rm = TRUE)) %>%
   pull()
 
-#positionen bei Ausländer datensatz
-positionen_ausl <- df_ausländer %>% 
-  select(br.pos, ends_with("japroz")) %>% 
-  filter(br.pos == "Befürwortend"|br.pos == "Ablehnend") %>% 
-  group_by(br.pos) %>% 
+# positionen bei Ausländer datensatz
+positionen_ausl <- df_ausländer %>%
+  select(br.pos, ends_with("japroz")) %>%
+  filter(br.pos == "Befürwortend" | br.pos == "Ablehnend") %>%
+  group_by(br.pos) %>%
   summarise_at(c((names(df_japroz_ausländer))), mean, na.rm = TRUE)
-colnames(positionen_ausl) <- gsub(".japroz", "", colnames(positionen_ausl), fixed=TRUE)
+colnames(positionen_ausl) <- gsub(".japroz", "", colnames(positionen_ausl), fixed = TRUE)
 
-df_positionen_ausl_pivoted <-positionen_ausl %>% 
-    pivot_longer(
-    cols = zh:ge, 
-    names_to = "Kanton", 
+df_positionen_ausl_pivoted <- positionen_ausl %>%
+  pivot_longer(
+    cols = zh:ge,
+    names_to = "Kanton",
     values_to = "Prozent"
-)
+  )
 
-durchschnitt_ausl <- df_ausländer %>% 
-  select(br.pos, volkja.proz) %>% 
-  filter(br.pos == "Befürwortend"|br.pos == "Ablehnend") %>% 
+durchschnitt_ausl <- df_ausländer %>%
+  select(br.pos, volkja.proz) %>%
+  filter(br.pos == "Befürwortend" | br.pos == "Ablehnend") %>%
   group_by(br.pos) %>%
-  summarize(mean = mean(volkja.proz, na.rm = TRUE)) %>% 
+  summarize(mean = mean(volkja.proz, na.rm = TRUE)) %>%
   pull()
 
-#Kombinierter Datensatz Ausländer & Total
-df_positionen_total <- inner_join(df_positionen_ausl_pivoted, df_positionen_pivoted, by="Kanton", "br.pos")
-df_pos_total <- df_positionen_total %>% 
-  filter(br.pos.x == br.pos.y) %>% 
-  select(-br.pos.y) %>% 
+# Kombinierter Datensatz Ausländer & Total
+df_positionen_total <- inner_join(df_positionen_ausl_pivoted,
+  df_positionen_pivoted,
+  by = "Kanton", "br.pos"
+)
+df_pos_total <- df_positionen_total %>%
+  filter(br.pos.x == br.pos.y) %>%
+  select(-br.pos.y) %>%
   rename(br.pos = br.pos.x, Proz_Ausländer = Prozent.x, Proz_total = Prozent.y)
 ```
 
 
 ```{r Grafik Abstimmungsverhalten vs. Empfehlung BR}
 
-(graf_pos_total <-  (ggplot(df_pos_total)+
-  geom_bar(aes(Kanton, Proz_Ausländer, fill = br.pos), position="dodge", stat="identity") +
-  scale_fill_brewer(type="div",palette = "Dark2", direction = -1)+
-  geom_point(aes(Kanton, Proz_total, fill = br.pos)) + 
-    scale_y_continuous(n.breaks = 10)+
-  theme_minimal()+
-  labs(title = "Ja-Prozentanteil vs. Haltung des Bundesrates",
-       subtitle =  "für alle Abstimmungen sowie Ausländerfragen",
-       x = "Kantone", y = "Ja-Anteil in %")+
-  geom_hline(yintercept = 50, colour = 'blue')))
+(graf_pos_total <- (ggplot(df_pos_total) +
+  geom_bar(aes(Kanton, Proz_Ausländer, fill = br.pos),
+    position = "dodge", stat = "identity"
+  ) +
+  scale_fill_brewer(type = "div", palette = "Accent", direction = -1) +
+  geom_point(aes(Kanton, Proz_total, fill = br.pos)) +
+  scale_y_continuous(n.breaks = 10) +
+  theme_minimal() +
+  labs(
+    title = "Ja-Prozentanteil vs. Haltung des Bundesrates",
+    subtitle = "für alle Abstimmungen sowie Ausländerfragen",
+    x = "Kantone", y = "Ja-Anteil in %"
+  ) +
+  geom_hline(yintercept = 50, colour = "blue")))
 
 
-#Grafik hochladen 
-#api_create(graf_pos_total, filename = "Japroz_Bundesrat")
+# Grafik hochladen
+# api_create(graf_pos_total, filename = "Japroz_Bundesrat")
 ```
 
 ##Analyse Korrelation Ja-Prozente einzelner Kantone (Korrelationsmatrizen)
 ```{r Datensätze erzeugen: pro/anti, pro_ausländer/anti_ausländer, japroz_alle}
-#Datensätze für Visualisierungen Japroz
-df_pro <- select(df, ge.japroz, ne.japroz,vs.japroz, vd.japroz, fr.japroz, bs.japroz, gr.japroz) %>% drop_na(.)
-df_anti <- select(df, ag.japroz, gl.japroz,nw.japroz, so.japroz,tg.japroz, sz.japroz) %>% drop_na(.)
+# Datensätze für Visualisierungen Japroz
+df_pro <- select(
+  df, ge.japroz, ne.japroz, vs.japroz, vd.japroz,
+  fr.japroz, bs.japroz, gr.japroz
+) %>% drop_na(.)
+df_anti <- select(
+  df, ag.japroz, gl.japroz, nw.japroz, so.japroz,
+  tg.japroz, sz.japroz
+) %>% drop_na(.)
 
-df_pro_ausländer <- select(df_ausländer, ge.japroz, ne.japroz,vs.japroz, vd.japroz, fr.japroz, bs.japroz, gr.japroz) %>% drop_na(.)
-df_anti_ausländer <- select(df_ausländer, ag.japroz, gl.japroz,nw.japroz, so.japroz,tg.japroz, sz.japroz) %>% drop_na(.)
+df_pro_ausländer <- select(
+  df_ausländer, ge.japroz, ne.japroz, vs.japroz,
+  vd.japroz, fr.japroz, bs.japroz, gr.japroz
+) %>%
+  drop_na(.)
+df_anti_ausländer <- select(
+  df_ausländer, ag.japroz, gl.japroz, nw.japroz,
+  so.japroz, tg.japroz, sz.japroz
+) %>% drop_na(.)
 
 df_japroz_alle <- select(df, ends_with("japroz")) %>% drop_na(.)
 ```
 
 ```{r Grafiken Korrelation}
 
-#Korrelation als Scatterplot
-(graf_cor <- ggplot(df_pro)+
-  geom_point(aes(ge.japroz, ne.japroz, color = "Genf/Neuchâtel"))+
-  geom_point(aes(ge.japroz, vs.japroz, color = "Genf/Wallis"))+
-  geom_point(aes(ge.japroz, vd.japroz, color = "Genf/Vaud"))+
+# Korrelation als Scatterplot
+(graf_cor <- ggplot(df_pro) +
+  geom_point(aes(ge.japroz, ne.japroz, color = "Genf/Neuchâtel")) +
+  geom_point(aes(ge.japroz, vs.japroz, color = "Genf/Wallis")) +
+  geom_point(aes(ge.japroz, vd.japroz, color = "Genf/Vaud")) +
   geom_point(aes(ge.japroz, fr.japroz, color = "Genf/Fribourg")))
 
 ggplotly(graf_cor)
 
-#Korrelationsmatrix 
+# Korrelationsmatrix
 
-#Funktion um nur halbe Korrelationsmatrix zu erhalten
-get_lower_tri<-function(cormat){
-    cormat[upper.tri(cormat)] <- NA
-    return(cormat)
+# Funktion um nur halbe Korrelationsmatrix zu erhalten
+get_lower_tri <- function(cormat) {
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
 }
-    
-#Funktion um Korrelationsmatrix zu plotten
-make_korrplot <- function(data){
+
+# Funktion um Korrelationsmatrix zu plotten
+make_korrplot <- function(data) {
   melted <- melt(get_lower_tri(cor(data)), na.rm = TRUE)
-  ggplot(melted, aes(Var1, Var2, fill = value))+
- geom_tile(color = "white")+
- scale_fill_gradient2(low = "green", high = "dark blue", mid = "white", 
-   midpoint = 0.7, limit = c(0.4,1), space = "Lab", 
-   name="Pearson\nCorrelation") +
-theme_minimal()+ 
-labs(x = "Kantone1", y= "Kantone2")+
- theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-    size = 12, hjust = 1))+
- coord_fixed()
+  ggplot(melted, aes(Var1, Var2, fill = value)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient2(
+      low = "green", high = "dark blue", mid = "white",
+      midpoint = 0.7, limit = c(0.4, 1), space = "Lab",
+      name = "Pearson\nCorrelation"
+    ) +
+    theme_minimal() +
+    labs(x = "Kantone1", y = "Kantone2") +
+    theme(axis.text.x = element_text(
+      angle = 45, vjust = 1,
+      size = 12, hjust = 1
+    )) +
+    coord_fixed()
 }
 
 
-#Korrelationsmatrizen
-ggplotly(make_korrplot(df_pro_ausländer)) %>% layout(title = "Korrelationsmatrix pro Lockerungen, Ausländerfragen")
-ggplotly(make_korrplot(df_pro))%>% layout(title = "Korrelationsmatrix pro Lockerungen, alle Abstimmungen")
-ggplotly(make_korrplot(df_anti_ausländer)) %>% layout(title = "Korrelationsmatrix pro Verschärfungen, Ausländerfragen")
-ggplotly(make_korrplot(df_anti))%>% layout(title = "Korrelationsmatrix pro Verschärfung, Alle Abstimmungen")
-ggplotly(make_korrplot(df_japroz_ausländer))%>% layout(title = "Korrelationsmatrix pro Verschärfung, Alle Daten")
-ggplotly(make_korrplot(df_japroz_alle))%>% layout(title = "Korrelationsmatrix pro-Verschärfung, Alle Daten")
+# Korrelationsmatrizen
+ggplotly(make_korrplot(df_pro_ausländer)) %>%
+  layout(title = "Korrelationsmatrix pro Lockerungen, Ausländerfragen")
 
+ggplotly(make_korrplot(df_pro)) %>%
+  layout(title = "Korrelationsmatrix pro Lockerungen, alle Abstimmungen")
 
+ggplotly(make_korrplot(df_anti_ausländer)) %>%
+  layout(title = "Korrelationsmatrix pro Verschärfungen, Ausländerfragen")
+
+ggplotly(make_korrplot(df_anti)) %>%
+  layout(title = "Korrelationsmatrix pro Verschärfung, Alle Abstimmungen")
+
+ggplotly(make_korrplot(df_japroz_ausländer)) %>%
+  layout(title = "Korrelationsmatrix pro Verschärfung, Alle Daten")
+
+ggplotly(make_korrplot(df_japroz_alle)) %>%
+  layout(title = "Korrelationsmatrix pro-Verschärfung, Alle Daten")
 ```
 
 
 ##Analyse Stimmbeteiligung 
 ```{r Datawrangling Stimmbeteiligung, Datensatz erstellen: kantone_bet/df_bet_ausländer / df_bet_alle}
-kantone <- c("Zürich", "Bern", "Luzern", "Uri", "Schwyz", "Obwalden", 
-             "Nidwalden", "Glarus", "Zug", "Freiburg", "Solothurn", 
-             "Basel-Stadt", "Basel-Land", "Schaffhausen","Appenzell A.Rh.", 
-             "Appenzell I.Rh.", "Sankt Gallen", "Graubünden", "Aargau", 
-             "Thurgau", "Tessin", "Waadt", "Wallis", "Neuenburg", "Genf", 
-             "Jura") 
-ch_kantone <- c("Volk", "Zürich", "Bern", "Luzern", "Uri", "Schwyz", "Obwalden", 
-             "Nidwalden", "Glarus", "Zug", "Freiburg", "Solothurn", 
-             "Basel-Stadt", "Basel-Land", "Schaffhausen","Appenzell A.Rh.", 
-             "Appenzell I.Rh.", "Sankt Gallen", "Graubünden", "Aargau", 
-             "Thurgau", "Tessin", "Waadt", "Wallis", "Neuenburg", "Genf", 
-             "Jura") 
+kantone <- c(
+  "Zürich", "Bern", "Luzern", "Uri", "Schwyz", "Obwalden",
+  "Nidwalden", "Glarus", "Zug", "Freiburg", "Solothurn",
+  "Basel-Stadt", "Basel-Land", "Schaffhausen", "Appenzell A.Rh.",
+  "Appenzell I.Rh.", "Sankt Gallen", "Graubünden", "Aargau",
+  "Thurgau", "Tessin", "Waadt", "Wallis", "Neuenburg", "Genf",
+  "Jura"
+)
+ch_kantone <- c(
+  "Volk", "Zürich", "Bern", "Luzern", "Uri", "Schwyz", "Obwalden",
+  "Nidwalden", "Glarus", "Zug", "Freiburg", "Solothurn",
+  "Basel-Stadt", "Basel-Land", "Schaffhausen", "Appenzell A.Rh.",
+  "Appenzell I.Rh.", "Sankt Gallen", "Graubünden", "Aargau",
+  "Thurgau", "Tessin", "Waadt", "Wallis", "Neuenburg", "Genf",
+  "Jura"
+)
 
 df_bet_ausländer <- df_ausländer %>%
-  select(ends_with(".bet")) %>% 
-  summarize(Beteiligung = colMeans(., na.rm = TRUE)) %>% 
-  add_column(Kanton=kantone) %>% 
+  select(ends_with(".bet")) %>%
+  summarize(Beteiligung = colMeans(., na.rm = TRUE)) %>%
+  add_column(Kanton = kantone) %>%
   pivot_longer(
-    cols = c(Beteiligung), 
-    names_to = "Abgabe", 
+    cols = c(Beteiligung),
+    names_to = "Abgabe",
     values_to = "Prozent"
   )
 
 df_bet_alle <- df %>%
-  select(ends_with(".bet")) %>% 
-  summarize(Beteiligung = colMeans(., na.rm = TRUE)) %>% 
-  add_column(Kanton=kantone) %>% 
+  select(ends_with(".bet")) %>%
+  summarize(Beteiligung = colMeans(., na.rm = TRUE)) %>%
+  add_column(Kanton = kantone) %>%
   pivot_longer(
-    cols = c(Beteiligung), 
-    names_to = "Abgabe", 
+    cols = c(Beteiligung),
+    names_to = "Abgabe",
     values_to = "Prozent"
   )
-
 ```
 
 ```{r Grafik Stimmbeteiligung allg. (Boxplot) } 
-#Boxplot Stimmbeteiligung allg. vs. Ausländer
-(stimmbet <- ggplotly(ggplot(df, aes(relevant, bet, fill = relevant))+
+# Boxplot Stimmbeteiligung allg. vs. Ausländer
+(stimmbet <- ggplotly(ggplot(df, aes(relevant, bet, fill = relevant)) +
   geom_boxplot() +
-  scale_fill_brewer(palette="Set1", direction=-1)+
-  labs(title = "Stimmbeteiligung für Abstimmungsvorlagen",
-       subtitle = "Thema Ausländer/Flüchtlingspolitik vs. restliche Abstimmungen",
-       x = "Ausländer/Flüchtlingspolitik",
-       y = "Stimmbeteiligung in Prozent"))) 
+  scale_fill_brewer(palette = "Pastel1", direction = -1) +
+  labs(
+    title = "Stimmbeteiligung für Abstimmungsvorlagen",
+    subtitle = "Thema Ausländer/Flüchtlingspolitik vs. restliche Abstimmungen",
+    x = "Ausländer/Flüchtlingspolitik",
+    y = "Stimmbeteiligung in Prozent",
+    fill = "Relevant"
+  )))
 
-#api_create(stimmbet, filename = "Boxplot_Stimmbet")
+# api_create(stimmbet, filename = "Boxplot_Stimmbet")
 ```
 
 ```{r Grafik Kantonale Beteiligung}
 
-(graf_bet_volk <- ggplotly(ggplot(df_bet_alle, 
-                      aes(x=reorder(Kanton, -Prozent), y=Prozent))+
-  geom_col(fill="grey")+
-  geom_text(aes(label=round(Prozent, 1)))+
-  annotate("text", label=paste("Durchschn. Beteiligung\n Gesamtschweizerisch:",round(mean_bet, 2),"%"), 
-           x=20, y=60, size=4, colour="red")+
-  geom_hline(yintercept = mean_bet, alpha=0.5, size = 0.5, colour="red")+
-  theme(axis.text.x = element_text(angle = 90))+
-  theme_minimal()+
-  labs(x= "Kantone", 
-       title = "Durchschnittliche Beteiligung bei Volksabstimmungen\n bei allen Abstimmungen im Zeitraum 1848-2022")+
+(graf_bet_volk <- ggplotly(ggplot(
+  df_bet_alle,
+  aes(x = reorder(Kanton, -Prozent), y = Prozent)
+) +
+  geom_col(fill = "grey") +
+  geom_text(aes(label = round(Prozent, 1))) +
+  annotate("text",
+    label = paste(
+      "Durchschn. Beteiligung\n Gesamtschweizerisch:",
+      round(mean_bet, 2), "%"
+    ),
+    x = 18, y = 51.5, size = 4, colour = "red", angle = 90
+  ) +
+  geom_hline(yintercept = mean_bet, alpha = 0.5, size = 0.5, colour = "red") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme_minimal() +
+  labs(
+    x = "Kantone",
+    title = "Durchschnittliche Beteiligung bei Volksabstimmungen
+       bei allen Abstimmungen im Zeitraum 1848-2022"
+  ) +
   coord_flip()))
 
-#api_create(graf_bet_volk, filename = "Durchschnittl. Beteiligung")
-
+# api_create(graf_bet_volk, filename = "Durchschnittl. Beteiligung")
 ```
 
 ```{r Datensätze für Differenzgrafik (df_japroz_kantone_ausl, df_bet_diff, df_bet_japroz)}
-df_japroz_kantone_ausl <- df_japroz_ausländer %>% 
-  summarize(japroz = colMeans(., na.rm = TRUE)) %>% 
-  add_column(Kanton=kantone) %>% 
+df_japroz_kantone_ausl <- df_japroz_ausländer %>%
+  summarize(japroz = colMeans(., na.rm = TRUE)) %>%
+  add_column(Kanton = kantone) %>%
   pivot_longer(
-    cols = c(japroz), 
-    names_to = "Art", 
+    cols = c(japroz),
+    names_to = "Art",
     values_to = "japroz"
-  ) %>% 
+  ) %>%
   select(Kanton, japroz)
 
 
-df_bet_diff <- inner_join(df_bet_alle,df_bet_ausländer, by = "Kanton" )
-df_bet_japroz <- inner_join(df_bet_diff,df_japroz_kantone_ausl, by = "Kanton" ) %>% 
-  select(-(starts_with("Abgabe"))) %>% 
-  mutate(Differenz = Prozent.y - Prozent.x) %>% 
-  rename(bet_allg = Prozent.x,
-         bet_ausl = Prozent.y)
+df_bet_diff <- inner_join(df_bet_alle, df_bet_ausländer, by = "Kanton")
+df_bet_japroz <- inner_join(df_bet_diff,
+  df_japroz_kantone_ausl,
+  by = "Kanton"
+) %>%
+  select(-(starts_with("Abgabe"))) %>%
+  mutate(Differenz = Prozent.y - Prozent.x) %>%
+  rename(
+    bet_allg = Prozent.x,
+    bet_ausl = Prozent.y
+  )
 
-mean_dif = mean(df_bet_japroz$Differenz)
+mean_dif <- mean(df_bet_japroz$Differenz)
 ```
 
 
 ```{r Grafik Differenz Stimmbeteiligung}
-(graf_differenz <- (ggplot(df_bet_japroz, aes(reorder(Kanton, Differenz), Differenz, fill=japroz))+
-  geom_col()+
-  labs(x="Kanton",
-       title = "Differenz der Stimmbeteiligung bei\nFlüchtlingsthemen gegenüber allen Abstimmungen", 
-       fill="Tendenz ± 50%")+
-  geom_hline(yintercept = round(mean_dif,2)+sd(df_bet_japroz$Differenz), 
-             colour="grey")+
-  geom_hline(yintercept = round(mean_dif,2)-sd(df_bet_japroz$Differenz), 
-             colour="grey")+
-  coord_flip()+
-  geom_text(aes(label=round(Differenz, 2)), size=3, hjust=-.1)+
-  scale_fill_gradient2(low = "orange", high = "blue", mid = "white",
-                       midpoint = 50, space = "Lab",
-                       name="Verschärfungstendenz"))+
+(graf_differenz <- (ggplot(df_bet_japroz, aes(reorder(Kanton, Differenz),
+  Differenz,
+  fill = japroz
+)) +
+  geom_col() +
+  labs(
+    x = "Kanton",
+    title = "Differenz der Stimmbeteiligung bei\nFlüchtlingsthemen gegenüber allen Abstimmungen",
+    fill = "Tendenz ± 50%"
+  ) +
+  geom_hline(
+    yintercept = round(mean_dif, 2) + sd(df_bet_japroz$Differenz),
+    colour = "grey"
+  ) +
+  geom_hline(
+    yintercept = round(mean_dif, 2) - sd(df_bet_japroz$Differenz),
+    colour = "grey"
+  ) +
+  coord_flip() +
+  geom_text(aes(label = round(Differenz, 2)), size = 3, hjust = -.1) +
+  geom_text(aes(x = 9, label = "68% Normalbereich", y = 2.5),
+    colour = "grey", size = 3.5, vjust = 1
+  ) +
+  scale_fill_gradient2(
+    low = "orange", high = "blue", mid = "white",
+    midpoint = 50, space = "Lab",
+    name = "Verschärfungstendenz"
+  )) +
   theme_minimal())
 
 graf_diff <- ggplotly(graf_differenz)
-#api_create(graf_diff, filename = "Differenz Beteiligung")
-
-
+# api_create(graf_diff, filename = "Differenz Beteiligung")
 ```
 
 ```{r Grafik Stimmbeteiligung für Ausländervorlagen } 
-quantil_75 <- quantile(df$bet, 0.75,na.rm = TRUE)
-quantil_95<- quantile(df$bet, 0.95,na.rm = TRUE)
-mean_bet <- mean(df$bet, 0.95,na.rm = TRUE)
+quantil_75 <- quantile(df$bet, 0.75, na.rm = TRUE)
+quantil_95 <- quantile(df$bet, 0.95, na.rm = TRUE)
+mean_bet <- mean(df$bet, 0.95, na.rm = TRUE)
 
 
-df_stimmbet_ausl <- df_ausländer %>% 
-  mutate(bet = ifelse(annahme == "abgelehnt", bet-100, bet))
+df_stimmbet_ausl <- df_ausländer %>%
+  mutate(bet = ifelse(annahme == "abgelehnt", bet - 100, bet))
 
-#Stimmbeteiligung Ausländerinitiativen im Vergleich mit dem 75 & 95 % Quantil 
-(graf_bet_ausländer <- ggplotly(ggplot(df_stimmbet_ausl, aes(bet, anr,fill= annahme))+
-  geom_col()+
-  labs(title = "Durchschnittliche Stimmbeteiligung für Vorlagen mit Thema Ausländer",
-       y = "Vorlage-Nr",
-       x = "Beteiligung in %")+
-  geom_text(aes(label=abs(round(bet, 1))), size = 3,
-  position = position_dodge(width = 1))+
-   scale_fill_brewer(palette = "Set1", direction = -1)+
-   geom_vline(xintercept = c(quantil_75, quantil_95), colour = 'black')+
-   geom_vline(xintercept = mean_bet, colour = 'red')+
-      geom_vline(xintercept = c(-quantil_75, -quantil_95), colour = 'black')+
-   geom_vline(xintercept = -mean_bet, colour = 'red')+
-   geom_text(aes(x=-quantil_75, label='75% Quantil', y="455"), colour = 'black', size = 3.5, angle = 90, vjust=1, text=element_text(size = 2)) +
-   geom_text(aes(x=-quantil_95, label='95% Quantil', y="455"), colour = 'black', size = 3.5, angle = 90, vjust=1, text=element_text(size = 2))+
-   geom_text(aes(x=quantil_75, 
-                 label='75% Quantil', 
-                 y="455"), 
-             colour = 'black', 
-             size = 3.5, 
-             angle = 90, 
-             vjust=1, 
-             text=element_text(size = 2)) +
-   theme_minimal()+
-   scale_x_continuous(n.breaks = 10)+
-   geom_text(aes(x=quantil_95, 
-                 label='95% Quantil', 
-                 y="455"), 
-             colour = 'black', 
-             size = 3.5, 
-             angle = 90, 
-             vjust=1, 
-             text=element_text(size = 2))))
-  
-# #Stimmbeteiligung Ausländerinitiativen im Vergleich mit dem 75 & 95 % Quantil 
+# Stimmbeteiligung Ausländerinitiativen im Vergleich mit dem 75 & 95 % Quantil
+(graf_bet_ausländer <- ggplotly(ggplot(
+  df_stimmbet_ausl,
+  aes(bet, anr, fill = annahme)
+) +
+  geom_col() +
+  labs(
+    title = "Durchschnittliche Stimmbeteiligung für Vorlagen mit Thema Ausländer",
+    y = "Vorlage-Nr",
+    x = "Beteiligung in %",
+    fill = "Annahme"
+  ) +
+  geom_text(aes(label = abs(round(bet, 1))),
+    size = 3,
+    position = position_dodge(width = 1)
+  ) +
+  scale_fill_brewer(palette = "Pastel1", direction = -1) +
+  geom_vline(xintercept = c(quantil_75, quantil_95), colour = "black") +
+  geom_vline(xintercept = mean_bet, colour = "red") +
+  geom_vline(xintercept = c(-quantil_75, -quantil_95), colour = "black") +
+  geom_vline(xintercept = -mean_bet, colour = "red") +
+  geom_text(aes(x = -quantil_75 - 5, label = "75% Quantil", y = "552.2"),
+    colour = "black", size = 3.5, angle = 90, vjust = 1,
+    text = element_text(size = 2)
+  ) +
+  geom_text(aes(x = -quantil_95 + 3, label = "95% Quantil", y = "454"),
+    colour = "black", size = 3.5, angle = 90, vjust = 1,
+    text = element_text(size = 2)
+  ) +
+  geom_text(aes(
+    x = quantil_75 + 2,
+    label = "75% Quantil",
+    y = "455"
+  ),
+  colour = "black",
+  size = 3.5,
+  angle = 90,
+  vjust = 1,
+  text = element_text(size = 2)
+  ) +
+  theme_minimal() +
+  scale_x_continuous(n.breaks = 10) +
+  geom_text(aes(
+    x = quantil_95 - 4,
+    label = "95% Quantil",
+    y = "355"
+  ),
+  colour = "black",
+  size = 3.5,
+  angle = 90,
+  vjust = 1,
+  text = element_text(size = 2)
+  )))
+
+# #Stimmbeteiligung Ausländerinitiativen im Vergleich mit dem 75 & 95 % Quantil
 # (graf_bet_ausländer <- ggplotly(ggplot(df_ausländer_korr, aes(bet, anr,fill= annahme))+
 #   geom_col()+
 #   scale_color_brewer(palette = "Set1")+
@@ -572,82 +681,107 @@ df_stimmbet_ausl <- df_ausländer %>%
 #    geom_vline(xintercept = mean_bet, colour = 'red')+
 #    geom_text(aes(x=quantil_75, label='75% Quantil', y="455"), colour = 'black', size = 3.5, angle = 90, vjust=1, text=element_text(size = 2)) +
 #    geom_text(aes(x=quantil_95, label='95% Quantil', y="455"), colour = 'black', size = 3.5, angle = 90, vjust=1, text=element_text(size = 2))))+
-# 
+#
 
-#api_create(graf_bet_ausländer, filename = "Beteiligung_Ausländerthemen")
-
+# api_create(graf_bet_ausländer, filename = "Beteiligung_Ausländerthemen")
 ```
-
-
 
 ##Analyse Zustimmung zu verschärfenden Massnahmen
 
 ```{r Datensatz df_japroz_mean_ausl / Quantile & IQR berechnen }
-df_japroz_mean_ausl <- data.frame(Zustimmung = colMeans(df_japroz_ausländer, na.rm = T)) #Mittelwert korrigierter Ja-Prozentsatz pro Kanton
-rownames(df_japroz_mean_ausl) <- gsub(".japroz", "", rownames(df_japroz_mean_ausl), fixed=TRUE)
+df_japroz_mean_ausl <- data.frame(Zustimmung = colMeans(df_japroz_ausländer, na.rm = T)) # Mittelwert korrigierter Ja-Prozentsatz pro Kanton
+rownames(df_japroz_mean_ausl) <- gsub(".japroz", "",
+  rownames(df_japroz_mean_ausl),
+  fixed = TRUE
+)
 df_japroz_mean_ausl["Kantone"] <- kantone
 quantile <- quantile(df_japroz_mean_ausl$Zustimmung)
 IQR(df_japroz_mean_ausl$Zustimmung)
 ```
 
 ```{r Grafik pro Verschärfung}
+# to do: Einfärben (entweder bei 50% oder die beiden Quantile)
+(graf_resultat_pro <- ggplotly(ggplot(
+  df_japroz_mean_ausl,
+  aes(x = reorder(Kantone, -Zustimmung), y = Zustimmung, fill = Kantone)
+) +
+  geom_col() +
+  scale_fill_manual(name = "Kantone", values = c(
+    "Waadt" = "#b3cde3",
+    "Jura" = "#b3cde3",
+    "Neuenburg" = "#b3cde3",
+    "Genf" = "#b3cde3",
+    "Freiburg" = "#b3cde3",
+    "Wallis" = "#b3cde3",
+    "Schwyz" = "#fbb4ae",
+    "Nidwalden" = "#fbb4ae",
+    "Aargau" = "#fbb4ae",
+    "Thurgau" = "#fbb4ae",
+    "Solothurn" = "#fbb4ae",
+    "Glarus" = "#fbb4ae"
+  )) +
+  geom_text(aes(label = round(Zustimmung, 1)),
+    size = 3,
+    position = position_dodge(width = 1)
+  ) +
+  annotate(
+    geom = "text", label = "Durchschnitt der\nVolksabstimmungen\n53.36%",
+    x = 10, y = 44, size = 4, colour = "dark blue", angle = 90
+  ) +
+  geom_hline(yintercept = quantile[3], alpha = 0.5, size = 0.5, color = "dark blue") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 90),
+    plot.margin = unit(c(3, 1, 1, 1), "lines")
+  ) +
+  labs(
+    x = "Kantone", y = "Prozent",
+    title = "Kantonale Tendenz zu Lockerung (blau) oder überdurchschnittliche
+       Verschärfungen (rot) bei Volksabstimmungen bezüglich
+       Flüchtlinge und Ausländer (1922-2016)"
+  ) +
+  coord_flip()))
 
-#to do: Einfärben (entweder bei 50% oder die beiden Quantile)
-(graf_resultat_pro <- ggplotly(ggplot(df_japroz_mean_ausl, 
-                   aes(x=reorder(Kantone, -Zustimmung),y=Zustimmung))+
-  geom_col(fill="gray")+
-  geom_text(aes(label=round(Zustimmung, 1)), size = 3,
-    position = position_dodge(width = 1))+
-  annotate("text", label = "Durchschnitt der\nVolksabstimmungen\n53.36%", 
-           x=10, y=44, size=4, colour="dark blue")+
-  geom_hline(yintercept = c(quantile[2], quantile[4]), alpha=0.5, size = 0.5)+
-  geom_hline(yintercept = 50, alpha=0.5, size = 0.5, color = "dark blue")+
-    geom_hline(yintercept = quantile[3], alpha=0.5, size = 0.5, color = "dark blue")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90))+
-  labs(x="Kantone", y="Prozent", 
-       title = "Durchschnittliches Zustimmung zu Verschärfungen bei Volksabstimmungen \nbezüglich Flüchtlinge und Ausländer (1922-2016)")))
 
-
-#api_create(graf_resultat_pro, filename = "Verschärfungen")
-
-
+# api_create(graf_resultat_pro, filename = "Verschärfungen")
 ```
 ```{r Datawrangling Asylgesuche}
 
-df_as_nation[1,1] <- "Country"
-df_as_nation[1,38] <- "2022"
+df_as_nation[1, 1] <- "Country"
+df_as_nation[1, 38] <- "2022"
 as.character(df_as_nation[1, ])
-names(df_as_nation) <- df_as_nation[1,]
-df_as_nation <- df_as_nation[-1,]
-total <- df_as_nation[186,]
-df_as_nation <- df_as_nation[-186,]
+names(df_as_nation) <- df_as_nation[1, ]
+df_as_nation <- df_as_nation[-1, ]
+total <- df_as_nation[186, ]
+df_as_nation <- df_as_nation[-186, ]
 ```
 
 
 ```{r Grafik Asylgesuche}
-cum_nat <- df_as_nation %>% 
+cum_nat <- df_as_nation %>%
   pivot_longer(
     cols = "1986":"2022",
-    names_to = "Jahr", 
+    names_to = "Jahr",
     values_to = "Anzahl"
   )
 
 cum_nat <- transform(cum_nat, Anzahl = as.numeric(Anzahl))
 
-top_land <- aggregate(cum_nat$Anzahl, by=list(Land=cum_nat$Country), FUN=sum)
-top_land <- top_land %>% 
-  arrange(desc(x)) %>% 
+top_land <- aggregate(cum_nat$Anzahl, by = list(Land = cum_nat$Country), FUN = sum)
+top_land <- top_land %>%
+  arrange(desc(x)) %>%
   ungroup()
 
-laender <- df_as_nation[,1]
+laender <- df_as_nation[, 1]
 
-top_20 <- top_land %>% 
-  mutate(Land=ifelse(Land %in% head(Land, 20), #Anzahl von den Top Flüchtlingsländer
-                     Land, "Andere"))
-top_20 <- aggregate(top_20$x, by=list(Herkunftsland=top_20$Land), FUN=sum)
+top_20 <- top_land %>%
+  mutate(Land = ifelse(Land %in% head(Land, 20), # Anzahl von den Top Flüchtlingsländer
+    Land, "Andere"
+  ))
+top_20 <- aggregate(top_20$x, by = list(Herkunftsland = top_20$Land), FUN = sum)
 
-t20 <- top_20[-4,]
+t20 <- top_20[-4, ]
 top_country <- pull(t20, Herkunftsland)
 
 `%!in%` <- Negate(`%in%`)
@@ -657,31 +791,34 @@ top20_country$Country <- as.character(top20_country$Country)
 top20_country$Country[top20_country$Country %!in% top_country] <- "Andere"
 top20_country$Country <- as.factor(top20_country$Country)
 
-cum_as_nat <- top20_country %>% 
+cum_as_nat <- top20_country %>%
   pivot_wider(
-    names_from = "Jahr", 
+    names_from = "Jahr",
     values_from = "Anzahl",
     values_fn = sum
   ) %>%
   pivot_longer(
-    cols=2:38, 
-    names_to="Year", 
-    values_to="Amount"
+    cols = 2:38,
+    names_to = "Year",
+    values_to = "Amount"
   )
-total <- total %>% 
+total <- total %>%
   pivot_longer(
-    cols = 2:38, 
-    names_to="Jahr", 
-    values_to="Anzahl"
-  ) %>% 
+    cols = 2:38,
+    names_to = "Jahr",
+    values_to = "Anzahl"
+  ) %>%
   mutate(Anzahl = as.numeric(Anzahl))
 
-herkunft <- ggplot(cum_as_nat, aes(x=Year, y=Amount, fill=Country))+
-  geom_bar(position="stack", stat = "identity")+
-  theme(axis.text.x = element_text(angle = 90))+
-  labs(x="Jahr", y="Anzahl", title = "Flüchtlingsherkunft seit 1986 \n20 häufigste Länder und alle Andere")+
-  guides(fill=guide_legend(title = "Herkunftsland"))
-  
+herkunft <- ggplot(cum_as_nat, aes(x = Year, y = Amount, fill = Country)) +
+  geom_bar(position = "stack", stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(
+    x = "Jahr", y = "Anzahl",
+    title = "Flüchtlingsherkunft seit 1986 \n20 häufigste Länder und alle Andere"
+  ) +
+  guides(fill = guide_legend(title = "Herkunftsland"))
+
 
 ggplotly(herkunft)
 ```
